@@ -1,8 +1,9 @@
 """
-DAC HealthPrice Platform v2.2
+DAC HealthPrice Platform v2.3
 Changes: authoritative underwriting engine, GLM-consistent fallback,
 model versioning + meta persistence, hot-swap retraining loop,
-full audit trail, 6-layer anti-scraping protection.
+full audit trail, 6-layer anti-scraping protection,
+client-specific partner API keys.
 """
 import os, re, time, uuid, logging, json, hashlib, secrets
 from datetime import datetime, timezone
@@ -37,6 +38,7 @@ ADMIN_KEY=os.getenv("ADMIN_API_KEY","")
 db_pool=None; models={}; model_version="v1.0.0"
 model_meta={"version":"v1.0.0","last_retrained_at":None,"training_dataset":None,"coverage":None,"r2":None}
 _fallback_models={}   # GLM fallback — consistent methodology with main models
+_partner_keys: dict={}  # key_hash → {partner_name, daily_limit, is_active, usage_today, date}
 
 # ── Anti-scraping protection ──────────────────────────────────────────────────
 DAILY_LIMIT=int(os.getenv("DAILY_QUOTE_LIMIT","15"))
@@ -154,9 +156,26 @@ async def lifespan(app):
                         r2 NUMERIC,
                         promoted_at TIMESTAMPTZ DEFAULT NOW()
                     );
+                    CREATE TABLE IF NOT EXISTS hp_partner_keys (
+                        id SERIAL PRIMARY KEY,
+                        key_hash TEXT UNIQUE NOT NULL,
+                        partner_name TEXT NOT NULL,
+                        daily_limit INT DEFAULT 500,
+                        is_active BOOLEAN DEFAULT TRUE,
+                        total_requests BIGINT DEFAULT 0,
+                        created_at TIMESTAMPTZ DEFAULT NOW(),
+                        last_used_at TIMESTAMPTZ
+                    );
                 """)
                 log.info("Schema migrations OK")
             except Exception as e: log.warning(f"Schema migration: {e}")
+            # Load active partner keys into memory cache
+            try:
+                rows=await db_pool.fetch("SELECT key_hash,partner_name,daily_limit FROM hp_partner_keys WHERE is_active=TRUE")
+                for r in rows:
+                    _partner_keys[r["key_hash"]]={"partner_name":r["partner_name"],"daily_limit":r["daily_limit"],"usage_today":0,"date":None}
+                log.info(f"Loaded {len(_partner_keys)} partner key(s)")
+            except Exception as e: log.warning(f"Partner key load: {e}")
     yield
     if db_pool: await db_pool.close()
 
@@ -316,19 +335,40 @@ async def _log_b(qid,req,browser_id:str="",email:str="",anomaly_flag:bool=False)
 
 @app.get("/health")
 async def health():
-    return {"status":"healthy","service":"DAC HealthPrice v2.2","models_loaded":list(models.keys()),"fallback_models_loaded":list(_fallback_models.keys()),"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
+    return {"status":"healthy","service":"DAC HealthPrice v2.3","models_loaded":list(models.keys()),"fallback_models_loaded":list(_fallback_models.keys()),"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
 
-# ── Layer 6: session token enforcement ───────────────────────────────────────
-async def verify_session(x_session_token:Optional[str]=Header(None)):
+# ── Partner key verification ─────────────────────────────────────────────────
+def _check_partner_daily(key_hash:str)->bool:
+    today=datetime.now(timezone.utc).date().isoformat()
+    p=_partner_keys[key_hash]
+    if p["date"]!=today: p["date"]=today; p["usage_today"]=0
+    if p["usage_today"]>=p["daily_limit"]: return False
+    p["usage_today"]+=1; return True
+
+async def verify_pricing_auth(x_session_token:Optional[str]=Header(None),x_partner_key:Optional[str]=Header(None)):
+    """Accept either a session token (consumer flow) or a partner API key (B2B flow)."""
+    if x_partner_key:
+        kh=hashlib.sha256(x_partner_key.encode()).hexdigest()
+        if kh not in _partner_keys:
+            raise HTTPException(401,"Invalid partner API key.")
+        if not _partner_keys[kh].get("is_active",True):
+            raise HTTPException(403,"Partner key has been revoked.")
+        if not _check_partner_daily(kh):
+            raise HTTPException(429,f"Partner daily quota ({_partner_keys[kh]['daily_limit']}) exhausted.")
+        if db_pool:
+            try: await db_pool.execute("UPDATE hp_partner_keys SET total_requests=total_requests+1,last_used_at=NOW() WHERE key_hash=$1",kh)
+            except Exception as e: log.warning(f"Partner key update: {e}")
+        return {"type":"partner","key_hash":kh,"partner_name":_partner_keys[kh]["partner_name"]}
+    # Fall back to session token
     if not x_session_token:
-        raise HTTPException(401,"Session token required. Call POST /api/v2/session with your email first.")
+        raise HTTPException(401,"Session token required. Call POST /api/v2/session with your email first, or provide X-Partner-Key.")
     if x_session_token not in _sessions:
         raise HTTPException(401,"Invalid or expired session token.")
     sess=_sessions[x_session_token]
     if sess["uses_remaining"]<=0:
         _sessions.pop(x_session_token,None)
         raise HTTPException(429,"Session quota exhausted. Request a new session.")
-    return x_session_token
+    return {"type":"session","token":x_session_token,"email":sess.get("email","")}
 
 # ── Layer 5: email gate ───────────────────────────────────────────────────────
 class SessionRequest(BaseModel):
@@ -351,22 +391,27 @@ async def create_session(body:SessionRequest):
     return {"token":token,"quotes_remaining":SESSION_QUOTE_LIMIT,"expires_in":3600}
 
 @app.post("/api/v2/price")
-async def calc(req:PricingRequest,request:Request,_tok:str=Depends(verify_session)):
+async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_pricing_auth)):
     bid=req.browser_id or request.client.host or "anon"
-    if not _check_daily(bid):
+    is_partner=auth["type"]=="partner"
+    # Consumer-path daily quota (partners have their own quota enforced in verify_pricing_auth)
+    if not is_partner and not _check_daily(bid):
         raise HTTPException(429,f"Daily quote limit ({DAILY_LIMIT}) reached for this device.")
     is_sweep=_detect_sweep(bid,req)
     if is_sweep:
-        log.warning(f"Sweep detected: browser_id={bid} email={_sessions.get(_tok,{}).get('email','?')}")
+        partner_tag=auth.get("partner_name","?") if is_partner else _sessions.get(auth.get("token",""),{}).get("email","?")
+        log.warning(f"Sweep detected: browser_id={bid} identity={partner_tag}")
 
     # Task 1: Authoritative underwriting check
     uw=_check_underwriting(req)
+    _tok=auth.get("token") if auth["type"]=="session" else None
+    _email_from_auth=auth.get("partner_name","") if is_partner else _sessions.get(_tok or "",{}).get("email","")
     if uw["status"]=="decline":
         qid=_qid(); rid=getattr(request.state,"rid","?")
-        email=req.email or _sessions.get(_tok,{}).get("email","")
+        email=req.email or _email_from_auth
         await _log_q(qid,req.model_dump(),{"underwriting":uw},uw_status="decline",browser_id=bid,email=email)
         await _log_b(qid,req,bid,email,is_sweep)
-        _sessions[_tok]["uses_remaining"]-=1
+        if _tok and _tok in _sessions: _sessions[_tok]["uses_remaining"]-=1
         log.info(f"[{rid}] DECLINED age={req.age} conditions={req.preexist_conditions}")
         return {"quote_id":qid,"underwriting":uw,"total_annual_premium":None,"total_monthly_premium":None,"message":"Application requires manual underwriting review. An underwriter will contact you.","calculated_at":datetime.now(timezone.utc).isoformat()}
 
@@ -385,7 +430,7 @@ async def calc(req:PricingRequest,request:Request,_tok:str=Depends(verify_sessio
     total=round(float(np.clip(pre_fam*ff,P_FLOOR,P_CEIL*req.family_size)),2)
 
     used_fallback=ipd.get("source","ml")!="ml" or any(v.get("source","ml")!="ml" for v in riders.values())
-    email=req.email or _sessions.get(_tok,{}).get("email","")
+    email=req.email or _email_from_auth
 
     res={"quote_id":qid,"request_id":rid,"country":req.country,"region":req.region,"model_version":model_version,
         "ipd_tier":req.ipd_tier,"tier_benefits":tier,"underwriting":uw,
@@ -396,7 +441,8 @@ async def calc(req:PricingRequest,request:Request,_tok:str=Depends(verify_sessio
         "calculated_at":datetime.now(timezone.utc).isoformat()}
 
     res=_apply_banding(res)
-    _sessions[_tok]["uses_remaining"]-=1
+    if _tok and _tok in _sessions: _sessions[_tok]["uses_remaining"]-=1
+    if is_partner: res["partner"]=auth.get("partner_name","")
 
     await _log_q(qid,req.model_dump(),res,uw_status=uw["status"],used_fallback=used_fallback,browser_id=bid,email=email)
     await _log_b(qid,req,bid,email,is_sweep)
@@ -566,6 +612,48 @@ async def model_versions():
         rows=await db_pool.fetch("SELECT version,coverage,training_dataset,r2,promoted_at FROM hp_model_versions ORDER BY promoted_at DESC LIMIT 50")
         return {"status":"ok","current_version":model_version,"versions":[{k:(v.isoformat() if hasattr(v,'isoformat') else v) for k,v in dict(r).items()} for r in rows]}
     except Exception as e: return {"status":"error","detail":str(e)}
+
+# ── Partner key management (admin) ───────────────────────────────────────────
+class PartnerKeyRequest(BaseModel):
+    partner_name:str=Field(...,min_length=2,max_length=100)
+    daily_limit:int=Field(500,ge=1,le=100000)
+
+@app.post("/api/v2/admin/partner-keys",dependencies=[Depends(verify_admin)])
+async def create_partner_key(body:PartnerKeyRequest):
+    raw=secrets.token_urlsafe(40)
+    kh=hashlib.sha256(raw.encode()).hexdigest()
+    if not db_pool: raise HTTPException(503,"Database required for partner key management.")
+    try:
+        await db_pool.execute(
+            "INSERT INTO hp_partner_keys(key_hash,partner_name,daily_limit)VALUES($1,$2,$3)",
+            kh,body.partner_name,body.daily_limit)
+    except Exception as e: raise HTTPException(500,f"DB error: {e}")
+    _partner_keys[kh]={"partner_name":body.partner_name,"daily_limit":body.daily_limit,"usage_today":0,"date":None,"is_active":True}
+    log.info(f"Partner key created for '{body.partner_name}' daily_limit={body.daily_limit}")
+    return {"partner_name":body.partner_name,"api_key":raw,"daily_limit":body.daily_limit,
+            "note":"Store this key securely — it will not be shown again."}
+
+@app.get("/api/v2/admin/partner-keys",dependencies=[Depends(verify_admin)])
+async def list_partner_keys():
+    if not db_pool: raise HTTPException(503,"Database required.")
+    try:
+        rows=await db_pool.fetch(
+            "SELECT id,partner_name,daily_limit,is_active,total_requests,created_at,last_used_at FROM hp_partner_keys ORDER BY created_at DESC")
+        return {"status":"ok","keys":[{k:(v.isoformat() if hasattr(v,'isoformat') else v) for k,v in dict(r).items()} for r in rows]}
+    except Exception as e: raise HTTPException(500,f"DB error: {e}")
+
+@app.delete("/api/v2/admin/partner-keys/{key_id}",dependencies=[Depends(verify_admin)])
+async def revoke_partner_key(key_id:int):
+    if not db_pool: raise HTTPException(503,"Database required.")
+    try:
+        row=await db_pool.fetchrow("UPDATE hp_partner_keys SET is_active=FALSE WHERE id=$1 RETURNING key_hash,partner_name",key_id)
+        if not row: raise HTTPException(404,"Partner key not found.")
+        kh=row["key_hash"]
+        if kh in _partner_keys: _partner_keys[kh]["is_active"]=False
+        log.info(f"Partner key revoked: id={key_id} partner='{row['partner_name']}'")
+        return {"status":"revoked","id":key_id,"partner_name":row["partner_name"]}
+    except HTTPException: raise
+    except Exception as e: raise HTTPException(500,f"DB error: {e}")
 
 @app.exception_handler(Exception)
 async def err(request:Request,exc:Exception):
