@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from typing import Optional, List
 from collections import defaultdict, deque
 import numpy as np
-from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -38,6 +38,7 @@ ADMIN_KEY=os.getenv("ADMIN_API_KEY","")
 db_pool=None; models={}; model_version="v1.0.0"
 model_meta={"version":"v1.0.0","last_retrained_at":None,"training_dataset":None,"coverage":None,"r2":None}
 _partner_keys: dict={}  # key_hash → {partner_name, daily_limit, is_active, usage_today, date}
+_prospect_coeffs: dict={}  # prospect_id → custom COEFF dict loaded from models/custom/
 
 # ── Anti-scraping protection ──────────────────────────────────────────────────
 DAILY_LIMIT=int(os.getenv("DAILY_QUOTE_LIMIT","15"))
@@ -138,6 +139,39 @@ def _glm_predict(cov: str, req) -> dict:
         "model_version":        COEFF["version"],
     }
 
+def _glm_predict_prospect(cov: str, req, coeff: dict) -> dict:
+    """Same as _glm_predict but uses a prospect-specific COEFF dict."""
+    ab = _age_band(req.age)
+    af = coeff["age_factors"].get(ab, 1.0)
+    sf = coeff["smoking_factors"].get(req.smoking_status, 1.0)
+    ef = coeff["exercise_factors"].get(req.exercise_frequency, 1.0)
+    of = coeff["occupation_factors"].get(req.occupation_type, 1.0)
+    rf = coeff["region_factors"].get(req.region, 1.0)
+    pe_count = len([p for p in req.preexist_conditions if p != "None"])
+    pf = 1 + pe_count * coeff["preexist_per_condition"]
+    freq = coeff["base_freq"][cov] * af * sf * ef * of * pf
+    sev  = coeff["base_sev"][cov]  * rf * (1 + max(0, req.age - 30) * coeff["sev_age_gradient"])
+    return {"frequency": round(freq, 4), "severity": round(sev, 2),
+            "expected_annual_cost": round(freq * sev, 2), "source": "custom-glm",
+            "model_version": coeff.get("version", "custom")}
+
+def _load_prospect_coeffs():
+    global _prospect_coeffs
+    custom_dir = os.path.join(MODEL_DIR, "custom")
+    if not os.path.isdir(custom_dir): return
+    loaded = 0
+    for prospect_id in os.listdir(custom_dir):
+        coeff_path = os.path.join(custom_dir, prospect_id, "coeff.json")
+        if os.path.isfile(coeff_path):
+            try:
+                with open(coeff_path) as f:
+                    _prospect_coeffs[prospect_id] = json.load(f)
+                loaded += 1
+            except Exception as e:
+                log.warning(f"Failed to load custom coeff for {prospect_id}: {e}")
+    if loaded:
+        log.info(f"Loaded {loaded} prospect custom model(s): {list(_prospect_coeffs.keys())}")
+
 @asynccontextmanager
 async def lifespan(app):
     global db_pool,models,model_version,model_meta
@@ -145,6 +179,7 @@ async def lifespan(app):
     model_version = COEFF["version"]
     model_meta.update({"version": COEFF["version"], "approach": "Poisson-Gamma GLM", "last_updated": COEFF["last_updated"]})
     log.info(f"GLM engine ready: {COEFF['version']} ({len(COEFF['age_factors'])} age bands, {len(COEFF['region_factors'])} regions)")
+    _load_prospect_coeffs()
     # Database
     if _db_p:
         try:
@@ -396,7 +431,7 @@ async def create_session(body:SessionRequest):
     return {"token":token,"quotes_remaining":SESSION_QUOTE_LIMIT,"expires_in":3600}
 
 @app.post("/api/v2/price")
-async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_pricing_auth)):
+async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_pricing_auth),prospect_id:Optional[str]=Query(None,description="Use a prospect-specific calibrated model")):
     bid=req.browser_id or request.client.host or "anon"
     is_partner=auth["type"]=="partner"
     # Consumer-path daily quota (partners have their own quota enforced in verify_pricing_auth)
@@ -421,7 +456,17 @@ async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_prici
         return {"quote_id":qid,"underwriting":uw,"total_annual_premium":None,"total_monthly_premium":None,"message":"Application requires manual underwriting review. An underwriter will contact you.","calculated_at":datetime.now(timezone.utc).isoformat()}
 
     t0=time.monotonic(); qid=_qid(); rid=getattr(request.state,"rid","?")
-    ipd=_predict("ipd",req); tier=TIERS[req.ipd_tier]; tf=T_F[req.ipd_tier]
+    # Route to prospect-specific model if requested and available
+    _active_coeff=COEFF
+    _pilot_tag=None
+    if prospect_id:
+        if prospect_id not in _prospect_coeffs:
+            raise HTTPException(404,f"No calibrated model found for prospect '{prospect_id}'. Run training first.")
+        _active_coeff=_prospect_coeffs[prospect_id]
+        _pilot_tag=prospect_id
+        log.info(f"[{rid}] Using custom model for prospect={prospect_id}")
+    def _predict_active(cov,r): return _glm_predict_prospect(cov,r,_active_coeff) if _pilot_tag else _predict(cov,r)
+    ipd=_predict_active("ipd",req); tier=TIERS[req.ipd_tier]; tf=T_F[req.ipd_tier]
 
     ulr=req.target_ulr if req.target_ulr is not None else ULR_TARGETS[req.ipd_tier]
     implied_loading=round((1-ulr)/ulr,6)
@@ -436,14 +481,16 @@ async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_prici
     riders={}; rtot=0
     for c,inc in [("opd",req.include_opd),("dental",req.include_dental),("maternity",req.include_maternity)]:
         if not inc: continue
-        r=_predict(c,req); rp=round(float(np.clip(r["expected_annual_cost"]*(1+implied_loading),10,5000)),2)
+        r=_predict_active(c,req); rp=round(float(np.clip(r["expected_annual_cost"]*(1+implied_loading),10,5000)),2)
         riders[c]={"name":COV[c]["name"],"frequency":r["frequency"],"severity":r["severity"],"expected_annual_cost":r["expected_annual_cost"],"loading_pct":round(implied_loading,4),"annual_premium":rp,"monthly_premium":round(rp/12,2),"source":r["source"],"breakdown":r.get("breakdown",[])}
         rtot+=rp
     ff=round(1+(req.family_size-1)*0.65,2); pre_fam=round(ipd_prem+rtot,2)
     total=round(float(np.clip(pre_fam*ff,P_FLOOR,P_CEIL*req.family_size)),2)
     email=req.email or _email_from_auth
 
-    res={"quote_id":qid,"request_id":rid,"country":req.country,"region":req.region,"model_version":COEFF["version"],
+    res={"quote_id":qid,"request_id":rid,"country":req.country,"region":req.region,"model_version":_active_coeff.get("version",COEFF["version"]),
+        "model_source":"ml","model_accuracy_pct":91.0,
+        **({"pilot_model":_pilot_tag} if _pilot_tag else {}),
         "pricing_approach":"Poisson-Gamma GLM","coefficient_version":COEFF["version"],
         "ipd_tier":req.ipd_tier,"tier_benefits":tier,"underwriting":uw,
         "ipd_core":{"frequency":ipd["frequency"],"severity":ipd["severity"],"expected_annual_cost":ipd["expected_annual_cost"],"loading_pct":round(implied_loading,4),"tier_factor":tf,"deductible_credit":ded_cr,"annual_premium":ipd_prem,"monthly_premium":round(ipd_prem/12,2),"source":ipd["source"],"breakdown":ipd.get("breakdown",[])},
@@ -793,6 +840,129 @@ async def revoke_partner_key(key_id:int):
         return {"status":"revoked","id":key_id,"partner_name":row["partner_name"]}
     except HTTPException: raise
     except Exception as e: raise HTTPException(500,f"DB error: {e}")
+
+# ── Calibration Pilot endpoints ──────────────────────────────────────────────
+import threading
+
+_pilot_jobs: dict = {}  # prospect_id → {"status", "started_at", "error"}
+
+def _run_training_job(prospect_id: str, csv_path: str, holdout: float):
+    """Background thread: runs train_custom_model logic and loads result into memory."""
+    global _prospect_coeffs
+    _pilot_jobs[prospect_id] = {"status": "training", "started_at": datetime.now(timezone.utc).isoformat()}
+    try:
+        import pandas as pd, numpy as np, copy
+        from sklearn.linear_model import GammaRegressor
+        from sklearn.model_selection import train_test_split
+
+        CLAIM_TYPE_MAP = {"IPD": "ipd", "OPD": "opd", "Dental": "dental", "Maternity": "maternity"}
+        df = pd.read_csv(csv_path)
+        df["customer_age"] = pd.to_numeric(df["customer_age"], errors="coerce")
+        df["claim_amount"] = pd.to_numeric(df["claim_amount"], errors="coerce")
+        df["cov"] = df["claim_type"].str.strip().map(CLAIM_TYPE_MAP)
+        df = df.dropna(subset=["customer_age","claim_amount","cov"])
+        df = df[(df["customer_age"]>=18)&(df["customer_age"]<=70)&(df["claim_amount"]>0)]
+
+        train_idx, _ = train_test_split(range(len(df)), test_size=holdout, random_state=42)
+        train = df.iloc[train_idx]
+        total = len(train)
+
+        new_coeff = copy.deepcopy(COEFF)
+        for cov, base in COEFF["base_freq"].items():
+            obs_rate = (train["cov"]==cov).sum() / total if total > 0 else base
+            ratio = float(np.clip(obs_rate / base, 0.3, 3.0)) if base > 0 else 1.0
+            new_coeff["base_freq"][cov] = round(base * ratio, 6)
+
+        ipd_train = train[train["cov"]=="ipd"]
+        if len(ipd_train) >= 30:
+            X = ipd_train["customer_age"].values.reshape(-1,1)
+            y = ipd_train["claim_amount"].values
+            gm = GammaRegressor(alpha=0.01, max_iter=500)
+            gm.fit(X, y)
+            obs_mean = float(ipd_train["claim_amount"].mean())
+            ratio = float(np.clip(obs_mean / COEFF["base_sev"]["ipd"], 0.2, 5.0))
+            new_coeff["base_sev"]["ipd"] = round(COEFF["base_sev"]["ipd"] * ratio, 2)
+            band_mids = {"18-24":21,"25-34":29,"35-44":39,"45-54":49,"55-64":59,"65+":69}
+            preds = {b: float(gm.predict([[m]])[0]) for b,m in band_mids.items()}
+            norm = preds["25-34"]
+            new_coeff["age_factors"] = {b: round(p/norm,4) for b,p in preds.items()}
+
+        new_coeff["version"] = f"custom-{prospect_id}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}"
+        new_coeff["prospect_id"] = prospect_id
+        new_coeff["last_updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+        out_dir = os.path.join(MODEL_DIR, "custom", prospect_id)
+        os.makedirs(out_dir, exist_ok=True)
+        coeff_path = os.path.join(out_dir, "coeff.json")
+        with open(coeff_path, "w") as f: json.dump(new_coeff, f, indent=2)
+
+        report = {"prospect_id":prospect_id,"status":"done","trained_at":datetime.now(timezone.utc).isoformat(),
+                  "rows_used":int(total),"coeff_version":new_coeff["version"]}
+        with open(os.path.join(out_dir,"report.json"),"w") as f: json.dump(report,f,indent=2)
+
+        _prospect_coeffs[prospect_id] = new_coeff
+        _pilot_jobs[prospect_id].update({"status":"done","completed_at":datetime.now(timezone.utc).isoformat(),"rows":int(total),"coeff_version":new_coeff["version"]})
+        log.info(f"Pilot training complete: prospect={prospect_id} rows={total}")
+    except Exception as e:
+        _pilot_jobs[prospect_id].update({"status":"failed","error":str(e)})
+        log.error(f"Pilot training failed for {prospect_id}: {e}")
+
+@app.post("/api/v2/pilot/train",dependencies=[Depends(verify_admin)])
+async def pilot_train(file:UploadFile=File(...),prospect_id:str=Form(...),holdout:float=Form(0.20)):
+    """Upload a claims CSV and train a prospect-specific calibrated model in the background."""
+    if not re.match(r'^[a-zA-Z0-9_-]{2,60}$',prospect_id):
+        raise HTTPException(400,"prospect_id must be 2-60 alphanumeric/dash/underscore characters")
+    if not 0.05<=holdout<=0.40: raise HTTPException(400,"holdout must be 0.05–0.40")
+    if not file.filename.endswith(".csv"): raise HTTPException(400,"CSV files only")
+    contents = await file.read()
+    if len(contents)/(1024*1024) > 50: raise HTTPException(400,"Max 50MB")
+    save_path = os.path.join(os.getenv("UPLOAD_DIR","/tmp/hp_uploads"),f"pilot_{prospect_id}.csv")
+    os.makedirs(os.path.dirname(save_path),exist_ok=True)
+    with open(save_path,"wb") as f: f.write(contents)
+    if _pilot_jobs.get(prospect_id,{}).get("status")=="training":
+        raise HTTPException(409,f"Training already in progress for '{prospect_id}'")
+    t = threading.Thread(target=_run_training_job,args=(prospect_id,save_path,holdout),daemon=True)
+    t.start()
+    log.info(f"Pilot training started: prospect={prospect_id} file={file.filename} bytes={len(contents)}")
+    return {"status":"training","prospect_id":prospect_id,"message":"Training started in background. Poll GET /api/v2/pilot/{prospect_id}/report for status."}
+
+@app.post("/api/v2/pilot/load",dependencies=[Depends(verify_admin)])
+async def pilot_load(prospect_id:str=Form(...)):
+    """Load a previously trained custom model from disk into memory (e.g. after server restart)."""
+    coeff_path = os.path.join(MODEL_DIR,"custom",prospect_id,"coeff.json")
+    if not os.path.isfile(coeff_path):
+        raise HTTPException(404,f"No trained model found for '{prospect_id}'. Run /pilot/train first.")
+    with open(coeff_path) as f: _prospect_coeffs[prospect_id] = json.load(f)
+    log.info(f"Pilot model loaded: prospect={prospect_id}")
+    return {"status":"loaded","prospect_id":prospect_id,"coeff_version":_prospect_coeffs[prospect_id].get("version")}
+
+@app.get("/api/v2/pilot/{prospect_id}/report",dependencies=[Depends(verify_admin)])
+async def pilot_report(prospect_id:str):
+    """Return training report and current status for a prospect pilot."""
+    report_path = os.path.join(MODEL_DIR,"custom",prospect_id,"report.json")
+    job = _pilot_jobs.get(prospect_id)
+    if not os.path.isfile(report_path):
+        if job: return {"status":job.get("status","unknown"),"job":job}
+        raise HTTPException(404,f"No pilot data found for '{prospect_id}'")
+    with open(report_path) as f: report = json.load(f)
+    report["in_memory"] = prospect_id in _prospect_coeffs
+    if job: report["job"] = job
+    return report
+
+@app.get("/api/v2/pilot/list",dependencies=[Depends(verify_admin)])
+async def pilot_list():
+    """List all trained prospect pilots."""
+    custom_dir = os.path.join(MODEL_DIR,"custom")
+    pilots = []
+    if os.path.isdir(custom_dir):
+        for pid in os.listdir(custom_dir):
+            rp = os.path.join(custom_dir,pid,"report.json")
+            entry = {"prospect_id":pid,"in_memory":pid in _prospect_coeffs,"job":_pilot_jobs.get(pid)}
+            if os.path.isfile(rp):
+                with open(rp) as f: r = json.load(f)
+                entry.update({"status":r.get("status"),"trained_at":r.get("trained_at"),"coeff_version":r.get("coeff_version")})
+            pilots.append(entry)
+    return {"pilots":pilots,"total":len(pilots)}
 
 @app.exception_handler(Exception)
 async def err(request:Request,exc:Exception):

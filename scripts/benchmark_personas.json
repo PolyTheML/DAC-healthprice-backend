@@ -1,0 +1,122 @@
+[
+  {
+    "id": "P01",
+    "label": "Young healthy female — Silver",
+    "age": 25, "gender": "Female", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Active", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["None"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P02",
+    "label": "Young male smoker — Bronze",
+    "age": 28, "gender": "Male", "country": "cambodia", "region": "Siem Reap",
+    "smoking_status": "Current", "exercise_frequency": "Sedentary", "occupation_type": "Retail/Service",
+    "preexist_conditions": ["None"], "ipd_tier": "Bronze", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P03",
+    "label": "Female, maternity rider — Gold",
+    "age": 30, "gender": "Female", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Moderate", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["None"], "ipd_tier": "Gold", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": true
+  },
+  {
+    "id": "P04",
+    "label": "Mid-age healthy male — Silver",
+    "age": 35, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Moderate", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["None"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P05",
+    "label": "Family plan — Silver, 4 members",
+    "age": 35, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Moderate", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["None"], "ipd_tier": "Silver", "family_size": 4,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P06",
+    "label": "Female, hypertension — Silver",
+    "age": 40, "gender": "Female", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Light", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["Hypertension"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P07",
+    "label": "Male, heart disease + smoker — Gold",
+    "age": 42, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Current", "exercise_frequency": "Sedentary", "occupation_type": "Manual Labor",
+    "preexist_conditions": ["Heart Disease"], "ipd_tier": "Gold", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P08",
+    "label": "Active male — Gold",
+    "age": 45, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Active", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["None"], "ipd_tier": "Gold", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P09",
+    "label": "Female, diabetes — Silver",
+    "age": 45, "gender": "Female", "country": "cambodia", "region": "Siem Reap",
+    "smoking_status": "Former", "exercise_frequency": "Light", "occupation_type": "Retail/Service",
+    "preexist_conditions": ["Diabetes"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P10",
+    "label": "Blue-collar male — Bronze",
+    "age": 50, "gender": "Male", "country": "cambodia", "region": "Battambang",
+    "smoking_status": "Never", "exercise_frequency": "Sedentary", "occupation_type": "Manual Labor",
+    "preexist_conditions": ["None"], "ipd_tier": "Bronze", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P11",
+    "label": "Female, hypertension + diabetes — Silver",
+    "age": 50, "gender": "Female", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Former", "exercise_frequency": "Sedentary", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["Hypertension", "Diabetes"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P12",
+    "label": "Healthy professional male — Platinum",
+    "age": 55, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Moderate", "occupation_type": "Office/Desk",
+    "preexist_conditions": ["None"], "ipd_tier": "Platinum", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P13",
+    "label": "Female, 3 conditions — Silver",
+    "age": 55, "gender": "Female", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Light", "occupation_type": "Retired",
+    "preexist_conditions": ["Hypertension", "Diabetes", "Obesity"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P14",
+    "label": "Active senior male — Gold",
+    "age": 60, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Active", "occupation_type": "Retired",
+    "preexist_conditions": ["None"], "ipd_tier": "Gold", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  },
+  {
+    "id": "P15",
+    "label": "Senior female — Silver",
+    "age": 65, "gender": "Female", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Light", "occupation_type": "Retired",
+    "preexist_conditions": ["None"], "ipd_tier": "Silver", "family_size": 1,
+    "include_opd": false, "include_dental": false, "include_maternity": false
+  }
+]
