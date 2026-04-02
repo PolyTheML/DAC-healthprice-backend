@@ -13,7 +13,6 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import PoissonRegressor, GammaRegressor
-from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
 import joblib
@@ -123,33 +122,26 @@ def train_freq_sev_model(coverage_type, seed):
     freq_scores = cross_val_score(freq_model, X, y_freq, cv=5, scoring="neg_mean_poisson_deviance")
     print(f"  5-fold CV deviance: {-freq_scores.mean():.4f}")
 
-    # ─── Severity Model (GBR on claims > 0) ─────────────────────────────
+    # ─── Severity Model (Gamma GLM on claims > 0) ────────────────────────
     mask = df["claim_count"] > 0
     X_sev = X[mask]
     y_sev = df.loc[mask, "avg_claim_amount"].values
-    print(f"\nSeverity model (GradientBoosting on {mask.sum()} claimants):")
+    print(f"\nSeverity model (GammaRegressor on {mask.sum()} claimants):")
     print(f"  Mean severity: ${y_sev.mean():,.0f}")
     print(f"  Median severity: ${np.median(y_sev):,.0f}")
 
-    sev_model = GradientBoostingRegressor(
-        n_estimators=150, max_depth=4, learning_rate=0.07,
-        subsample=0.85, random_state=seed,
-    )
+    sev_model = GammaRegressor(alpha=0.01, max_iter=500)
     sev_model.fit(X_sev, y_sev)
 
-    sev_scores = cross_val_score(sev_model, X_sev, y_sev, cv=5, scoring="neg_root_mean_squared_error")
-    print(f"  5-fold CV RMSE: ${-sev_scores.mean():,.0f}")
+    sev_scores = cross_val_score(sev_model, X_sev, y_sev, cv=5, scoring="r2")
+    print(f"  5-fold CV R²: {sev_scores.mean():.4f} ± {sev_scores.std():.4f}")
     print(f"  Training R²: {sev_model.score(X_sev, y_sev):.4f}")
-
-    # Feature importance
-    print(f"\n  Feature importance (severity):")
-    for name, imp in sorted(zip(features, sev_model.feature_importances_), key=lambda x: -x[1]):
-        print(f"    {name:20s} {imp:.3f} {'█' * int(imp * 40)}")
+    print(f"  GLM coefficients shape: {sev_model.coef_.shape}")
 
     # Stamp versions
-    freq_model._model_version = f"v1.0.0"
+    freq_model._model_version = "v2.0.0"
     freq_model._coverage_type = coverage_type
-    sev_model._model_version = f"v1.0.0"
+    sev_model._model_version = "v2.0.0"
     sev_model._coverage_type = coverage_type
 
     # Save
@@ -181,11 +173,12 @@ def train():
 
     # Create a combined metadata file
     meta = {
-        "version": "v1.0.0",
+        "version": "v2.0.0",
         "coverage_types": ["ipd", "opd", "dental", "maternity"],
         "features": ["age", "gender", "smoking", "exercise", "occupation", "region", "preexist_conditions"],
         "frequency_model": "PoissonRegressor",
-        "severity_model": "GradientBoostingRegressor",
+        "severity_model": "GammaRegressor",
+        "model_family": "Poisson-Gamma GLM",
         "training_samples": N_SAMPLES,
     }
     joblib.dump(meta, os.path.join(OUTPUT_DIR, "model_meta.pkl"))
