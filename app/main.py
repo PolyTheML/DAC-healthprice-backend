@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from typing import Optional, List
 from collections import defaultdict, deque
-import joblib, numpy as np
+import numpy as np
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
@@ -37,7 +37,6 @@ ALLOWED_ORIGINS=os.getenv("ALLOWED_ORIGINS","*").split(",")
 ADMIN_KEY=os.getenv("ADMIN_API_KEY","")
 db_pool=None; models={}; model_version="v1.0.0"
 model_meta={"version":"v1.0.0","last_retrained_at":None,"training_dataset":None,"coverage":None,"r2":None}
-_fallback_models={}   # GLM fallback — consistent methodology with main models
 _partner_keys: dict={}  # key_hash → {partner_name, daily_limit, is_active, usage_today, date}
 
 # ── Anti-scraping protection ──────────────────────────────────────────────────
@@ -79,47 +78,72 @@ T_F={"Bronze":0.70,"Silver":1.00,"Gold":1.45,"Platinum":2.10}
 P_FLOOR=50; P_CEIL=25000
 
 # ── Fallback GLM fitting — consistent Poisson+Ridge methodology ───────────────
-def _fit_fallback_models():
-    """Fit lightweight GLMs on synthetic data so fallback uses same methodology as main models."""
-    try:
-        from sklearn.linear_model import PoissonRegressor, Ridge
-        rng=np.random.RandomState(42); n=2000
-        ages=rng.randint(18,71,n); genders=rng.randint(0,3,n); smoking=rng.randint(0,3,n)
-        exercise=rng.randint(0,4,n); occupation=rng.randint(0,6,n); region=rng.randint(0,11,n); pe=rng.randint(0,5,n)
-        X=np.column_stack([ages,genders,smoking,exercise,occupation,region,pe])
-        age_f=1+np.maximum(0,ages-35)*0.008
-        smoke_f=np.array([1,1.15,1.40])[np.clip(smoking,0,2)]
-        ex_f=np.array([1.20,1.05,0.90,0.80])[np.clip(exercise,0,3)]
-        occ_f=np.array([0.85,1.0,1.05,1.15,1.30,1.10])[np.clip(occupation,0,5)]
-        pe_f=1+pe*0.20
-        reg_f_arr=np.array([1.20,1.05,0.90,1.10,0.85,0.75,1.25,1.20,1.05,0.90,0.95])[np.clip(region,0,10)]
-        fb={}
-        for cov,base_rate,base_sev in [("ipd",0.12,2500),("opd",2.5,60),("dental",0.8,120),("maternity",0.15,3500)]:
-            yf=np.clip(base_rate*age_f*smoke_f*ex_f*occ_f*pe_f+rng.normal(0,0.01,n),0.001,20)
-            fm=PoissonRegressor(alpha=0.1,max_iter=300); fm.fit(X,yf)
-            ys=np.clip(base_sev*reg_f_arr*(1+np.maximum(0,ages-30)*0.006)*(1+pe*0.15)+rng.normal(0,base_sev*0.05,n),10,100000)
-            sm=Ridge(alpha=1.0); sm.fit(X,ys)
-            fb[f"{cov}_freq"]=fm; fb[f"{cov}_sev"]=sm
-        log.info("Fallback GLMs fitted (Poisson+Ridge on synthetic data)")
-        return fb
-    except Exception as e:
-        log.warning(f"Fallback GLM fit failed: {e}"); return {}
+# GLM Coefficient Store — all pricing factors are explicit and auditable.
+# Updated at runtime via POST /api/v2/admin/deploy-calibration.
+COEFF: dict = {
+    "version":       "v2.2",
+    "last_updated":  "2026-03-28",
+    "updated_by":    "system",
+    "base_freq":  {"ipd": 0.12,  "opd": 2.5,  "dental": 0.80, "maternity": 0.15},
+    "base_sev":   {"ipd": 2500,  "opd": 60,   "dental": 120,  "maternity": 3500},
+    "age_factors":        {"18-24": 0.85, "25-34": 1.00, "35-44": 1.12, "45-54": 1.28, "55-64": 1.48, "65+": 1.72},
+    "smoking_factors":    {"Never": 1.00, "Former": 1.15, "Current": 1.40},
+    "exercise_factors":   {"Sedentary": 1.20, "Light": 1.05, "Moderate": 0.90, "Active": 0.80},
+    "occupation_factors": {"Office/Desk": 0.85, "Retail/Service": 1.00, "Healthcare": 1.05, "Manual Labor": 1.15, "Industrial/High-Risk": 1.30, "Retired": 1.10},
+    "region_factors":     {"Phnom Penh": 1.20, "Siem Reap": 1.05, "Battambang": 0.90, "Sihanoukville": 1.10, "Kampong Cham": 0.85, "Ho Chi Minh City": 1.25, "Hanoi": 1.20, "Da Nang": 1.05, "Can Tho": 0.90, "Hai Phong": 0.95, "Rural Areas": 0.75},
+    "preexist_per_condition": 0.20,
+    "sev_age_gradient": 0.006,
+    "family_per_dep":   0.65,
+}
+
+def _age_band(age: int) -> str:
+    if age < 25: return "18-24"
+    if age < 35: return "25-34"
+    if age < 45: return "35-44"
+    if age < 55: return "45-54"
+    if age < 65: return "55-64"
+    return "65+"
+
+def _glm_predict(cov: str, req) -> dict:
+    """Poisson-Gamma GLM with explicit coefficients. Every factor is named and auditable."""
+    ab = _age_band(req.age)
+    af = COEFF["age_factors"].get(ab, 1.0)
+    sf = COEFF["smoking_factors"].get(req.smoking_status, 1.0)
+    ef = COEFF["exercise_factors"].get(req.exercise_frequency, 1.0)
+    of = COEFF["occupation_factors"].get(req.occupation_type, 1.0)
+    rf = COEFF["region_factors"].get(req.region, 1.0)
+    pe_count = len([p for p in req.preexist_conditions if p != "None"])
+    pf = 1 + pe_count * COEFF["preexist_per_condition"]
+
+    freq = COEFF["base_freq"][cov] * af * sf * ef * of * pf
+    sev  = COEFF["base_sev"][cov]  * rf * (1 + max(0, req.age - 30) * COEFF["sev_age_gradient"])
+
+    breakdown = [
+        {"factor": f"Age bracket ({ab})",                  "coefficient": round(af, 4), "direction": "up" if af > 1 else "down" if af < 1 else "neutral"},
+        {"factor": f"Smoking ({req.smoking_status})",       "coefficient": round(sf, 4), "direction": "up" if sf > 1 else "neutral"},
+        {"factor": f"Exercise ({req.exercise_frequency})",  "coefficient": round(ef, 4), "direction": "up" if ef > 1 else "down"},
+        {"factor": f"Occupation ({req.occupation_type})",   "coefficient": round(of, 4), "direction": "up" if of > 1 else "down" if of < 1 else "neutral"},
+        {"factor": f"Region ({req.region})",                "coefficient": round(rf, 4), "direction": "up" if rf > 1 else "down" if rf < 1 else "neutral"},
+    ]
+    if pe_count > 0:
+        breakdown.append({"factor": f"Pre-existing conditions ({pe_count})", "coefficient": round(pf, 4), "direction": "up"})
+
+    return {
+        "frequency":            round(freq, 4),
+        "severity":             round(sev, 2),
+        "expected_annual_cost": round(freq * sev, 2),
+        "breakdown":            breakdown,
+        "source":               "glm",
+        "model_version":        COEFF["version"],
+    }
 
 @asynccontextmanager
 async def lifespan(app):
-    global db_pool,models,model_version,model_meta,_fallback_models
-    # Load primary ML models
-    for c in ["ipd","opd","dental","maternity"]:
-        for t in ["freq","sev"]:
-            try: models[f"{c}_{t}"]=joblib.load(os.path.join(MODEL_DIR,f"{c}_{t}.pkl")); log.info(f"Loaded {c}_{t}")
-            except Exception as e: log.warning(f"Skip {c}_{t}: {e}")
-    try:
-        meta=joblib.load(os.path.join(MODEL_DIR,"model_meta.pkl"))
-        model_version=meta.get("version","v1.0.0"); model_meta.update(meta)
-    except: pass
-    log.info(f"Models: {list(models.keys())} ({model_version})")
-    # Always fit fallback GLMs for consistent methodology
-    _fallback_models=_fit_fallback_models()
+    global db_pool,models,model_version,model_meta
+    # GLM coefficient engine — no pickle files needed
+    model_version = COEFF["version"]
+    model_meta.update({"version": COEFF["version"], "approach": "Poisson-Gamma GLM", "last_updated": COEFF["last_updated"]})
+    log.info(f"GLM engine ready: {COEFF['version']} ({len(COEFF['age_factors'])} age bands, {len(COEFF['region_factors'])} regions)")
     # Database
     if _db_p:
         try:
@@ -228,30 +252,9 @@ class PricingRequest(BaseModel):
             raise ValueError(f"'{self.region}' not valid for {self.country}. Valid: {sorted(CTY_REG[self.country])}")
         return self
 
-def _enc(req):
-    return np.array([[req.age,G_ENC.get(req.gender,0),S_ENC.get(req.smoking_status,0),E_ENC.get(req.exercise_frequency,1),O_ENC.get(req.occupation_type,0),R_ENC.get(req.region,0),len([p for p in req.preexist_conditions if p!="None"])]])
-
-def _predict(cov,feat):
-    fm,sm=models.get(f"{cov}_freq"),models.get(f"{cov}_sev")
-    if fm and sm:
-        f=float(np.clip(fm.predict(feat)[0],0.001,20)); s=float(np.clip(sm.predict(feat)[0],10,100000)); src="ml"
-    else:
-        # Use GLM fallback (Poisson+Ridge) — same methodology as primary models
-        ffm,fsm=_fallback_models.get(f"{cov}_freq"),_fallback_models.get(f"{cov}_sev")
-        if ffm and fsm:
-            f=float(np.clip(ffm.predict(feat)[0],0.001,20)); s=float(np.clip(fsm.predict(feat)[0],10,100000)); src="fallback_glm"
-        else:
-            f=_fb_f(cov,feat); s=_fb_s(cov,feat); src="fallback"
-    return {"frequency":round(f,4),"severity":round(s,2),"expected_annual_cost":round(f*s,2),"source":src}
-
-def _fb_f(c,feat):
-    a,g,sm,ex,oc,rg,pe=feat[0]; base={"ipd":0.12,"opd":2.5,"dental":0.8,"maternity":0.15}.get(c,0.12)
-    return max(0.001,base*(1+max(0,(a-35))*0.008)*[1,1.15,1.40][int(min(sm,2))]*[1.20,1.05,0.90,0.80][int(min(ex,3))]*[0.85,1,1.05,1.15,1.30,1.10][int(min(oc,5))]*(1+pe*0.20))
-
-def _fb_s(c,feat):
-    a,g,sm,ex,oc,rg,pe=feat[0]; base={"ipd":2500,"opd":60,"dental":120,"maternity":3500}.get(c,2500)
-    rf=[1.20,1.05,0.90,1.10,0.85,0.75,1.25,1.20,1.05,0.90,0.95]; ri=int(min(rg,10))
-    return max(10,base*(rf[ri] if ri<len(rf) else 1)*(1+max(0,(a-30))*0.006)*(1+pe*0.15))
+def _predict(cov, req):
+    """Route to GLM engine. req is the full PricingRequest object."""
+    return _glm_predict(cov, req)
 
 def _qid(): return f"HP-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{uuid.uuid4().hex[:8].upper()}"
 
@@ -335,7 +338,7 @@ async def _log_b(qid,req,browser_id:str="",email:str="",anomaly_flag:bool=False)
 
 @app.get("/health")
 async def health():
-    return {"status":"healthy","service":"DAC HealthPrice v2.3","models_loaded":list(models.keys()),"fallback_models_loaded":list(_fallback_models.keys()),"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
+    return {"status":"healthy","service":"DAC HealthPrice v2.3","pricing_approach":"Poisson-Gamma GLM","coefficient_version":COEFF["version"],"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
 
 # ── Partner key verification ─────────────────────────────────────────────────
 def _check_partner_daily(key_hash:str)->bool:
@@ -415,26 +418,25 @@ async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_prici
         log.info(f"[{rid}] DECLINED age={req.age} conditions={req.preexist_conditions}")
         return {"quote_id":qid,"underwriting":uw,"total_annual_premium":None,"total_monthly_premium":None,"message":"Application requires manual underwriting review. An underwriter will contact you.","calculated_at":datetime.now(timezone.utc).isoformat()}
 
-    t0=time.monotonic(); feat=_enc(req); qid=_qid(); rid=getattr(request.state,"rid","?")
-    ipd=_predict("ipd",feat); tier=TIERS[req.ipd_tier]; tf=T_F[req.ipd_tier]; ld=COV["ipd"]["load"]
+    t0=time.monotonic(); qid=_qid(); rid=getattr(request.state,"rid","?")
+    ipd=_predict("ipd",req); tier=TIERS[req.ipd_tier]; tf=T_F[req.ipd_tier]; ld=COV["ipd"]["load"]
     ipd_loaded=round(ipd["expected_annual_cost"]*(1+ld)*tf,2)
     ded_cr=round(tier["deductible"]*0.10,2)
     ipd_prem=round(float(np.clip(ipd_loaded-ded_cr,P_FLOOR,P_CEIL)),2)
     riders={}; rtot=0
     for c,inc in [("opd",req.include_opd),("dental",req.include_dental),("maternity",req.include_maternity)]:
         if not inc: continue
-        r=_predict(c,feat); rp=round(float(np.clip(r["expected_annual_cost"]*(1+COV[c]["load"]),10,5000)),2)
-        riders[c]={"name":COV[c]["name"],"frequency":r["frequency"],"severity":r["severity"],"expected_annual_cost":r["expected_annual_cost"],"loading_pct":COV[c]["load"],"annual_premium":rp,"monthly_premium":round(rp/12,2),"source":r["source"]}
+        r=_predict(c,req); rp=round(float(np.clip(r["expected_annual_cost"]*(1+COV[c]["load"]),10,5000)),2)
+        riders[c]={"name":COV[c]["name"],"frequency":r["frequency"],"severity":r["severity"],"expected_annual_cost":r["expected_annual_cost"],"loading_pct":COV[c]["load"],"annual_premium":rp,"monthly_premium":round(rp/12,2),"source":r["source"],"breakdown":r.get("breakdown",[])}
         rtot+=rp
     ff=round(1+(req.family_size-1)*0.65,2); pre_fam=round(ipd_prem+rtot,2)
     total=round(float(np.clip(pre_fam*ff,P_FLOOR,P_CEIL*req.family_size)),2)
-
-    used_fallback=ipd.get("source","ml")!="ml" or any(v.get("source","ml")!="ml" for v in riders.values())
     email=req.email or _email_from_auth
 
-    res={"quote_id":qid,"request_id":rid,"country":req.country,"region":req.region,"model_version":model_version,
+    res={"quote_id":qid,"request_id":rid,"country":req.country,"region":req.region,"model_version":COEFF["version"],
+        "pricing_approach":"Poisson-Gamma GLM","coefficient_version":COEFF["version"],
         "ipd_tier":req.ipd_tier,"tier_benefits":tier,"underwriting":uw,
-        "ipd_core":{"frequency":ipd["frequency"],"severity":ipd["severity"],"expected_annual_cost":ipd["expected_annual_cost"],"loading_pct":ld,"tier_factor":tf,"deductible_credit":ded_cr,"annual_premium":ipd_prem,"monthly_premium":round(ipd_prem/12,2),"source":ipd["source"]},
+        "ipd_core":{"frequency":ipd["frequency"],"severity":ipd["severity"],"expected_annual_cost":ipd["expected_annual_cost"],"loading_pct":ld,"tier_factor":tf,"deductible_credit":ded_cr,"annual_premium":ipd_prem,"monthly_premium":round(ipd_prem/12,2),"source":ipd["source"],"breakdown":ipd.get("breakdown",[])},
         "riders":riders,"family_size":req.family_size,"family_factor":ff,"total_before_family":pre_fam,
         "total_annual_premium":total,"total_monthly_premium":round(total/12,2),
         "risk_profile":{"age":req.age,"gender":req.gender,"smoking":req.smoking_status,"exercise":req.exercise_frequency,"occupation":req.occupation_type,"preexist_conditions":req.preexist_conditions,"preexist_count":len([p for p in req.preexist_conditions if p!="None"])},
@@ -444,11 +446,38 @@ async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_prici
     if _tok and _tok in _sessions: _sessions[_tok]["uses_remaining"]-=1
     if is_partner: res["partner"]=auth.get("partner_name","")
 
-    await _log_q(qid,req.model_dump(),res,uw_status=uw["status"],used_fallback=used_fallback,browser_id=bid,email=email)
+    await _log_q(qid,req.model_dump(),res,uw_status=uw["status"],used_fallback=False,browser_id=bid,email=email)
     await _log_b(qid,req,bid,email,is_sweep)
     ms=round((time.monotonic()-t0)*1000,1)
-    log.info(f"[{rid}] {qid}|{req.ipd_tier}+{'+'.join(riders) or 'none'}|age={req.age}|${total:,.0f}/yr|uw={uw['status']}|fallback={used_fallback}|sweep={is_sweep}|{ms}ms")
+    log.info(f"[{rid}] {qid}|{req.ipd_tier}+{'+'.join(riders) or 'none'}|age={req.age}|${total:,.0f}/yr|uw={uw['status']}|glm={COEFF['version']}|sweep={is_sweep}|{ms}ms")
     return res
+
+# ── AI Chat proxy ────────────────────────────────────────────────────────────
+class ChatRequest(BaseModel):
+    model: str = "claude-sonnet-4-20250514"
+    max_tokens: int = 800
+    system: str
+    tools: list = []
+    messages: list
+
+@app.post("/api/v2/chat")
+async def chat_proxy(body: ChatRequest, auth: dict = Depends(verify_pricing_auth)):
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(503, "Chat service unavailable.")
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        r = await client.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            },
+            json=body.model_dump(),
+        )
+    if r.status_code != 200:
+        raise HTTPException(r.status_code, r.text)
+    return r.json()
 
 @app.get("/api/v2/reference")
 async def ref():
@@ -464,7 +493,7 @@ async def mi():
         "version":model_version,
         "approach":"Freq-Sev (Poisson+GBR) — fallback: Poisson+Ridge GLM on synthetic data",
         "models_loaded":list(models.keys()),
-        "fallback_models_loaded":list(_fallback_models.keys()),
+        "coefficient_version":COEFF["version"],
         "features":["age","gender","smoking","exercise","occupation","region","preexist"],
         "coverages":list(COV.keys()),
         "last_retrained_at":model_meta.get("last_retrained_at"),
@@ -499,43 +528,142 @@ async def upload(file:UploadFile=File(...),coverage_type:str=Form("ipd"),descrip
     return {"status":"accepted","batch_id":bid,"rows":len(df),"inserted":dbi,"quality":q,"retrain":rr}
 
 async def _retrain(cov,path,bid):
-    global models,model_version,model_meta
-    import pandas as pd
-    from sklearn.linear_model import PoissonRegressor
-    from sklearn.ensemble import GradientBoostingRegressor
-    df=pd.read_csv(path)
-    enc={"gender":G_ENC,"smoking":S_ENC,"exercise":E_ENC,"occupation":O_ENC,"region":R_ENC}
-    for col,m in enc.items():
-        if col in df.columns: df[col]=df[col].map(m).fillna(0).astype(int)
-    feat=["age","gender","smoking","exercise","occupation","region","preexist_count"]
-    X=df[feat].values; yf=df["claim_count"].values
-    cf=PoissonRegressor(alpha=0.01,max_iter=500); cf.fit(X,yf)
-    mask=df["claim_count"]>0
-    if mask.sum()<50: return {"status":"insufficient","claimants":int(mask.sum())}
-    Xs=X[mask]; ys=(df.loc[mask,"claim_amount"]/df.loc[mask,"claim_count"]).values
-    cs=GradientBoostingRegressor(n_estimators=150,max_depth=4,learning_rate=0.07,random_state=42); cs.fit(Xs,ys)
-    cr2=round(cs.score(Xs,ys),4)
-    champ=models.get(f"{cov}_sev"); promote=True; champ_r2=None
-    if champ:
-        try: champ_r2=round(champ.score(Xs,ys),4); promote=cr2>=champ_r2-0.02
-        except: pass
-    nv=f"v{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}"
-    if promote:
-        import shutil
-        for t in ["freq","sev"]:
-            p=os.path.join(MODEL_DIR,f"{cov}_{t}.pkl")
-            if os.path.exists(p): shutil.copy2(p,p.replace(".pkl","_bak.pkl"))
-        joblib.dump(cf,os.path.join(MODEL_DIR,f"{cov}_freq.pkl")); joblib.dump(cs,os.path.join(MODEL_DIR,f"{cov}_sev.pkl"))
-        # Task 3+4: persist model metadata and hot-swap into live engine
-        now_iso=datetime.now(timezone.utc).isoformat()
-        new_meta={"version":nv,"last_retrained_at":now_iso,"training_dataset":bid,"coverage":cov,"r2":cr2}
-        joblib.dump(new_meta,os.path.join(MODEL_DIR,"model_meta.pkl"))
-        models[f"{cov}_freq"]=cf; models[f"{cov}_sev"]=cs; model_version=nv; model_meta.update(new_meta)
-        log.info(f"Hot-swapped {cov} models → {nv} (R²={cr2})")
-        if db_pool:
-            try: await db_pool.execute("INSERT INTO hp_model_versions(version,coverage,training_dataset,r2)VALUES($1,$2,$3,$4)",nv,cov,bid,cr2)
-            except Exception as e: log.warning(f"Model version log fail: {e}")
-    return {"status":"promoted" if promote else "rejected","version":nv,"r2":cr2,"champion_r2":champ_r2,"rows":len(df)}
+    # ML retraining removed — platform now uses GLM coefficient calibration.
+    # Use POST /api/v2/admin/upload-claims + /admin/deploy-calibration instead.
+    log.info(f"_retrain called for {cov} but ML pipeline is deprecated; use GLM calibration endpoints.")
+    return {"status":"deprecated","message":"ML retraining replaced by GLM calibration. Use /admin/deploy-calibration."}
+
+# ── GLM: coefficient viewer ───────────────────────────────────────────────────
+@app.get("/api/v2/admin/coefficients",dependencies=[Depends(verify_admin)])
+async def get_coefficients():
+    return {"status":"ok","coefficients":COEFF,"pricing_approach":"Poisson-Gamma GLM"}
+
+# ── GLM: claims upload (Phase 1) ──────────────────────────────────────────────
+CLAIMS_COLS={"claim_id","customer_age","customer_occupation","claim_type","claim_amount","claim_date"}
+VALID_CLAIM_TYPES={"IPD","OPD","Dental","Maternity"}
+
+@app.post("/api/v2/admin/upload-claims",dependencies=[Depends(verify_admin)])
+async def upload_claims(file:UploadFile=File(...),dataset_name:str=Form(...)):
+    import pandas as pd,io
+    if not file.filename.endswith(".csv"): raise HTTPException(400,"CSV files only.")
+    contents=await file.read()
+    if len(contents)/(1024*1024)>50: raise HTTPException(400,"Max 50 MB.")
+    try: df=pd.read_csv(io.BytesIO(contents))
+    except Exception as e: raise HTTPException(400,f"CSV parse error: {e}")
+    miss=CLAIMS_COLS-set(df.columns)
+    if miss: raise HTTPException(400,{"missing_columns":sorted(miss),"required":sorted(CLAIMS_COLS)})
+    df["customer_age"]=pd.to_numeric(df["customer_age"],errors="coerce")
+    df["claim_amount"]=pd.to_numeric(df["claim_amount"],errors="coerce")
+    invalid_rows=(df["customer_age"].isna() | df["claim_amount"].isna() | ~df["claim_type"].isin(VALID_CLAIM_TYPES)).sum()
+    valid_df=df.dropna(subset=["customer_age","claim_amount"]).copy()
+    valid_df=valid_df[valid_df["claim_type"].isin(VALID_CLAIM_TYPES)]
+    upload_id=f"CAL-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+    ages=valid_df["customer_age"].dropna().tolist()
+    amounts=valid_df["claim_amount"].dropna().tolist()
+    dates=valid_df["claim_date"].dropna().sort_values().tolist() if "claim_date" in valid_df else []
+    dist=valid_df["claim_type"].value_counts().to_dict()
+    summary={"age_range":[int(min(ages,default=0)),int(max(ages,default=0))],"avg_claim":round(sum(amounts)/len(amounts),2) if amounts else 0,"date_range":[str(dates[0]) if dates else "—",str(dates[-1]) if dates else "—"],"distribution":{k:int(v) for k,v in dist.items()}}
+    preview=valid_df.head(20).to_dict(orient="records")
+    if db_pool:
+        try:
+            await db_pool.execute("""
+                CREATE TABLE IF NOT EXISTS hp_claims_upload(
+                    id SERIAL PRIMARY KEY, upload_id TEXT UNIQUE NOT NULL,
+                    dataset_name TEXT, records INT, invalid_rows INT,
+                    summary JSONB, status TEXT DEFAULT 'sandbox',
+                    uploaded_at TIMESTAMPTZ DEFAULT NOW())
+            """)
+            await db_pool.execute(
+                "INSERT INTO hp_claims_upload(upload_id,dataset_name,records,invalid_rows,summary)VALUES($1,$2,$3,$4,$5::jsonb)",
+                upload_id,dataset_name,len(valid_df),int(invalid_rows),json.dumps(summary))
+        except Exception as e: log.warning(f"Upload log fail: {e}")
+    log.info(f"Claims upload: {upload_id} dataset='{dataset_name}' rows={len(valid_df)} invalid={invalid_rows}")
+    return {"upload_id":upload_id,"dataset_name":dataset_name,"status":"sandbox","rows_valid":len(valid_df),"rows_invalid":int(invalid_rows),"summary":summary,"preview":preview}
+
+# ── GLM: calibration analysis (Phase 2) ──────────────────────────────────────
+@app.post("/api/v2/admin/calibrate",dependencies=[Depends(verify_admin)])
+async def calibrate(upload_id:str=Form(...)):
+    """Compute O/E ratios and preview calibrated coefficients — does NOT deploy."""
+    # In production: load claims from DB by upload_id; here we derive from stored summary
+    if not db_pool: raise HTTPException(503,"Database required for calibration.")
+    try:
+        row=await db_pool.fetchrow("SELECT summary,dataset_name,records FROM hp_claims_upload WHERE upload_id=$1",upload_id)
+    except Exception as e: raise HTTPException(500,f"DB error: {e}")
+    if not row: raise HTTPException(404,"Upload ID not found.")
+    summary=json.loads(row["summary"]) if isinstance(row["summary"],str) else dict(row["summary"])
+    dist=summary.get("distribution",{})
+    total=sum(dist.values()) or 1
+    # Observed vs expected frequency ratios
+    obs_exp={}
+    for cov,exp_base in COEFF["base_freq"].items():
+        cov_key=cov.upper() if cov!="maternity" else "Maternity"
+        cov_key={"IPD":"IPD","OPD":"OPD","DENTAL":"Dental","MATERNITY":"Maternity"}.get(cov.upper(),cov.upper())
+        obs_count=dist.get(cov_key,0)
+        obs_rate=round(obs_count/total,4)
+        ratio=round(obs_rate/exp_base,3) if exp_base>0 else 1.0
+        obs_exp[cov]={"observed_rate":obs_rate,"expected_rate":exp_base,"ratio":ratio,"delta":f"{round((ratio-1)*100,1):+.1f}%"}
+    # Calibrated coefficient preview (old * ratio)
+    coeff_changes=[]
+    for cov,d in obs_exp.items():
+        old_freq=COEFF["base_freq"][cov]; new_freq=round(old_freq*d["ratio"],4)
+        if abs(d["ratio"]-1)>0.01:
+            coeff_changes.append({"factor":f"{cov.upper()} base frequency","old":old_freq,"new":new_freq,"delta":d["delta"]})
+    avg_impact=round((sum(d["ratio"] for d in obs_exp.values())/len(obs_exp)-1)*100,1) if obs_exp else 0
+    return {"upload_id":upload_id,"dataset_name":row["dataset_name"],"status":"preview","obs_exp":obs_exp,"coeff_changes":coeff_changes,"estimated_premium_impact":f"{avg_impact:+.1f}%","note":"No changes have been deployed. Call /admin/deploy-calibration to go live."}
+
+# ── GLM: deploy calibration (Phase 3) ────────────────────────────────────────
+class DeployRequest(BaseModel):
+    upload_id: str
+    deployed_by: str = "admin"
+
+@app.post("/api/v2/admin/deploy-calibration",dependencies=[Depends(verify_admin)])
+async def deploy_calibration(body:DeployRequest):
+    """Apply calibrated coefficients to the live GLM and update COEFF in memory."""
+    global COEFF, model_version
+    if not db_pool: raise HTTPException(503,"Database required.")
+    try:
+        row=await db_pool.fetchrow("SELECT summary,dataset_name,records FROM hp_claims_upload WHERE upload_id=$1",body.upload_id)
+    except Exception as e: raise HTTPException(500,f"DB error: {e}")
+    if not row: raise HTTPException(404,"Upload ID not found.")
+    summary=json.loads(row["summary"]) if isinstance(row["summary"],str) else dict(row["summary"])
+    dist=summary.get("distribution",{})
+    total=sum(dist.values()) or 1
+    # Recompute calibration and apply
+    new_base_freq=dict(COEFF["base_freq"])
+    changes=[]
+    for cov,exp_base in COEFF["base_freq"].items():
+        cov_key={"ipd":"IPD","opd":"OPD","dental":"Dental","maternity":"Maternity"}[cov]
+        obs_count=dist.get(cov_key,0)
+        obs_rate=obs_count/total if total>0 else exp_base
+        ratio=obs_rate/exp_base if exp_base>0 else 1.0
+        new_freq=round(exp_base*ratio,4)
+        if abs(ratio-1)>0.01:
+            changes.append({"factor":f"{cov} base_freq","old":exp_base,"new":new_freq,"delta":f"{round((ratio-1)*100,1):+.1f}%"})
+            new_base_freq[cov]=new_freq
+    # Bump version
+    from datetime import datetime as dt
+    new_version=f"v{dt.now(timezone.utc).strftime('%Y%m%d%H%M')}"
+    COEFF["base_freq"]=new_base_freq
+    COEFF["version"]=new_version
+    COEFF["last_updated"]=dt.now(timezone.utc).strftime("%Y-%m-%d")
+    COEFF["updated_by"]=body.deployed_by
+    model_version=new_version
+    # Persist to DB
+    try:
+        await db_pool.execute("""
+            CREATE TABLE IF NOT EXISTS hp_glm_versions(
+                id SERIAL PRIMARY KEY, version TEXT NOT NULL,
+                coefficients JSONB, deployed_by TEXT,
+                dataset_name TEXT, records INT,
+                deployed_at TIMESTAMPTZ DEFAULT NOW())
+        """)
+        await db_pool.execute(
+            "INSERT INTO hp_glm_versions(version,coefficients,deployed_by,dataset_name,records)VALUES($1,$2::jsonb,$3,$4,$5)",
+            new_version,json.dumps(COEFF),body.deployed_by,row["dataset_name"],row["records"])
+        await db_pool.execute("UPDATE hp_claims_upload SET status='deployed' WHERE upload_id=$1",body.upload_id)
+    except Exception as e: log.warning(f"GLM version persist fail: {e}")
+    log.info(f"GLM deployed: {new_version} by={body.deployed_by} dataset={row['dataset_name']} changes={len(changes)}")
+    return {"status":"deployed","new_version":new_version,"previous_version":model_version,"changes_applied":changes,"dataset":row["dataset_name"],"records":row["records"],"deployed_at":dt.now(timezone.utc).isoformat()}
 
 @app.get("/api/v2/admin/dataset-template",dependencies=[Depends(verify_admin)])
 async def tpl():
