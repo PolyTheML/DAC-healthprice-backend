@@ -21,6 +21,7 @@ import joblib
 SEED = 42
 N_SAMPLES = 10000
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "synthetic")
 
 # ─── Encoding maps (must match backend) ─────────────────────────────────────
 GENDER_MAP = {"Male": 0, "Female": 1, "Other": 2}
@@ -190,7 +191,7 @@ def train_freq_sev_model(coverage_type, seed):
         },
     }
 
-    return freq_model, sev_model, metrics
+    return freq_model, sev_model, metrics, df
 
 
 def train():
@@ -200,9 +201,16 @@ def train():
 
     # Train models for each coverage type and collect metrics
     all_metrics = {}
+    os.makedirs(DATA_DIR, exist_ok=True)
+
     for i, cov in enumerate(["ipd", "opd", "dental", "maternity"]):
-        _, _, metrics = train_freq_sev_model(cov, SEED + i)
+        _, _, metrics, df = train_freq_sev_model(cov, SEED + i)
         all_metrics[cov] = metrics
+
+        # Save synthetic data to CSV
+        data_path = os.path.join(DATA_DIR, f"{cov}_synthetic.csv")
+        df.to_csv(data_path, index=False)
+        print(f"  Saved synthetic data: {data_path}")
 
     # Create a combined metadata file with metrics
     meta = {
@@ -217,6 +225,7 @@ def train():
     }
     joblib.dump(meta, os.path.join(OUTPUT_DIR, "model_meta.pkl"))
     print(f"\nAll models trained and saved to {OUTPUT_DIR}/")
+    print(f"All synthetic data saved to {DATA_DIR}/")
 
 
 if __name__ == "__main__":
