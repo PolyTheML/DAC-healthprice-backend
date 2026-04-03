@@ -15,6 +15,7 @@ import pandas as pd
 from sklearn.linear_model import PoissonRegressor, GammaRegressor
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 import joblib
 
 SEED = 42
@@ -120,7 +121,9 @@ def train_freq_sev_model(coverage_type, seed):
     freq_model.fit(X, y_freq)
 
     freq_scores = cross_val_score(freq_model, X, y_freq, cv=5, scoring="neg_mean_poisson_deviance")
-    print(f"  5-fold CV deviance: {-freq_scores.mean():.4f}")
+    freq_cv_deviance_mean = -freq_scores.mean()
+    freq_cv_deviance_std = freq_scores.std()
+    print(f"  5-fold CV deviance: {freq_cv_deviance_mean:.4f} ± {freq_cv_deviance_std:.4f}")
 
     # ─── Severity Model (Gamma GLM on claims > 0) ────────────────────────
     mask = df["claim_count"] > 0
@@ -134,9 +137,21 @@ def train_freq_sev_model(coverage_type, seed):
     sev_model.fit(X_sev, y_sev)
 
     sev_scores = cross_val_score(sev_model, X_sev, y_sev, cv=5, scoring="r2")
-    print(f"  5-fold CV R²: {sev_scores.mean():.4f} ± {sev_scores.std():.4f}")
-    print(f"  Training R²: {sev_model.score(X_sev, y_sev):.4f}")
+    sev_r2_train = sev_model.score(X_sev, y_sev)
+    sev_r2_cv_mean = sev_scores.mean()
+    sev_r2_cv_std = sev_scores.std()
+    print(f"  5-fold CV R²: {sev_r2_cv_mean:.4f} ± {sev_r2_cv_std:.4f}")
+    print(f"  Training R²: {sev_r2_train:.4f}")
     print(f"  GLM coefficients shape: {sev_model.coef_.shape}")
+
+    # Compute additional severity metrics on training set
+    y_sev_pred = sev_model.predict(X_sev)
+    sev_mse = mean_squared_error(y_sev, y_sev_pred)
+    sev_rmse = np.sqrt(sev_mse)
+    sev_mae = mean_absolute_error(y_sev, y_sev_pred)
+    print(f"  Training MSE: ${sev_mse:,.0f}")
+    print(f"  Training RMSE: ${sev_rmse:,.0f}")
+    print(f"  Training MAE: ${sev_mae:,.0f}")
 
     # Stamp versions
     freq_model._model_version = "v2.0.0"
@@ -159,7 +174,23 @@ def train_freq_sev_model(coverage_type, seed):
     pred_sev = sev_model.predict(test)[0]
     print(f"\n  Sanity: 35M smoker sedentary → {pred_freq:.3f} claims/yr × ${pred_sev:,.0f}/claim = ${pred_freq * pred_sev:,.0f} expected")
 
-    return freq_model, sev_model
+    # Collect metrics into dict
+    metrics = {
+        "freq": {
+            "cv_deviance_mean": float(freq_cv_deviance_mean),
+            "cv_deviance_std": float(freq_cv_deviance_std),
+        },
+        "sev": {
+            "r2_train": float(sev_r2_train),
+            "r2_cv_mean": float(sev_r2_cv_mean),
+            "r2_cv_std": float(sev_r2_cv_std),
+            "mse": float(sev_mse),
+            "rmse": float(sev_rmse),
+            "mae": float(sev_mae),
+        },
+    }
+
+    return freq_model, sev_model, metrics
 
 
 def train():
@@ -167,11 +198,13 @@ def train():
     print("DAC HealthPrice — Frequency-Severity Model Training")
     print("=" * 60)
 
-    # Train models for each coverage type
+    # Train models for each coverage type and collect metrics
+    all_metrics = {}
     for i, cov in enumerate(["ipd", "opd", "dental", "maternity"]):
-        train_freq_sev_model(cov, SEED + i)
+        _, _, metrics = train_freq_sev_model(cov, SEED + i)
+        all_metrics[cov] = metrics
 
-    # Create a combined metadata file
+    # Create a combined metadata file with metrics
     meta = {
         "version": "v2.0.0",
         "coverage_types": ["ipd", "opd", "dental", "maternity"],
@@ -180,6 +213,7 @@ def train():
         "severity_model": "GammaRegressor",
         "model_family": "Poisson-Gamma GLM",
         "training_samples": N_SAMPLES,
+        "metrics": all_metrics,
     }
     joblib.dump(meta, os.path.join(OUTPUT_DIR, "model_meta.pkl"))
     print(f"\nAll models trained and saved to {OUTPUT_DIR}/")

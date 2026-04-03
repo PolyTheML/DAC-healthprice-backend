@@ -84,7 +84,7 @@ R_ENC={r:i for i,r in enumerate(["Phnom Penh","Siem Reap","Battambang","Sihanouk
 COV={"ipd":{"name":"IPD Hospital Reimbursement","core":True,"load":0.30},"opd":{"name":"OPD Rider","core":False,"load":0.25},"dental":{"name":"Dental Rider","core":False,"load":0.20},"maternity":{"name":"Maternity Rider","core":False,"load":0.25}}
 TIERS={"Bronze":{"annual_limit":15000,"room":"General Ward","surgery_limit":5000,"icu_days":3,"deductible":500},"Silver":{"annual_limit":40000,"room":"Semi-Private","surgery_limit":15000,"icu_days":7,"deductible":250},"Gold":{"annual_limit":80000,"room":"Private Room","surgery_limit":40000,"icu_days":14,"deductible":100},"Platinum":{"annual_limit":150000,"room":"Private Suite","surgery_limit":80000,"icu_days":30,"deductible":0}}
 T_F={"Bronze":0.70,"Silver":1.00,"Gold":1.45,"Platinum":2.10}
-ULR_TARGETS: dict = {"Bronze": 0.70, "Silver": 0.72, "Gold": 0.75, "Platinum": 0.78}
+LOAD_FACTOR=0.30
 P_FLOOR=50; P_CEIL=25000
 
 # ── Fallback GLM fitting — consistent Poisson+Ridge methodology ───────────────
@@ -363,7 +363,6 @@ class PricingRequest(BaseModel):
     preexist_conditions:List[str]=Field(default_factory=lambda:["None"])
     ipd_tier:str=Field("Silver"); family_size:int=Field(1,ge=1,le=10)
     include_opd:bool=False; include_dental:bool=False; include_maternity:bool=False
-    target_ulr:Optional[float]=Field(None,ge=0.50,le=0.95)
     browser_id:Optional[str]=Field(None); email:Optional[str]=Field(None)
     # ── Extended lifestyle & clinical inputs (v2.3) ───────────────────────────
     bmi_height:Optional[float]=Field(None,ge=100,le=250)   # cm
@@ -590,21 +589,15 @@ async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_prici
     def _predict_active(cov,r): return _glm_predict_prospect(cov,r,_active_coeff) if _pilot_tag else _predict(cov,r)
     ipd=_predict_active("ipd",req); tier=TIERS[req.ipd_tier]; tf=T_F[req.ipd_tier]
 
-    ulr=req.target_ulr if req.target_ulr is not None else ULR_TARGETS[req.ipd_tier]
-    implied_loading=round((1-ulr)/ulr,6)
-
     ded_cr=round(tier["deductible"]*0.10,2)
-    pure_premium=round(ipd["expected_annual_cost"]*tf,2)
-    ipd_loaded=round(ipd["expected_annual_cost"]*(1+implied_loading)*tf,2)
+    ipd_loaded=round(ipd["expected_annual_cost"]*(1+LOAD_FACTOR)*tf,2)
     ipd_prem=round(float(np.clip(ipd_loaded-ded_cr,P_FLOOR,P_CEIL)),2)
-
-    ulr_analysis={"target_ulr":round(ulr,4),"implied_loading_pct":round(implied_loading,4),"pure_premium":pure_premium,"ulr_adjusted_premium":ipd_prem}
 
     riders={}; rtot=0
     for c,inc in [("opd",req.include_opd),("dental",req.include_dental),("maternity",req.include_maternity)]:
         if not inc: continue
-        r=_predict_active(c,req); rp=round(float(np.clip(r["expected_annual_cost"]*(1+implied_loading),10,5000)),2)
-        riders[c]={"name":COV[c]["name"],"frequency":r["frequency"],"severity":r["severity"],"expected_annual_cost":r["expected_annual_cost"],"loading_pct":round(implied_loading,4),"annual_premium":rp,"monthly_premium":round(rp/12,2),"source":r["source"],"breakdown":r.get("breakdown",[])}
+        r=_predict_active(c,req); rp=round(float(np.clip(r["expected_annual_cost"]*(1+LOAD_FACTOR),10,5000)),2)
+        riders[c]={"name":COV[c]["name"],"frequency":r["frequency"],"severity":r["severity"],"expected_annual_cost":r["expected_annual_cost"],"annual_premium":rp,"monthly_premium":round(rp/12,2),"source":r["source"],"breakdown":r.get("breakdown",[])}
         rtot+=rp
     ff=round(1+(req.family_size-1)*0.65,2); pre_fam=round(ipd_prem+rtot,2)
     total=round(float(np.clip(pre_fam*ff,P_FLOOR,P_CEIL*req.family_size)),2)
@@ -615,10 +608,9 @@ async def calc(req:PricingRequest,request:Request,auth:dict=Depends(verify_prici
         **({"pilot_model":_pilot_tag} if _pilot_tag else {}),
         "pricing_approach":"Poisson-Gamma GLM","coefficient_version":COEFF["version"],
         "ipd_tier":req.ipd_tier,"tier_benefits":tier,"underwriting":uw,
-        "ipd_core":{"frequency":ipd["frequency"],"severity":ipd["severity"],"expected_annual_cost":ipd["expected_annual_cost"],"loading_pct":round(implied_loading,4),"tier_factor":tf,"deductible_credit":ded_cr,"annual_premium":ipd_prem,"monthly_premium":round(ipd_prem/12,2),"source":ipd["source"],"breakdown":ipd.get("breakdown",[])},
+        "ipd_core":{"frequency":ipd["frequency"],"severity":ipd["severity"],"expected_annual_cost":ipd["expected_annual_cost"],"tier_factor":tf,"deductible_credit":ded_cr,"annual_premium":ipd_prem,"monthly_premium":round(ipd_prem/12,2),"source":ipd["source"],"breakdown":ipd.get("breakdown",[])},
         "riders":riders,"family_size":req.family_size,"family_factor":ff,"total_before_family":pre_fam,
         "total_annual_premium":total,"total_monthly_premium":round(total/12,2),
-        "ulr_analysis":ulr_analysis,
         "risk_profile":{"age":req.age,"gender":req.gender,"smoking":req.smoking_status,"exercise":req.exercise_frequency,"occupation":req.occupation_type,"preexist_conditions":req.preexist_conditions,"preexist_count":len([p for p in req.preexist_conditions if p!="None"])},
         "calculated_at":datetime.now(timezone.utc).isoformat()}
 
@@ -671,14 +663,14 @@ async def ctry(): return {"countries":[{"id":k,"name":k.title(),"regions":v} for
 async def mi():
     return {
         "version":model_version,
-        "approach":"Freq-Sev (Poisson+GBR) — fallback: Poisson+Ridge GLM on synthetic data",
+        "approach":"Freq-Sev (Poisson+Gamma GLM) — fallback: Poisson+Ridge GLM on synthetic data",
         "models_loaded":list(models.keys()),
         "coefficient_version":COEFF["version"],
         "features":["age","gender","smoking","exercise","occupation","region","preexist"],
         "coverages":list(COV.keys()),
         "last_retrained_at":model_meta.get("last_retrained_at"),
         "training_dataset":model_meta.get("training_dataset"),
-        "r2":model_meta.get("r2"),
+        "metrics":model_meta.get("metrics",{}),
     }
 
 UPLOAD_DIR=os.getenv("UPLOAD_DIR","/tmp/hp_uploads")
