@@ -123,7 +123,7 @@ def train_freq_sev_model(coverage_type, seed):
     freq_scores = cross_val_score(freq_model, X, y_freq, cv=5, scoring="neg_mean_poisson_deviance")
     freq_cv_deviance_mean = -freq_scores.mean()
     freq_cv_deviance_std = freq_scores.std()
-    print(f"  5-fold CV deviance: {freq_cv_deviance_mean:.4f} ± {freq_cv_deviance_std:.4f}")
+    print(f"  5-fold CV deviance: {freq_cv_deviance_mean:.4f} +/- {freq_cv_deviance_std:.4f}")
 
     # ─── Severity Model (Gamma GLM on claims > 0) ────────────────────────
     mask = df["claim_count"] > 0
@@ -140,8 +140,8 @@ def train_freq_sev_model(coverage_type, seed):
     sev_r2_train = sev_model.score(X_sev, y_sev)
     sev_r2_cv_mean = sev_scores.mean()
     sev_r2_cv_std = sev_scores.std()
-    print(f"  5-fold CV R²: {sev_r2_cv_mean:.4f} ± {sev_r2_cv_std:.4f}")
-    print(f"  Training R²: {sev_r2_train:.4f}")
+    print(f"  5-fold CV R2: {sev_r2_cv_mean:.4f} +/- {sev_r2_cv_std:.4f}")
+    print(f"  Training R2: {sev_r2_train:.4f}")
     print(f"  GLM coefficients shape: {sev_model.coef_.shape}")
 
     # Compute additional severity metrics on training set
@@ -172,7 +172,7 @@ def train_freq_sev_model(coverage_type, seed):
     test = np.array([[35, 0, 2, 0, 0, 0, 0]])  # 35M, current smoker, sedentary, office, phnom penh, no preexist
     pred_freq = freq_model.predict(test)[0]
     pred_sev = sev_model.predict(test)[0]
-    print(f"\n  Sanity: 35M smoker sedentary → {pred_freq:.3f} claims/yr × ${pred_sev:,.0f}/claim = ${pred_freq * pred_sev:,.0f} expected")
+    print(f"\n  Sanity: 35M smoker sedentary -> {pred_freq:.3f} claims/yr x ${pred_sev:,.0f}/claim = ${pred_freq * pred_sev:,.0f} expected")
 
     # Collect metrics into dict
     metrics = {
