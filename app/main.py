@@ -65,6 +65,14 @@ VALID_SMOKING=["Never","Former","Current"]
 VALID_EXERCISE=["Sedentary","Light","Moderate","Active"]
 VALID_OCC=["Office/Desk","Retail/Service","Healthcare","Manual Labor","Industrial/High-Risk","Retired"]
 VALID_PE=frozenset(["None","Hypertension","Diabetes","Heart Disease","Asthma/COPD","Cancer (remission)","Kidney Disease","Liver Disease","Obesity","Mental Health"])
+VALID_ALCOHOL=["Never","Occasional","Regular","Heavy"]
+VALID_DIET=["Healthy","Balanced","High Processed"]
+VALID_SLEEP=["Good (7-9h)","Fair (5-7h)","Poor (<5h)"]
+VALID_STRESS=["Low","Moderate","High"]
+VALID_MOTORBIKE=["No","Never","Occasional","Daily"]
+VALID_WATER=["Piped/Safe","Well/Mixed","Limited"]
+VALID_PROXIMITY=["<5km","5-20km",">20km"]
+VALID_MARITAL=["Single","Married","Divorced","Widowed"]
 CTY_REG={"cambodia":{"Phnom Penh","Siem Reap","Battambang","Sihanoukville","Kampong Cham","Rural Areas"},"vietnam":{"Ho Chi Minh City","Hanoi","Da Nang","Can Tho","Hai Phong","Rural Areas"}}
 CTY_REG_L={"cambodia":["Phnom Penh","Siem Reap","Battambang","Sihanoukville","Kampong Cham","Rural Areas"],"vietnam":["Ho Chi Minh City","Hanoi","Da Nang","Can Tho","Hai Phong","Rural Areas"]}
 REG_F={"Phnom Penh":1.20,"Siem Reap":1.05,"Battambang":0.90,"Sihanoukville":1.10,"Kampong Cham":0.85,"Ho Chi Minh City":1.25,"Hanoi":1.20,"Da Nang":1.05,"Can Tho":0.90,"Hai Phong":0.95,"Rural Areas":0.75}
@@ -83,8 +91,8 @@ P_FLOOR=50; P_CEIL=25000
 # GLM Coefficient Store — all pricing factors are explicit and auditable.
 # Updated at runtime via POST /api/v2/admin/deploy-calibration.
 COEFF: dict = {
-    "version":       "v2.2",
-    "last_updated":  "2026-03-28",
+    "version":       "v2.3",
+    "last_updated":  "2026-04-03",
     "updated_by":    "system",
     "base_freq":  {"ipd": 0.12,  "opd": 2.5,  "dental": 0.80, "maternity": 0.15},
     "base_sev":   {"ipd": 2500,  "opd": 60,   "dental": 120,  "maternity": 3500},
@@ -96,6 +104,19 @@ COEFF: dict = {
     "preexist_per_condition": 0.20,
     "sev_age_gradient": 0.006,
     "family_per_dep":   0.65,
+    # ── Extended lifestyle & clinical factors (v2.3) ──────────────────────────
+    "bmi_factors":      {"Underweight": 1.10, "Normal": 1.00, "Overweight": 1.15, "Obese": 1.35},
+    "alcohol_factors":  {"Never": 1.00, "Occasional": 1.05, "Regular": 1.20, "Heavy": 1.45},
+    "hosp_factors":     {0: 1.00, 1: 1.25, 2: 1.50, 3: 1.80},   # 3 = "3 or more"
+    "med_factors":      {0: 1.00, 1: 1.15, 2: 1.15, 3: 1.30, 4: 1.30, 5: 1.50},  # 5 = "5+"
+    "fh_per_condition": 0.10,
+    "marital_factors":  {"Single": 1.05, "Married": 1.00, "Divorced": 1.08, "Widowed": 1.08},
+    "diet_factors":     {"Healthy": 0.90, "Balanced": 1.00, "High Processed": 1.15},
+    "sleep_factors":    {"Good (7-9h)": 1.00, "Fair (5-7h)": 1.10, "Poor (<5h)": 1.25},
+    "stress_factors":   {"Low": 1.00, "Moderate": 1.10, "High": 1.25},
+    "motorbike_factors":{"No": 1.00, "Never": 1.00, "Occasional": 1.05, "Daily": 1.15},
+    "water_factors":    {"Piped/Safe": 1.00, "Well/Mixed": 1.08, "Limited": 1.18},
+    "proximity_factors":{"<5km": 1.00, "5-20km": 1.05, ">20km": 1.12},  # severity multiplier
 }
 
 def _age_band(age: int) -> str:
@@ -105,6 +126,90 @@ def _age_band(age: int) -> str:
     if age < 55: return "45-54"
     if age < 65: return "55-64"
     return "65+"
+
+def _bmi_cat(height_cm, weight_kg) -> str:
+    if not height_cm or not weight_kg: return "Normal"
+    bmi = weight_kg / (height_cm / 100) ** 2
+    if bmi < 18.5: return "Underweight"
+    if bmi < 25:   return "Normal"
+    if bmi < 30:   return "Overweight"
+    return "Obese"
+
+def _extended_factors(req, coeff: dict) -> tuple:
+    """Compute the 10 extended lifestyle/clinical frequency multipliers and 1 severity multiplier.
+    Returns (freq_mult, sev_mult, breakdown_entries).
+    All factors default to 1.0 when the field is absent."""
+    # BMI
+    bmi_cat = _bmi_cat(getattr(req, "bmi_height", None), getattr(req, "bmi_weight", None))
+    bmif = coeff.get("bmi_factors", {}).get(bmi_cat, 1.0)
+
+    # Alcohol
+    alcohol = getattr(req, "alcohol", None) or "Never"
+    alf = coeff.get("alcohol_factors", {}).get(alcohol, 1.0)
+
+    # Prior hospitalisations
+    hosp = getattr(req, "prev_hospitalizations", None)
+    hosp = int(hosp) if hosp is not None else 0
+    hosp_key = min(hosp, 3)
+    hospf = coeff.get("hosp_factors", {}).get(hosp_key, 1.0)
+
+    # Medications
+    meds = getattr(req, "medications_count", None)
+    meds = int(meds) if meds is not None else 0
+    med_key = min(meds, 5)
+    medf = coeff.get("med_factors", {}).get(med_key, 1.0)
+
+    # Family history (each non-None item adds fh_per_condition)
+    fh = getattr(req, "family_history", None) or []
+    fh_count = len([x for x in fh if x and x != "None"])
+    fhf = 1.0 + fh_count * coeff.get("fh_per_condition", 0.10)
+
+    # Marital status
+    marital = getattr(req, "marital_status", None) or "Single"
+    mrf = coeff.get("marital_factors", {}).get(marital, 1.0)
+
+    # Diet
+    diet = getattr(req, "diet", None) or "Balanced"
+    df = coeff.get("diet_factors", {}).get(diet, 1.0)
+
+    # Sleep quality
+    sleep = getattr(req, "sleep_quality", None) or "Good (7-9h)"
+    slf = coeff.get("sleep_factors", {}).get(sleep, 1.0)
+
+    # Stress level
+    stress = getattr(req, "stress_level", None) or "Low"
+    stf = coeff.get("stress_factors", {}).get(stress, 1.0)
+
+    # Motorbike usage
+    motorbike = getattr(req, "motorbike_daily", None) or "No"
+    mbf = coeff.get("motorbike_factors", {}).get(motorbike, 1.0)
+
+    # Water access
+    water = getattr(req, "water_access", None) or "Piped/Safe"
+    waf = coeff.get("water_factors", {}).get(water, 1.0)
+
+    # Healthcare proximity — severity factor
+    proximity = getattr(req, "healthcare_proximity", None) or "<5km"
+    hpxf = coeff.get("proximity_factors", {}).get(proximity, 1.0)
+
+    freq_mult = bmif * alf * hospf * medf * fhf * mrf * df * slf * stf * mbf * waf
+
+    breakdown = []
+    def _dir(f): return "up" if f > 1 else "down" if f < 1 else "neutral"
+    if bmif != 1.0:   breakdown.append({"factor": f"BMI ({bmi_cat})",                         "coefficient": round(bmif, 4), "direction": _dir(bmif)})
+    if alf != 1.0:    breakdown.append({"factor": f"Alcohol ({alcohol})",                       "coefficient": round(alf,  4), "direction": _dir(alf)})
+    if hospf != 1.0:  breakdown.append({"factor": f"Prior hospitalisations ({hosp})",           "coefficient": round(hospf,4), "direction": _dir(hospf)})
+    if medf != 1.0:   breakdown.append({"factor": f"Medications ({meds})",                      "coefficient": round(medf, 4), "direction": _dir(medf)})
+    if fh_count > 0:  breakdown.append({"factor": f"Family history ({fh_count} conditions)",   "coefficient": round(fhf,  4), "direction": _dir(fhf)})
+    if mrf != 1.0:    breakdown.append({"factor": f"Marital status ({marital})",                "coefficient": round(mrf,  4), "direction": _dir(mrf)})
+    if df != 1.0:     breakdown.append({"factor": f"Diet ({diet})",                             "coefficient": round(df,   4), "direction": _dir(df)})
+    if slf != 1.0:    breakdown.append({"factor": f"Sleep ({sleep})",                           "coefficient": round(slf,  4), "direction": _dir(slf)})
+    if stf != 1.0:    breakdown.append({"factor": f"Stress ({stress})",                         "coefficient": round(stf,  4), "direction": _dir(stf)})
+    if mbf != 1.0:    breakdown.append({"factor": f"Motorbike ({motorbike})",                   "coefficient": round(mbf,  4), "direction": _dir(mbf)})
+    if waf != 1.0:    breakdown.append({"factor": f"Water access ({water})",                    "coefficient": round(waf,  4), "direction": _dir(waf)})
+    if hpxf != 1.0:   breakdown.append({"factor": f"Healthcare proximity ({proximity})",        "coefficient": round(hpxf, 4), "direction": _dir(hpxf)})
+
+    return freq_mult, hpxf, breakdown
 
 def _glm_predict(cov: str, req) -> dict:
     """Poisson-Gamma GLM with explicit coefficients. Every factor is named and auditable."""
@@ -116,9 +221,10 @@ def _glm_predict(cov: str, req) -> dict:
     rf = COEFF["region_factors"].get(req.region, 1.0)
     pe_count = len([p for p in req.preexist_conditions if p != "None"])
     pf = 1 + pe_count * COEFF["preexist_per_condition"]
+    ext_freq, hpxf, ext_breakdown = _extended_factors(req, COEFF)
 
-    freq = COEFF["base_freq"][cov] * af * sf * ef * of * pf
-    sev  = COEFF["base_sev"][cov]  * rf * (1 + max(0, req.age - 30) * COEFF["sev_age_gradient"])
+    freq = COEFF["base_freq"][cov] * af * sf * ef * of * pf * ext_freq
+    sev  = COEFF["base_sev"][cov]  * rf * (1 + max(0, req.age - 30) * COEFF["sev_age_gradient"]) * hpxf
 
     breakdown = [
         {"factor": f"Age bracket ({ab})",                  "coefficient": round(af, 4), "direction": "up" if af > 1 else "down" if af < 1 else "neutral"},
@@ -129,6 +235,7 @@ def _glm_predict(cov: str, req) -> dict:
     ]
     if pe_count > 0:
         breakdown.append({"factor": f"Pre-existing conditions ({pe_count})", "coefficient": round(pf, 4), "direction": "up"})
+    breakdown.extend(ext_breakdown)
 
     return {
         "frequency":            round(freq, 4),
@@ -149,8 +256,9 @@ def _glm_predict_prospect(cov: str, req, coeff: dict) -> dict:
     rf = coeff["region_factors"].get(req.region, 1.0)
     pe_count = len([p for p in req.preexist_conditions if p != "None"])
     pf = 1 + pe_count * coeff["preexist_per_condition"]
-    freq = coeff["base_freq"][cov] * af * sf * ef * of * pf
-    sev  = coeff["base_sev"][cov]  * rf * (1 + max(0, req.age - 30) * coeff["sev_age_gradient"])
+    ext_freq, hpxf, _ = _extended_factors(req, coeff)
+    freq = coeff["base_freq"][cov] * af * sf * ef * of * pf * ext_freq
+    sev  = coeff["base_sev"][cov]  * rf * (1 + max(0, req.age - 30) * coeff["sev_age_gradient"]) * hpxf
     return {"frequency": round(freq, 4), "severity": round(sev, 2),
             "expected_annual_cost": round(freq * sev, 2), "source": "custom-glm",
             "model_version": coeff.get("version", "custom")}
@@ -257,6 +365,20 @@ class PricingRequest(BaseModel):
     include_opd:bool=False; include_dental:bool=False; include_maternity:bool=False
     target_ulr:Optional[float]=Field(None,ge=0.50,le=0.95)
     browser_id:Optional[str]=Field(None); email:Optional[str]=Field(None)
+    # ── Extended lifestyle & clinical inputs (v2.3) ───────────────────────────
+    bmi_height:Optional[float]=Field(None,ge=100,le=250)   # cm
+    bmi_weight:Optional[float]=Field(None,ge=20,le=300)    # kg
+    alcohol:Optional[str]=Field(None)
+    prev_hospitalizations:Optional[int]=Field(None,ge=0,le=10)
+    medications_count:Optional[int]=Field(None,ge=0,le=20)
+    family_history:Optional[List[str]]=Field(default_factory=list)
+    marital_status:Optional[str]=Field(None)
+    diet:Optional[str]=Field(None)
+    sleep_quality:Optional[str]=Field(None)
+    stress_level:Optional[str]=Field(None)
+    motorbike_daily:Optional[str]=Field(None)
+    water_access:Optional[str]=Field(None)
+    healthcare_proximity:Optional[str]=Field(None)
 
     @field_validator("gender")
     @classmethod
