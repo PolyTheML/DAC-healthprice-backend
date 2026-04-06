@@ -25,6 +25,7 @@ ALLOWED_ORIGINS=os.getenv("ALLOWED_ORIGINS","*").split(",")
 ADMIN_KEY=os.getenv("ADMIN_API_KEY","")
 CF_SECRET=os.getenv("CF_SECRET_TOKEN","")  # Cloudflare secret header — set in Render dashboard
 MAX_BODY=int(os.getenv("MAX_BODY_BYTES","65536"))  # 64KB default
+GROQ_API_KEY=os.getenv("GROQ_API_KEY","")  # From console.groq.com
 db_pool=None; models={}; model_version="v1.0.0"
 model_meta={"version":"v1.0.0","last_retrained_at":None,"training_dataset":None,"coverage":None,"r2":None}
 _fallback_models={}   # GLM fallback — consistent methodology with main models
@@ -181,8 +182,8 @@ app.add_middleware(CORSMiddleware,allow_origins=ALLOWED_ORIGINS,allow_credential
 @app.middleware("http")
 async def mw(request:Request,call_next):
     ip=request.client.host if request.client else "x"
-    # Block direct access — only allow requests that came through Cloudflare
-    if CF_SECRET and request.headers.get("X-CF-Secret")!=CF_SECRET:
+    # /api/v2/chat is called directly from browser — skip CF_SECRET check for it
+    if CF_SECRET and request.url.path != "/api/v2/chat" and request.headers.get("X-CF-Secret")!=CF_SECRET:
         return JSONResponse(status_code=403,content={"detail":"Direct API access not permitted. Use the official frontend."})
     # Rate limit
     if not _rl(ip): return JSONResponse(429,{"detail":"Rate limit exceeded"})
@@ -596,6 +597,85 @@ async def model_versions():
         rows=await db_pool.fetch("SELECT version,coverage,training_dataset,r2,promoted_at FROM hp_model_versions ORDER BY promoted_at DESC LIMIT 50")
         return {"status":"ok","current_version":model_version,"versions":[{k:(v.isoformat() if hasattr(v,'isoformat') else v) for k,v in dict(r).items()} for r in rows]}
     except Exception as e: return {"status":"error","detail":str(e)}
+
+# ── AI Chat endpoint — full Anthropic→Groq→Anthropic conversion with tool support ──
+@app.post("/api/v2/chat")
+async def chat(request: Request):
+    if not GROQ_API_KEY:
+        raise HTTPException(503, "AI chat not configured — set GROQ_API_KEY env var on Render")
+    import httpx
+    body = await request.json()
+    system   = body.get("system")
+    messages = body.get("messages", [])
+    tools    = body.get("tools", [])
+    max_tok  = body.get("max_tokens", 800)
+
+    # Convert Anthropic messages → OpenAI/Groq format
+    openai_msgs = []
+    if system:
+        openai_msgs.append({"role": "system", "content": system})
+    for msg in messages:
+        content = msg.get("content", "")
+        if isinstance(content, str):
+            openai_msgs.append({"role": msg["role"], "content": content})
+        elif isinstance(content, list):
+            text_parts   = [b for b in content if b.get("type") == "text"]
+            tool_uses    = [b for b in content if b.get("type") == "tool_use"]
+            tool_results = [b for b in content if b.get("type") == "tool_result"]
+            if tool_results:
+                for tr in tool_results:
+                    res_content = tr.get("content", "")
+                    if not isinstance(res_content, str): res_content = json.dumps(res_content)
+                    openai_msgs.append({"role": "tool", "content": res_content, "tool_call_id": tr["tool_use_id"]})
+            elif tool_uses:
+                openai_msgs.append({
+                    "role": "assistant",
+                    "content": " ".join(b["text"] for b in text_parts) or None,
+                    "tool_calls": [{"id": b["id"], "type": "function",
+                        "function": {"name": b["name"], "arguments": json.dumps(b.get("input", {}))}} for b in tool_uses]
+                })
+            else:
+                openai_msgs.append({"role": msg["role"], "content": " ".join(b["text"] for b in text_parts)})
+
+    # Convert Anthropic tools → OpenAI format
+    openai_tools = [{"type": "function", "function": {
+        "name": t["name"], "description": t.get("description", ""),
+        "parameters": t.get("input_schema", {"type": "object", "properties": {}})
+    }} for t in tools] if tools else None
+
+    payload = {"model": "llama-3.3-70b-versatile", "messages": openai_msgs, "max_tokens": max_tok}
+    if openai_tools: payload["tools"] = openai_tools; payload["tool_choice"] = "auto"
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
+                json=payload,
+            )
+        data = r.json()
+        if "error" in data:
+            raise HTTPException(502, f"Groq error: {data['error'].get('message','Unknown')}")
+
+        # Convert Groq response → Anthropic format
+        choice  = data["choices"][0]["message"]
+        content = []
+        has_tool = False
+        if choice.get("content"): content.append({"type": "text", "text": choice["content"]})
+        for tc in (choice.get("tool_calls") or []):
+            has_tool = True
+            try:    inp = json.loads(tc["function"].get("arguments", "{}"))
+            except: inp = {}
+            content.append({"type": "tool_use", "id": tc["id"],
+                "name": tc["function"]["name"], "input": inp})
+
+        return {"content": content, "stop_reason": "tool_use" if has_tool else "end_turn",
+                "model": "llama-3.3-70b-versatile"}
+    except httpx.TimeoutException:
+        raise HTTPException(504, "AI response timed out")
+    except HTTPException: raise
+    except Exception as e:
+        log.error(f"Chat error: {e}"); raise HTTPException(500, "AI chat failed")
 
 @app.exception_handler(Exception)
 async def err(request:Request,exc:Exception):
