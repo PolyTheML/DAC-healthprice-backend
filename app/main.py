@@ -350,12 +350,19 @@ async def lifespan(app):
 app=FastAPI(title="DAC HealthPrice API",version="2.2.0",lifespan=lifespan)
 app.add_middleware(CORSMiddleware,allow_origins=ALLOWED_ORIGINS,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 
-# Auto Pricing Lab v2 routes
+# Health Insurance Pricing Lab routes (DAC-UW-Agent integration)
 try:
-    from app.routes.auto_pricing import router as auto_router
-    app.include_router(auto_router)
-except Exception as _auto_err:
-    log.warning(f"Auto pricing routes not loaded: {_auto_err}")
+    from app.routes.health_pricing import router as health_router
+    app.include_router(health_router)
+except Exception as _health_err:
+    log.warning(f"Health pricing routes not loaded: {_health_err}")
+
+# V2 Compatibility routes (for existing frontend)
+try:
+    from app.routes.health_pricing_v2_compat import router as v2_router
+    app.include_router(v2_router)
+except Exception as _v2_err:
+    log.warning(f"V2 compatibility routes not loaded: {_v2_err}")
 
 @app.middleware("http")
 async def mw(request:Request,call_next):

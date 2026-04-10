@@ -1,0 +1,101 @@
+age,gender,smoking,exercise,occupation,region,preexist_count,claim_count,claim_amount
+63,Female,Former,Sedentary,Healthcare,Sihanoukville,0,0,0.0
+24,Male,Never,Active,Manual Labor,Can Tho,2,0,0.0
+37,Female,Current,Moderate,Healthcare,Da Nang,1,0,0.0
+39,Male,Current,Moderate,Retail/Service,Da Nang,0,0,0.0
+60,Female,Never,Light,Office/Desk,Battambang,0,0,0.0
+75,Male,Never,Light,Office/Desk,Phnom Penh,2,0,0.0
+28,Female,Former,Moderate,Retail/Service,Hai Phong,1,0,0.0
+38,Male,Former,Sedentary,Office/Desk,Rural Areas,2,0,0.0
+75,Male,Current,Sedentary,Office/Desk,Hanoi,3,0,0.0
+29,Female,Current,Light,Retired,Can Tho,0,0,0.0
+26,Female,Current,Sedentary,Retail/Service,Can Tho,0,1,3818.93
+41,Male,Never,Moderate,Retail/Service,Siem Reap,0,0,0.0
+65,Male,Never,Sedentary,Industrial/High-Risk,Da Nang,2,0,0.0
+56,Female,Former,Sedentary,Office/Desk,Da Nang,0,0,0.0
+32,Female,Current,Moderate,Office/Desk,Battambang,1,1,4364.37
+71,Female,Former,Sedentary,Manual Labor,Siem Reap,2,1,4095.61
+65,Female,Never,Sedentary,Office/Desk,Hai Phong,0,0,0.0
+37,Female,Former,Active,Industrial/High-Risk,Rural Areas,1,0,0.0
+74,Female,Former,Light,Retail/Service,Da Nang,0,0,0.0
+64,Female,Never,Light,Retail/Service,Ho Chi Minh City,0,0,0.0
+25,Female,Never,Sedentary,Healthcare,Siem Reap,0,0,0.0
+39,Male,Never,Light,Office/Desk,Hai Phong,3,0,0.0
+22,Male,Never,Sedentary,Retail/Service,Can Tho,0,0,0.0
+54,Female,Never,Light,Healthcare,Phnom Penh,0,0,0.0
+56,Female,Current,Sedentary,Office/Desk,Sihanoukville,0,0,0.0
+45,Female,Current,Active,Manual Labor,Hanoi,2,1,16018.79
+49,Female,Never,Active,Healthcare,Hanoi,0,0,0.0
+56,Female,Current,Sedentary,Manual Labor,Ho Chi Minh City,0,0,0.0
+29,Male,Former,Sedentary,Office/Desk,Siem Reap,0,0,0.0
+55,Female,Current,Light,Office/Desk,Kampong Cham,1,0,0.0
+29,Female,Never,Moderate,Office/Desk,Kampong Cham,0,0,0.0
+25,Male,Current,Active,Office/Desk,Sihanoukville,1,0,0.0
+28,Male,Former,Moderate,Office/Desk,Rural Areas,0,0,0.0
+66,Male,Never,Light,Retail/Service,Hanoi,2,0,0.0
+38,Female,Never,Sedentary,Retail/Service,Can Tho,2,0,0.0
+34,Female,Never,Light,Retail/Service,Hanoi,2,3,3986.4
+64,Female,Former,Sedentary,Retail/Service,Da Nang,0,0,0.0
+66,Female,Never,Light,Office/Desk,Siem Reap,0,0,0.0
+42,Male,Never,Sedentary,Office/Desk,Hanoi,0,0,0.0
+68,Female,Never,Sedentary,Office/Desk,Hai Phong,0,0,0.0
+65,Male,Never,Moderate,Healthcare,Ho Chi Minh City,2,0,0.0
+22,Female,Current,Light,Office/Desk,Phnom Penh,0,0,0.0
+70,Female,Current,Moderate,Retired,Sihanoukville,2,0,0.0
+68,Female,Former,Sedentary,Office/Desk,Siem Reap,0,0,0.0
+34,Female,Never,Sedentary,Industrial/High-Risk,Phnom Penh,0,0,0.0
+25,Female,Never,Sedentary,Office/Desk,Battambang,3,1,1618.79
+37,Other,Former,Sedentary,Office/Desk,Hanoi,0,0,0.0
+49,Male,Never,Sedentary,Office/Desk,Phnom Penh,0,0,0.0
+74,Male,Former,Light,Retail/Service,Battambang,0,0,0.0
+35,Female,Former,Active,Office/Desk,Kampong Cham,0,0,0.0
+57,Male,Never,Moderate,Retail/Service,Ho Chi Minh City,0,0,0.0
+34,Female,Never,Sedentary,Industrial/High-Risk,Battambang,0,0,0.0
+18,Female,Former,Active,Healthcare,Kampong Cham,0,0,0.0
+31,Male,Never,Moderate,Retail/Service,Rural Areas,1,0,0.0
+35,Male,Current,Light,Retail/Service,Da Nang,0,0,0.0
+46,Female,Former,Light,Office/Desk,Ho Chi Minh City,0,0,0.0
+45,Female,Never,Active,Manual Labor,Hai Phong,0,0,0.0
+70,Male,Never,Sedentary,Industrial/High-Risk,Ho Chi Minh City,0,0,0.0
+73,Female,Never,Sedentary,Retail/Service,Hai Phong,0,0,0.0
+25,Male,Never,Light,Office/Desk,Hanoi,0,0,0.0
+20,Female,Never,Sedentary,Office/Desk,Ho Chi Minh City,3,0,0.0
+39,Male,Never,Light,Healthcare,Siem Reap,0,0,0.0
+18,Male,Current,Active,Manual Labor,Ho Chi Minh City,0,0,0.0
+27,Male,Former,Light,Office/Desk,Da Nang,0,0,0.0
+30,Male,Current,Moderate,Retail/Service,Battambang,0,0,0.0
+30,Female,Current,Active,Retail/Service,Rural Areas,1,0,0.0
+65,Female,Former,Light,Healthcare,Rural Areas,1,0,0.0
+24,Female,Former,Sedentary,Manual Labor,Da Nang,0,0,0.0
+26,Female,Former,Moderate,Healthcare,Hanoi,0,0,0.0
+38,Male,Never,Light,Retail/Service,Battambang,0,0,0.0
+32,Male,Former,Light,Office/Desk,Kampong Cham,3,0,0.0
+30,Male,Former,Moderate,Office/Desk,Kampong Cham,0,0,0.0
+74,Female,Current,Light,Healthcare,Phnom Penh,3,0,0.0
+21,Male,Never,Sedentary,Industrial/High-Risk,Sihanoukville,0,0,0.0
+53,Male,Former,Moderate,Office/Desk,Da Nang,1,0,0.0
+43,Female,Former,Light,Office/Desk,Siem Reap,0,0,0.0
+68,Female,Current,Sedentary,Retail/Service,Sihanoukville,1,0,0.0
+62,Female,Current,Light,Office/Desk,Ho Chi Minh City,2,0,0.0
+31,Male,Never,Light,Office/Desk,Ho Chi Minh City,1,0,0.0
+33,Male,Never,Moderate,Manual Labor,Kampong Cham,1,0,0.0
+47,Male,Never,Active,Office/Desk,Kampong Cham,2,0,0.0
+70,Male,Never,Sedentary,Retired,Da Nang,0,0,0.0
+58,Male,Never,Light,Office/Desk,Siem Reap,0,0,0.0
+32,Female,Never,Light,Office/Desk,Hanoi,3,2,2884.56
+43,Male,Never,Sedentary,Industrial/High-Risk,Can Tho,3,0,0.0
+23,Male,Never,Sedentary,Retail/Service,Siem Reap,1,0,0.0
+34,Male,Never,Sedentary,Retail/Service,Sihanoukville,0,0,0.0
+31,Female,Current,Moderate,Retail/Service,Battambang,0,0,0.0
+22,Female,Former,Light,Office/Desk,Sihanoukville,1,1,4964.11
+34,Female,Never,Sedentary,Office/Desk,Hanoi,0,0,0.0
+18,Female,Current,Moderate,Healthcare,Hanoi,0,0,0.0
+66,Male,Current,Light,Office/Desk,Siem Reap,3,0,0.0
+54,Female,Never,Sedentary,Office/Desk,Ho Chi Minh City,1,0,0.0
+33,Male,Current,Light,Industrial/High-Risk,Rural Areas,2,0,0.0
+39,Male,Never,Moderate,Office/Desk,Kampong Cham,0,0,0.0
+51,Female,Never,Moderate,Industrial/High-Risk,Battambang,1,0,0.0
+52,Male,Never,Sedentary,Office/Desk,Da Nang,2,0,0.0
+40,Male,Never,Moderate,Office/Desk,Hanoi,0,0,0.0
+70,Female,Former,Moderate,Manual Labor,Ho Chi Minh City,2,0,0.0
+65,Male,Never,Light,Manual Labor,Kampong Cham,0,0,0.0
