@@ -1,18 +1,17 @@
 """
 Health Insurance Pricing Lab — API Routes
 
-POST /api/v1/health/price                 — single quote (customer-facing)
-POST /api/v1/health/price/underwriting    — with medical extraction (underwriter-facing)
-POST /api/v1/health/price/batch           — batch quotes (lab use)
-GET  /api/v1/health/monitoring            — drift report (admin)
-GET  /api/v1/health/risk-classification   — risk tier info (customer-facing)
+POST /api/v1/health/price                 — single quote (underwriter-facing)
+POST /api/v1/health/price/batch           — batch quotes (underwriter-facing)
+POST /api/v1/health/price/what-if         — sensitivity analysis (underwriter-facing)
+GET  /api/v1/health/risk-classification   — risk tier info (reference)
 """
 from __future__ import annotations
-import sys, os
+import sys
 from pathlib import Path
 from typing import Optional, List, Dict
 
-from fastapi import APIRouter, HTTPException, Depends, Header, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -23,13 +22,6 @@ from app.pricing_engine.health_pricing import compute_health_glm_price, HEALTH_C
 
 
 router = APIRouter(prefix="/api/v1/health", tags=["health-pricing"])
-
-ADMIN_KEY = os.getenv("ADMIN_API_KEY", "")
-
-
-def _require_admin(x_api_key: str = Header(None)):
-    if not ADMIN_KEY or x_api_key != ADMIN_KEY:
-        raise HTTPException(status_code=403, detail="Admin key required")
 
 
 # ─── Request / Response Models ────────────────────────────────────────────────
@@ -211,21 +203,6 @@ def get_risk_classifications():
             description="Uninsurable risk profile. Declined or needs specialized underwriting.",
             approval_likelihood="< 60%"
         ),
-    }
-
-
-@router.get("/monitoring", dependencies=[Depends(_require_admin)])
-def health_monitoring():
-    """Admin endpoint: pricing drift and performance metrics."""
-    return {
-        "status": "ok",
-        "last_updated": "2026-04-10T14:30:00Z",
-        "assumptions_version": HEALTH_COEFF["version"],
-        "assumptions_last_updated": HEALTH_COEFF["last_updated"],
-        "quotes_processed_today": 0,  # Would come from database
-        "average_premium_computed": 0.0,
-        "modal_risk_tier": "MEDIUM",
-        "health_check": "All systems operational"
     }
 
 

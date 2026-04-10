@@ -5,11 +5,11 @@ Adapter for existing frontend expecting /api/v2/* endpoints.
 Translates v2 format to v1 health pricing and back.
 """
 from __future__ import annotations
-import sys, os
+import sys
 from pathlib import Path
 from typing import Optional, List
 
-from fastapi import APIRouter, HTTPException, Header, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -20,13 +20,6 @@ from app.pricing_engine.health_pricing import compute_health_glm_price
 
 
 router = APIRouter(prefix="/api/v2", tags=["health-pricing-v2"])
-
-ADMIN_KEY = os.getenv("ADMIN_API_KEY", "")
-
-
-def _require_admin(x_api_key: str = Header(None)):
-    if not ADMIN_KEY or x_api_key != ADMIN_KEY:
-        raise HTTPException(status_code=403, detail="Admin key required")
 
 
 # ─── Request / Response Models (v2 format) ────────────────────────────────────
@@ -188,32 +181,3 @@ def health():
     return {"status": "ok", "message": "Health insurance pricing service is running"}
 
 
-@router.post("/admin/upload-dataset", dependencies=[Depends(_require_admin)])
-def upload_dataset(file: bytes = ...):
-    """Admin endpoint: upload training dataset."""
-    return {"status": "ok", "message": "Dataset upload not implemented yet"}
-
-
-@router.post("/admin/upload-claims", dependencies=[Depends(_require_admin)])
-def upload_claims(file: bytes = ...):
-    """Admin endpoint: upload claims data."""
-    return {"status": "ok", "message": "Claims upload not implemented yet"}
-
-
-@router.get("/admin/user-behavior", dependencies=[Depends(_require_admin)])
-def user_behavior(api_key: str = Header(None)):
-    """Admin endpoint: user behavior metrics."""
-    return {"status": "ok", "behavior": []}
-
-
-@router.get("/model-info", dependencies=[Depends(_require_admin)])
-def model_info(api_key: str = Header(None)):
-    """Admin endpoint: model information."""
-    return {
-        "version": "1.0.0",
-        "last_trained": "2026-04-10T14:30:00Z",
-        "accuracy": 0.98,
-        "type": "GLM",
-        "features": 13,
-        "status": "production"
-    }
