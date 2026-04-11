@@ -9,6 +9,8 @@ import os, re, time, uuid, logging, json, hashlib, secrets
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from typing import Optional, List
+from types import SimpleNamespace
+import httpx
 from collections import defaultdict, deque
 import numpy as np
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header, Query
@@ -670,6 +672,250 @@ async def chat_proxy(body: ChatRequest, auth: dict = Depends(verify_pricing_auth
 @app.get("/api/v2/reference")
 async def ref():
     return {"countries":{k:{"regions":v} for k,v in CTY_REG_L.items()},"genders":VALID_GENDERS,"smoking":VALID_SMOKING,"exercise":VALID_EXERCISE,"occupations":VALID_OCC,"preexist":sorted(VALID_PE),"tiers":TIERS,"tier_factors":T_F,"coverages":COV,"premium_bounds":{"floor":P_FLOOR,"ceiling":P_CEIL}}
+
+# ── Scenario AI Agent ─────────────────────────────────────────────────────────
+# Actuarial what-if analysis via tool-use: accepts natural language questions,
+# runs GLM sweeps internally, returns narrative synthesis + raw data.
+class ScenarioAgentRequest(BaseModel):
+    question: str = Field(..., description="Natural language scenario question for the actuary")
+    base_profile: dict = Field(default_factory=dict, description="Optional profile overrides applied to all tool calls")
+    max_quotes: int = Field(default=30, le=60, description="Max quotes the agent may run (cost guard)")
+
+_AGENT_TOOLS = [
+    {
+        "name": "run_quote",
+        "description": (
+            "Run a single health insurance quote through the Poisson-Gamma GLM engine. "
+            "Returns annual premium, monthly premium, frequency/severity components, "
+            "and which risk factors drove the price. Use this to spot-check individual profiles."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "age":               {"type": "integer", "description": "Applicant age 18-100"},
+                "gender":            {"type": "string",  "description": "Male | Female"},
+                "smoking_status":    {"type": "string",  "description": "Never | Former | Current"},
+                "exercise_frequency":{"type": "string",  "description": "Sedentary | Light | Moderate | Active"},
+                "occupation_type":   {"type": "string",  "description": "Office/Desk | Retail/Service | Healthcare | Manual Labor | Industrial/High-Risk | Retired"},
+                "preexist_conditions":{"type": "array",  "items": {"type": "string"}, "description": "e.g. ['Diabetes','Hypertension'] or ['None']"},
+                "ipd_tier":          {"type": "string",  "description": "Bronze | Silver | Gold | Platinum"},
+                "region":            {"type": "string",  "description": "Phnom Penh | Siem Reap | Battambang | Sihanoukville | Kampong Cham | Rural Areas | Ho Chi Minh City | Hanoi | Da Nang | Can Tho | Hai Phong"},
+                "country":           {"type": "string",  "description": "cambodia | vietnam"},
+                "include_opd":       {"type": "boolean"},
+                "include_dental":    {"type": "boolean"},
+                "include_maternity": {"type": "boolean"},
+                "family_size":       {"type": "integer", "description": "1-8"},
+            },
+            "required": ["age", "gender", "ipd_tier", "region", "country"],
+        },
+    },
+    {
+        "name": "sweep_parameter",
+        "description": (
+            "Vary a single parameter across a list of values, holding the rest of the "
+            "profile constant. Returns a table of quotes — ideal for understanding "
+            "sensitivity: how much does premium change as age, smoking status, or "
+            "tier changes? Use this before run_quote for exploratory analysis."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "param":  {"type": "string", "description": "Parameter to vary: age | smoking_status | ipd_tier | region | exercise_frequency | occupation_type | preexist_conditions"},
+                "values": {"type": "array",  "description": "Ordered list of values to test"},
+                "base_profile": {"type": "object", "description": "Profile to hold fixed for all other params"},
+            },
+            "required": ["param", "values", "base_profile"],
+        },
+    },
+]
+
+_SCENARIO_SYSTEM = (
+    "You are an actuarial analyst for DAC HealthPrice, a health insurance pricing platform "
+    "operating in Cambodia and Vietnam. You have direct access to the live Poisson-Gamma GLM "
+    "pricing engine via tools.\n\n"
+    "Your job: answer the actuary's question by running targeted scenarios, then synthesise "
+    "the results into a clear, precise narrative. Always cite specific dollar amounts and "
+    "percentages. Flag any surprising patterns — e.g. non-linear jumps, regional anomalies, "
+    "or risk factor interactions that actuaries should be aware of.\n\n"
+    "Be concise. Lead with the answer, then support it with numbers."
+)
+
+_AGENT_DEFAULT_PROFILE = {
+    "age": 35, "gender": "Male", "country": "cambodia", "region": "Phnom Penh",
+    "smoking_status": "Never", "exercise_frequency": "Moderate",
+    "occupation_type": "Office/Desk", "preexist_conditions": ["None"],
+    "ipd_tier": "Silver", "include_opd": False, "include_dental": False,
+    "include_maternity": False, "family_size": 1,
+}
+
+def _build_glm_req(params: dict) -> SimpleNamespace:
+    """Build a lightweight request object for _glm_predict from a params dict."""
+    r = SimpleNamespace()
+    r.age                  = int(params.get("age", 35))
+    r.gender               = params.get("gender", "Male")
+    r.smoking_status       = params.get("smoking_status", "Never")
+    r.exercise_frequency   = params.get("exercise_frequency", "Moderate")
+    r.occupation_type      = params.get("occupation_type", "Office/Desk")
+    r.region               = params.get("region", "Phnom Penh")
+    r.preexist_conditions  = params.get("preexist_conditions", ["None"])
+    # Extended factors — default to neutral values
+    r.bmi_height           = None; r.bmi_weight = None
+    r.alcohol              = "Never"
+    r.prev_hospitalizations = 0
+    r.medications_count    = 0
+    r.family_history       = []
+    r.marital_status       = "Single"
+    r.diet                 = "Balanced"
+    r.sleep_quality        = "Good (7-9h)"
+    r.stress_level         = "Low"
+    r.motorbike_daily      = "No"
+    r.water_access         = "Piped/Safe"
+    r.healthcare_proximity = "<5km"
+    return r
+
+def _execute_run_quote(params: dict, base: dict, quota: list) -> dict:
+    """Call _glm_predict and compute the loaded premium. quota is a 1-item list used as a mutable counter."""
+    if quota[0] <= 0:
+        return {"error": "quote_limit_reached"}
+    quota[0] -= 1
+    p = {**_AGENT_DEFAULT_PROFILE, **base, **params}
+    try:
+        req = _build_glm_req(p)
+        tier_key = p.get("ipd_tier", "Silver")
+        tf  = T_F.get(tier_key, 1.0)
+        tier = TIERS.get(tier_key, {})
+        ded_cr = tier.get("deductible", 0) * 0.002
+
+        ipd = _glm_predict("ipd", req)
+        ipd_prem = round(float(np.clip(
+            ipd["expected_annual_cost"] * (1 + LOAD_FACTOR) * tf - ded_cr,
+            P_FLOOR, P_CEIL
+        )), 2)
+
+        riders = []
+        rider_total = 0.0
+        for cov, flag in [("opd", "include_opd"), ("dental", "include_dental"), ("maternity", "include_maternity")]:
+            if p.get(flag, False):
+                r_glm = _glm_predict(cov, req)
+                r_prem = round(float(np.clip(
+                    r_glm["expected_annual_cost"] * (1 + LOAD_FACTOR),
+                    P_FLOOR, P_CEIL
+                )), 2)
+                riders.append({"coverage": cov, "annual_premium": r_prem})
+                rider_total += r_prem
+
+        ff = round(1 + (int(p.get("family_size", 1)) - 1) * 0.65, 2)
+        total = round(float(np.clip((ipd_prem + rider_total) * ff, P_FLOOR, P_CEIL * int(p.get("family_size", 1)))), 2)
+
+        return {
+            "age": req.age, "gender": req.gender, "smoking_status": req.smoking_status,
+            "exercise_frequency": req.exercise_frequency, "occupation_type": req.occupation_type,
+            "region": req.region, "country": p.get("country", "cambodia"),
+            "preexist_conditions": req.preexist_conditions, "ipd_tier": tier_key,
+            "family_size": p.get("family_size", 1),
+            "ipd_frequency": ipd["frequency"], "ipd_severity": ipd["severity"],
+            "ipd_expected_cost": ipd["expected_annual_cost"],
+            "ipd_annual_premium": ipd_prem, "ipd_monthly_premium": round(ipd_prem / 12, 2),
+            "riders": riders, "family_factor": ff,
+            "total_annual_premium": total, "total_monthly_premium": round(total / 12, 2),
+            "risk_factors_applied": len(ipd.get("breakdown", [])),
+        }
+    except Exception as e:
+        return {"error": str(e), "params": p}
+
+def _execute_sweep(params: dict, base: dict, quota: list) -> dict:
+    param  = params["param"]
+    values = params["values"]
+    bp     = {**base, **params.get("base_profile", {})}
+    results = []
+    for v in values:
+        row = _execute_run_quote({**bp, param: v}, base, quota)
+        row["_sweep_value"] = v
+        results.append(row)
+    return {"sweep_param": param, "count": len(results), "results": results}
+
+@app.post("/api/v2/scenario-agent")
+async def scenario_agent(body: ScenarioAgentRequest, auth: dict = Depends(verify_pricing_auth)):
+    """
+    Actuarial what-if analysis via AI agent.
+
+    Submit a natural language question; the agent runs GLM scenarios using the
+    live pricing engine and returns a narrative synthesis with supporting data.
+
+    Examples:
+      - "How does premium change for smokers aged 25-65 in Silver tier?"
+      - "Compare Phnom Penh vs Rural Areas for a 45yo male with diabetes."
+      - "If Cambodia A/E drops to 0.75, what happens to our loss ratio on Gold tier?"
+    """
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(503, "AI service unavailable — ANTHROPIC_API_KEY not set.")
+
+    quota    = [body.max_quotes]   # mutable counter passed by reference
+    all_data: list = []
+    messages = [{"role": "user", "content": body.question}]
+
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        for _step in range(12):   # hard cap on agentic steps
+            r = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": api_key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={
+                    "model": "claude-haiku-4-5-20251001",
+                    "max_tokens": 2048,
+                    "system": _SCENARIO_SYSTEM,
+                    "tools": _AGENT_TOOLS,
+                    "messages": messages,
+                },
+            )
+            if r.status_code != 200:
+                raise HTTPException(r.status_code, detail=r.text[:500])
+
+            resp = r.json()
+            messages.append({"role": "assistant", "content": resp["content"]})
+
+            if resp["stop_reason"] == "end_turn":
+                narrative = next((b["text"] for b in resp["content"] if b["type"] == "text"), "")
+                return {
+                    "narrative": narrative,
+                    "quotes_run": body.max_quotes - quota[0],
+                    "data": all_data,
+                    "question": body.question,
+                }
+
+            if resp["stop_reason"] != "tool_use":
+                break
+
+            # Execute all tool calls in this step
+            tool_results = []
+            for block in resp["content"]:
+                if block["type"] != "tool_use":
+                    continue
+                inp = block["input"]
+                if block["name"] == "run_quote":
+                    result = _execute_run_quote(inp, body.base_profile, quota)
+                    if "error" not in result:
+                        all_data.append(result)
+                elif block["name"] == "sweep_parameter":
+                    result = _execute_sweep(inp, body.base_profile, quota)
+                    all_data.extend([row for row in result.get("results", []) if "error" not in row])
+                else:
+                    result = {"error": f"unknown tool: {block['name']}"}
+
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": block["id"],
+                    "content": json.dumps(result),
+                })
+
+            messages.append({"role": "user", "content": tool_results})
+
+    return {
+        "narrative": "Agent completed without producing a final response.",
+        "quotes_run": body.max_quotes - quota[0],
+        "data": all_data,
+        "question": body.question,
+    }
 
 @app.get("/api/v2/countries")
 async def ctry(): return {"countries":[{"id":k,"name":k.title(),"regions":v} for k,v in CTY_REG_L.items()]}
