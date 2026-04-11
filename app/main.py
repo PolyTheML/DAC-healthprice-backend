@@ -359,6 +359,13 @@ try:
 except Exception as _v2_err:
     log.warning(f"V2 compatibility routes not loaded: {_v2_err}")
 
+# Escalation product routes (Phase 5E)
+try:
+    from app.routes.escalation import router as escalation_router
+    app.include_router(escalation_router)
+except Exception as _esc_err:
+    log.warning(f"Escalation routes not loaded: {_esc_err}")
+
 @app.middleware("http")
 async def mw(request:Request,call_next):
     ip=request.client.host if request.client else "x"
