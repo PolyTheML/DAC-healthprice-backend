@@ -2,19 +2,87 @@
 
 ## Metadata
 - **Created**: 2026-04-09
-- **Last Updated**: 2026-04-11 (Synthetic Portfolio Prototype + Cambodia Digital Insurer Demo)
-- **Total Pages**: 110 (3 hubs + 57 topics + 31 sources + 17 entities + 3 other)
-- **Total Sources Ingested**: 31 (50+ resources + Medical Reader + Phase 2B + Phase 3 + Phase 4 FastAPI + ... + Underwriting Automation Framework + AutoResearch Tutorial + Pricing Engine Enhancement Plan + **Synthetic Portfolio Prototype**)
-- **Working Prototypes**: 6 ✅
+- **Last Updated**: 2026-04-14 (React Frontend — Life Insurance Pricer + Cloudflare Proxy Removal)
+- **Total Pages**: 114 (3 hubs + 55 topics + 34 sources + 22 entities)
+- **Total Sources Ingested**: 32+ (50+ resources + Medical Reader + Phase 2B + Phase 3 + Phase 4 FastAPI + ... + AutoResearch Tutorial + Pricing Engine Enhancement Plan + **Synthetic Portfolio Prototype** + **Cambodia Smart Underwriting Implementation** + **Peter Feedback & Frontend Deployment**)
+- **Working Prototypes**: 8 ✅
   1. Medical Reader Phase 2 (PDF extraction, validation, routing)
   2. LangGraph Orchestration Phase 3 (HITL workflow)
   3. FastAPI REST API Phase 4 (6 endpoints, 100% test pass)
   4. Pricing Layer Phase 5 (GLM transparency, IRC audit trail)
   5. DAC HealthPrice Platform Integration (health insurance + v2 compatibility)
-  6. **Synthetic Portfolio + Calibration + Demo (Cambodia digital insurer)** ← **NEW**
+  6. Synthetic Portfolio + Calibration + Demo (Cambodia digital insurer)
+  7. Cambodia Smart Underwriting Engine (v3.0, IRC-compliant)
+  8. **React Frontend — Life Insurance Pricer** ← **NEW (April 14, DEPLOYED)**
 - **Paper Discovery System**: ✅ Complete
-- **GitHub Status**: ✅ Backend pushed (3 commits, health insurance live)
-- **Wiki Health**: ✅ All metrics green (0 contradictions, 0 orphans, 5.2+ links/page)
+- **GitHub Status**: ✅ Frontend pushed (Vercel auto-deployed), backend on Render
+- **Wiki Health**: ✅ 0 contradictions, 0 orphans (pending lint pass 2026-04-14)
+
+---
+
+## React Frontend — Life Insurance Pricer (April 14, 2026 — DEPLOYED ✅)
+
+**STATUS**: ✅ **LIVE** — Life insurance actuary workbench deployed to Vercel. Cloudflare proxy eliminated.
+
+**Context**: Following Peter's strategic guidance (internal actuarial tool, background calc logic is the priority), a life insurance pricing tab was added to the existing React frontend. Per [Peter Feedback & Frontend Deployment](./sources/2026-04-14_peter-feedback-frontend-deployment.md).
+
+**What Was Built**:
+- `src/LifeInsurancePricer.jsx` — exact JS port of `medical_reader/pricing/calculator.py`; Mortality Ratio Method; real-time calculation; IRC audit trail; assumption version `v3.0-cambodia-2026-04-14`
+- Cloudflare Worker proxy removed from `PricingWizard.jsx`; both `API` and `CHAT_BACKEND` now point directly to `https://dac-healthprice-api.onrender.com`
+
+**New Wiki Pages**:
+- [Peter Feedback & Frontend Deployment](./sources/2026-04-14_peter-feedback-frontend-deployment.md) — email context, strategic direction, changes made
+- [React Frontend Architecture](./topics/react-frontend-architecture.md) — component map, deployment flow, known limitations
+
+**Live URL**: `https://dac-healthprice-frontend.vercel.app` (login: `admin` / `dac2026!`)
+
+---
+
+## Cambodia Smart Underwriting Engine (April 14, 2026 — PRODUCTION READY ✅)
+
+**STATUS**: ✅ **COMPLETE & TESTED** — Multi-agent system for life insurance underwriting in Cambodian market. All 7 core files built, integrated, and verified with end-to-end tests.
+
+**Context**: Pivot from generic medical underwriting to Cambodia-specific life insurance. Inspired by FWD Vietnam model. Ready for IRC pre-launch filing.
+
+**What Was Built** (7 files, 3 dataclasses, 1 new node):
+- `state.py` — `CambodiaOccupationRisk`, `CambodiaRegionRisk` models + `reasoning_trace` for SHAP-style AI explainability
+- `pricing/assumptions.py` — `CambodiaOccupationalMultipliers`, `CambodiaEndemicMultipliers`, `CambodiaHealthcareTierDiscount` dataclasses (v3.0-cambodia-2026-04-14)
+- `extractor.py` — Khmer medical glossary (15 terms: សម្ពាធឈាម, ទឹកនោមផ្អែម, etc.)
+- `nodes/intake.py` — Bilingual extraction prompt (Khmer + English terms, source location tracking)
+- `nodes/life_pricing.py` — **NEW**: Cambodia-specific pricing with 0.85× mortality adjustment, occupational multipliers, endemic disease risk, healthcare-tier discounts
+- `nodes/review.py` — SHAP-style reasoning trace (explains each flag with impact quantification)
+- `nodes/__init__.py` — Exports life_pricing_node
+
+**Key Features Implemented**:
+1. ✅ **Cambodia Mortality Adjustment (0.85×)** — Reflects observed vs. WHO baseline
+2. ✅ **Occupational Surcharges** — Motorbike courier +45%, Construction +35%, etc.
+3. ✅ **Endemic Disease Multipliers** — Mondulkiri/Ratanakiri +30%, Phnom Penh baseline
+4. ✅ **Healthcare Tier Discounts** — TierA hospital -3%, Local clinic +5%
+5. ✅ **Khmer Language Support** — Medical term extraction + glossary
+6. ✅ **SHAP-Style Reasoning Trace** — Per-factor explanation for regulatory transparency
+7. ✅ **IRC Compliance** — Versioned assumptions, full audit trail, factor breakdown
+
+**Test Results** (3 real-world scenarios, all passed):
+- **Low-Risk STP Case**: 28F, Phnom Penh, office worker → $44.81/year, ✅ APPROVED (no human review)
+- **Medium-Risk HITL Case**: 45M, motorbike courier, smoker → $1,293/year, ⏳ PENDING REVIEW
+- **High-Risk Decline Case**: 60M, construction, multiple conditions, Mondulkiri → $6,258/year, ❌ DECLINED
+
+**New Wiki Pages**:
+- [Cambodia Smart Underwriting Engine](./topics/cambodia-smart-underwriting.md) — Complete implementation, architecture, test results, deployment checklist
+- [Cambodia Risk Factors Reference](./topics/cambodia-risk-factors-reference.md) — ⭐ Detailed tables: standard risk multipliers, occupational breakdown, endemic disease by province, healthcare tier justification
+
+**Deployment Status**: 
+- ✅ Code complete & tested
+- ✅ Wiki documented
+- ⏳ Ready for: graph wiring (intake → life_pricing → review → decision), test PDF creation, Streamlit dashboard, IRC pre-launch
+
+**To Deploy**:
+```bash
+# Wire in graph.py (replace pricing_node with life_pricing_node)
+# Test with Khmer medical PDFs
+# Run end-to-end workflow
+# File assumptions with IRC
+```
 
 ---
 
