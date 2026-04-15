@@ -4,6 +4,53 @@ Chronological record of all ingestions, queries, and maintenance operations on t
 
 ---
 
+## [2026-04-15 00:00] implementation | Underwriter Dashboard & Drift Monitor
+
+Built all three tasks from `wiki/topics/dashboard-drift-monitor-plan.md`.
+
+**New files**:
+- `analytics/__init__.py` — package init
+- `analytics/monitor.py` — `calculate_psi()`, `calculate_human_override_rate()`, `get_psi_time_series()`, `REFERENCE_DISTRIBUTION`
+- `api/routers/dashboard.py` — `/dashboard/stats` endpoint
+- `src/components/DriftMonitor.jsx` — Recharts PSI line chart (warning 0.10 / drift 0.25 reference lines)
+- `src/components/UnderwriterQueue.jsx` — HITL review queue with reasoning trace expand + approve/decline buttons
+
+**Modified**:
+- `api/main.py` — added `dashboard` router import + `app.include_router(dashboard.router, prefix="/dashboard")`
+
+**Verified**:
+- `analytics/monitor.py` smoke tests pass (PSI math correct; mock series returns correctly when no cases)
+- `/dashboard/stats` route registered and importable; all other routes unaffected
+
+**Frontend JSX files**: created in `src/components/` in this repo — copy to `dac-healthprice-frontend/src/components/` and import both into `LifeInsurancePricer.jsx` or a new Dashboard tab.
+
+Metrics: 5 new files, 1 file modified.
+
+---
+
+## [2026-04-14 19:30] plan | Underwriter Dashboard & Drift Monitor implementation plan
+
+Planned the full implementation for the Underwriter Dashboard and PSI Drift Monitor.
+
+**New wiki page**:
+- `wiki/topics/dashboard-drift-monitor-plan.md` — complete implementation spec: PSI math, function signatures, API endpoint shape, React component code, implementation order, file manifest
+
+**Scope**:
+- **Task 1**: `analytics/monitor.py` — `calculate_psi()`, `calculate_human_override_rate()`, `get_psi_time_series()` with REFERENCE_DISTRIBUTION baseline for mortality_ratio
+- **Task 2**: `api/routers/dashboard.py` — new `/dashboard/stats` endpoint returning PSI score, province distribution, HITL pending count, override rate, 30-day PSI series; wire into `api/main.py`
+- **Task 3**: `DriftMonitor.jsx` — Recharts line chart with PSI thresholds (warning: 0.10, drift: 0.25); `UnderwriterQueue.jsx` — collapsible HITL queue showing reasoning_trace per case with approve/decline buttons
+
+**Key decisions**:
+- PSI is computed on `mortality_ratio` (the primary risk signal) from `UnderwritingState.actuarial`
+- Reference distribution = synthetic baseline from training assumptions (in-memory; will migrate to JSON file for production)
+- No new dependencies beyond `numpy` for PSI math
+- Recharts already available in frontend; no library changes needed for that
+- Province normalization dict handles Khmer + Latin variants of "Phnom Penh"
+
+Metrics: 1 new wiki page, 0 code files modified (plan only). Ready to build next session.
+
+---
+
 ## [2026-04-14 19:00] lint | Wiki health check + fixes
 
 Ran full lint pass across all 114 wiki pages.
