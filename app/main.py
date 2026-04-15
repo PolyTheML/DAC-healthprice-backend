@@ -689,6 +689,173 @@ async def mi():
         "metrics":model_meta.get("metrics",{}),
     }
 
+# ─── Dashboard helpers ────────────────────────────────────────────────────────
+# PSI reference distribution for total_annual_premium (Cambodia Silver-tier baseline)
+_HEALTH_PSI_REF = {
+    "bins":        [0, 200, 500, 800, 1200, 1800, 2500, 4000, float("inf")],
+    "proportions": [0.02, 0.20, 0.25, 0.20, 0.15, 0.10, 0.06, 0.02],
+}
+_PHNOM_PENH_ALIASES = {"phnom penh", "phonm penh", "pp"}
+
+def _psi_health(premiums: list) -> float:
+    """PSI on annual premium distribution vs baseline reference."""
+    if len(premiums) < 5:
+        return 0.0
+    bins     = _HEALTH_PSI_REF["bins"]
+    expected = np.array(_HEALTH_PSI_REF["proportions"], dtype=float)
+    values   = np.array(premiums, dtype=float)
+    bin_idx  = np.digitize(values, bins[1:])
+    counts   = np.bincount(bin_idx, minlength=8)[:8]
+    actual   = counts.astype(float) / max(len(values), 1)
+    eps = 1e-6
+    actual   = np.clip(actual,   eps, 1.0)
+    expected = np.clip(expected, eps, 1.0)
+    return round(float(max(np.sum((actual - expected) * np.log(actual / expected)), 0.0)), 6)
+
+def _classify_health_risk(inp: dict) -> str:
+    score = 0
+    if inp.get("smoking_status") == "Current":    score += 2
+    elif inp.get("smoking_status") == "Former":   score += 1
+    conds = inp.get("pre_existing_conditions") or inp.get("preexist_conditions") or []
+    if len(conds) >= 3:  score += 2
+    elif len(conds) >= 1: score += 1
+    if inp.get("occupation_type") in ("Industrial/High-Risk", "Manual Labor"): score += 1
+    if inp.get("ipd_tier") in ("Gold", "Platinum"): score += 1
+    if score >= 4: return "decline"
+    if score >= 3: return "high"
+    if score >= 1: return "medium"
+    return "low"
+
+def _health_reasoning(inp: dict, res: dict) -> str:
+    lines = [
+        f"Tier: {inp.get('ipd_tier','?')}  |  {inp.get('country','?')} / {inp.get('region','?')}",
+        f"Age {inp.get('age','?')} · {inp.get('gender','?')} · Smoking: {inp.get('smoking_status','?')}",
+    ]
+    conds = inp.get("pre_existing_conditions") or inp.get("preexist_conditions") or []
+    if conds: lines.append(f"Pre-existing: {', '.join(conds)}")
+    if inp.get("occupation_type"): lines.append(f"Occupation: {inp['occupation_type']}")
+    total = res.get("total_annual_premium", 0)
+    if total: lines.append(f"Annual premium: ${total:,.2f}")
+    uw = res.get("underwriting")
+    if uw and uw not in ("auto_approved", None): lines.append(f"UW flag: {uw}")
+    return "\n".join(lines)
+
+def _psi_series_health(rows: list, window_days: int = 30) -> list:
+    from collections import defaultdict as _dd
+    from datetime import date as _date, timedelta as _td
+    by_date: dict = _dd(list)
+    for row in rows:
+        try:
+            ca = row.get("created_at")
+            d  = ca.strftime("%Y-%m-%d") if hasattr(ca, "strftime") else str(ca)[:10]
+            rj = row.get("result_json", "{}")
+            res = json.loads(rj) if isinstance(rj, str) else dict(rj)
+            p = res.get("total_annual_premium", 0)
+            if p: by_date[d].append(float(p))
+        except Exception: pass
+    today  = datetime.now(timezone.utc).date()
+    result = []
+    for offset in range(window_days - 1, -1, -1):
+        target   = today - _td(days=offset)
+        date_str = target.strftime("%Y-%m-%d")
+        rolling  = [v for d, vals in by_date.items() if d <= date_str for v in vals]
+        batch    = rolling[-20:] if len(rolling) >= 20 else rolling
+        psi      = _psi_health(batch) if len(batch) >= 5 else 0.0
+        result.append({"date": date_str, "psi": psi, "n_cases": len(batch)})
+    return result
+
+
+class CaseReviewBody(BaseModel):
+    approved: bool
+    reviewer_id: str = "dashboard-user"
+    notes: str = ""
+
+
+@app.get("/dashboard/stats", tags=["dashboard"])
+async def dashboard_stats():
+    """Underwriter dashboard KPIs: PSI, HITL manual-review queue, province distribution."""
+    quotes  = []
+    pending = []
+    if db_pool:
+        try:
+            rows = await db_pool.fetch(
+                "SELECT quote_ref, input_json::text AS input_json, "
+                "result_json::text AS result_json, underwriting_status, created_at "
+                "FROM hp_quote_log ORDER BY created_at DESC LIMIT 200"
+            )
+            quotes = [dict(r) for r in rows]
+            pr = await db_pool.fetch(
+                "SELECT quote_ref, input_json::text AS input_json, "
+                "result_json::text AS result_json, underwriting_status, created_at "
+                "FROM hp_quote_log WHERE underwriting_status='manual_review' "
+                "ORDER BY created_at DESC LIMIT 10"
+            )
+            pending = [dict(r) for r in pr]
+        except Exception as e:
+            log.warning(f"dashboard DB: {e}")
+
+    # PSI on last 100 non-manual premiums
+    premiums = []
+    for q in quotes[:100]:
+        try:
+            r = json.loads(q["result_json"])
+            p = r.get("total_annual_premium", 0)
+            if p and q.get("underwriting_status") != "manual_review":
+                premiums.append(float(p))
+        except Exception: pass
+    psi_score  = _psi_health(premiums)
+    psi_status = "stable" if psi_score < 0.10 else ("warning" if psi_score < 0.25 else "drift")
+
+    # Province distribution
+    regions = []
+    for q in quotes:
+        try: regions.append(json.loads(q["input_json"]).get("region", "").lower())
+        except Exception: pass
+    pp = sum(1 for r in regions if r in _PHNOM_PENH_ALIASES)
+
+    # HITL summaries
+    pending_summaries = []
+    for row in pending:
+        try:
+            inp = json.loads(row["input_json"])
+            res = json.loads(row["result_json"])
+            pending_summaries.append({
+                "case_id":      row["quote_ref"],
+                "risk_level":   _classify_health_risk(inp),
+                "final_premium": res.get("total_annual_premium", 0),
+                "extracted_data": {
+                    "age":             inp.get("age"),
+                    "province":        inp.get("region"),
+                    "occupation_type": inp.get("occupation_type"),
+                },
+                "reasoning_trace": _health_reasoning(inp, res),
+            })
+        except Exception: pass
+
+    return {
+        "psi":                 {"current": round(psi_score, 4), "status": psi_status},
+        "province_distribution": {"phnom_penh": pp, "provinces": len(regions) - pp, "total": len(regions)},
+        "hitl_queue":          {"pending_count": len(pending_summaries), "pending_cases": pending_summaries},
+        "human_override_rate": {"total_reviewed": 0, "total_overridden": 0, "override_rate": 0.0, "by_risk_level": {}},
+        "psi_time_series":     _psi_series_health(quotes, window_days=30),
+    }
+
+
+@app.post("/cases/{case_id}/review", tags=["dashboard"])
+async def review_case(case_id: str, body: CaseReviewBody):
+    """Approve or decline a manual-review case from the underwriter dashboard."""
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    new_status = "approved" if body.approved else "declined"
+    result = await db_pool.execute(
+        "UPDATE hp_quote_log SET underwriting_status=$1 WHERE quote_ref=$2",
+        new_status, case_id,
+    )
+    if result == "UPDATE 0":
+        raise HTTPException(404, f"Case {case_id} not found")
+    return {"case_id": case_id, "status": new_status, "reviewer_id": body.reviewer_id}
+
+
 @app.exception_handler(Exception)
 async def err(request:Request,exc:Exception):
     rid=getattr(request.state,"rid","?") if hasattr(request,"state") else "?"
