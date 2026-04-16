@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 .env
 .venv/
+
+# ETL runtime artifacts (SQLite dataset + audit log written by etl/ pipeline)
+data/synced/*.db
+data/synced/*.db-journal
+data/synced/etl_audit_log.json

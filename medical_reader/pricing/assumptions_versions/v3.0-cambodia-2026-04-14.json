@@ -1,0 +1,89 @@
+{
+  "version": "v3.0-cambodia-2026-04-14",
+  "created_at": "2026-04-14T18:00:00Z",
+  "parent_version": null,
+  "data_provenance": {
+    "source": "synthetic bootstrap (dataclass defaults from medical_reader/pricing/assumptions.py)",
+    "rows_used": 0,
+    "data_hash": "synthetic_initial",
+    "sync_id": null
+  },
+  "parameters": {
+    "cambodia_mortality_adj": 0.85,
+    "mortality": {
+      "base_rate_male": {
+        "18-24": 0.80, "25-34": 1.10, "35-44": 2.20, "45-54": 4.80, "55-64": 10.50, "65+": 22.00
+      },
+      "base_rate_female": {
+        "18-24": 0.50, "25-34": 0.70, "35-44": 1.40, "45-54": 3.20, "55-64": 7.80, "65+": 17.50
+      }
+    },
+    "risk_factors": {
+      "smoking": 2.00,
+      "alcohol_heavy": 1.25,
+      "bmi_underweight": 1.20,
+      "bmi_overweight": 1.15,
+      "bmi_obese_1": 1.35,
+      "bmi_obese_2": 1.60,
+      "bp_elevated": 1.10,
+      "bp_stage1": 1.25,
+      "bp_stage2": 1.50,
+      "diabetes": 1.40,
+      "hypertension": 1.25,
+      "hyperlipidemia": 1.20,
+      "family_history_chd": 1.30
+    },
+    "loading": {
+      "expense_ratio": 0.12,
+      "commission_ratio": 0.10,
+      "profit_margin": 0.05,
+      "contingency": 0.05
+    },
+    "tiers": {
+      "low_max": 1.50,
+      "medium_max": 2.50,
+      "high_max": 4.00
+    },
+    "cambodia_occupational": {
+      "motorbike_courier": 1.45,
+      "motorbike_daily": 1.25,
+      "motorbike_occasional": 1.10,
+      "construction": 1.35,
+      "manual_labor": 1.20,
+      "healthcare": 1.05,
+      "retail_service": 1.05,
+      "office_desk": 1.00,
+      "retired": 0.95,
+      "unknown": 1.00
+    },
+    "cambodia_endemic": {
+      "phnom_penh": 1.00,
+      "siem_reap": 1.05,
+      "sihanoukville": 1.08,
+      "battambang": 1.05,
+      "kampong_cham": 1.07,
+      "kampong_speu": 1.06,
+      "kandal": 1.03,
+      "kratie": 1.15,
+      "mondulkiri": 1.30,
+      "ratanakiri": 1.28,
+      "preah_vihear": 1.18,
+      "kampong_thom": 1.08,
+      "takeo": 1.04,
+      "pursat": 1.07,
+      "rural_default": 1.12
+    },
+    "cambodia_healthcare_tier": {
+      "tier_a": 0.97,
+      "tier_b": 1.00,
+      "clinic": 1.05,
+      "unknown": 1.03
+    }
+  },
+  "validation": {
+    "fairness_score": null,
+    "disparate_impact_ratio": null,
+    "status": "approved",
+    "notes": "Initial bootstrap version; no empirical fairness test run (no claims data)."
+  }
+}

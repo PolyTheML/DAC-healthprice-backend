@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import cases, pricing, portfolio, dashboard
+from api.routers import cases, pricing, portfolio, dashboard, calibration
 
 app = FastAPI(
     title="DAC-UW Underwriting API",
@@ -23,6 +23,7 @@ app.include_router(cases.router, prefix="/cases", tags=["cases"])
 app.include_router(pricing.router, prefix="/pricing", tags=["pricing"])
 app.include_router(portfolio.router, prefix="/portfolio", tags=["portfolio"])
 app.include_router(dashboard.router, prefix="/dashboard", tags=["dashboard"])
+app.include_router(calibration.router, prefix="/api/v1/calibration", tags=["calibration"])
 
 
 @app.get("/health")

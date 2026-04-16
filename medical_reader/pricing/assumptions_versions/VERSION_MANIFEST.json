@@ -1,0 +1,13 @@
+{
+  "active_version": "v3.0-cambodia-2026-04-14",
+  "versions": [
+    {
+      "version": "v3.0-cambodia-2026-04-14",
+      "created_at": "2026-04-14T18:00:00Z",
+      "status": "active",
+      "parent_version": null,
+      "reason": "Initial Cambodia calibration (dataclass defaults materialized as JSON)"
+    }
+  ],
+  "recalibration_log": []
+}
