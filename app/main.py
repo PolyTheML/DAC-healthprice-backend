@@ -332,6 +332,43 @@ async def lifespan(app):
                 """)
                 log.info("Schema migrations OK")
             except Exception as e: log.warning(f"Schema migration: {e}")
+            try:
+                await db_pool.execute("""
+                    CREATE TABLE IF NOT EXISTS applications (
+                        id TEXT PRIMARY KEY,
+                        status TEXT NOT NULL DEFAULT 'submitted',
+                        full_name TEXT,
+                        date_of_birth TEXT,
+                        gender TEXT,
+                        phone TEXT,
+                        email TEXT,
+                        region TEXT,
+                        occupation TEXT,
+                        national_id TEXT,
+                        medical_data JSONB,
+                        document_id TEXT,
+                        consent_signature TEXT,
+                        submitted_at TIMESTAMPTZ DEFAULT NOW(),
+                        updated_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                    CREATE TABLE IF NOT EXISTS application_events (
+                        id SERIAL PRIMARY KEY,
+                        case_id TEXT NOT NULL,
+                        event TEXT NOT NULL,
+                        done BOOLEAN DEFAULT TRUE,
+                        event_at TIMESTAMPTZ
+                    );
+                    CREATE TABLE IF NOT EXISTS documents (
+                        id TEXT PRIMARY KEY,
+                        case_id TEXT,
+                        filename TEXT,
+                        upload_status TEXT DEFAULT 'pending',
+                        extracted_data JSONB,
+                        created_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                """)
+                log.info("Application schema OK")
+            except Exception as e: log.warning(f"Application schema: {e}")
             # Load active partner keys into memory cache
             try:
                 rows=await db_pool.fetch("SELECT key_hash,partner_name,daily_limit FROM hp_partner_keys WHERE is_active=TRUE")
@@ -771,6 +808,41 @@ class CaseReviewBody(BaseModel):
     notes: str = ""
 
 
+class PersonalInfo(BaseModel):
+    fullName: str
+    dateOfBirth: str
+    gender: str
+    phone: str
+    email: str
+    region: str
+    occupation: str
+    nationalId: str = ""
+
+class MedicalInfo(BaseModel):
+    height: float
+    weight: float
+    smokingStatus: str
+    alcoholConsumption: str
+    exerciseFrequency: str
+    bloodPressure: str = ""
+    preexistingConditions: list = []
+    familyHistory: list = []
+    currentMedications: str = ""
+
+class ConsentInfo(BaseModel):
+    terms: bool
+    privacy: bool
+    dataProcessing: bool
+    truthfulness: bool
+    signature: str
+
+class ApplicationSubmit(BaseModel):
+    personal: PersonalInfo
+    medical: MedicalInfo
+    consent: ConsentInfo
+    documentId: Optional[str] = None
+
+
 @app.get("/dashboard/stats", tags=["dashboard"])
 async def dashboard_stats():
     """Underwriter dashboard KPIs: PSI, HITL manual-review queue, province distribution."""
@@ -854,6 +926,96 @@ async def review_case(case_id: str, body: CaseReviewBody):
     if result == "UPDATE 0":
         raise HTTPException(404, f"Case {case_id} not found")
     return {"case_id": case_id, "status": new_status, "reviewer_id": body.reviewer_id}
+
+
+_STATUS_NOTES = {
+    "submitted":    "Your application has been received and is awaiting review.",
+    "in_review":    "Your application is currently under review by our underwriting team.",
+    "approved":     "Congratulations! Your application has been approved.",
+    "declined":     "After careful review, we are unable to offer coverage at this time.",
+    "referred":     "Your application requires additional review. We will contact you shortly.",
+    "pending_docs": "Additional documentation is required to process your application.",
+}
+
+_INITIAL_TIMELINE = [
+    ("Application received", True),
+    ("Initial review",       False),
+    ("Underwriter decision", False),
+    ("Policy issued",        False),
+]
+
+
+@app.post("/api/v1/applications", tags=["applications"])
+async def create_application(body: ApplicationSubmit):
+    case_id = f"DAC-{uuid.uuid4().hex[:8].upper()}"
+    now = datetime.now(timezone.utc)
+    if db_pool:
+        try:
+            await db_pool.execute(
+                "INSERT INTO applications(id,status,full_name,date_of_birth,gender,phone,email,region,occupation,national_id,medical_data,document_id,consent_signature)"
+                " VALUES($1,'submitted',$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11,$12)",
+                case_id,
+                body.personal.fullName, body.personal.dateOfBirth, body.personal.gender,
+                body.personal.phone, body.personal.email, body.personal.region,
+                body.personal.occupation, body.personal.nationalId,
+                json.dumps({"height": body.medical.height, "weight": body.medical.weight,
+                            "smokingStatus": body.medical.smokingStatus,
+                            "alcoholConsumption": body.medical.alcoholConsumption,
+                            "exerciseFrequency": body.medical.exerciseFrequency,
+                            "bloodPressure": body.medical.bloodPressure,
+                            "preexistingConditions": body.medical.preexistingConditions,
+                            "familyHistory": body.medical.familyHistory,
+                            "currentMedications": body.medical.currentMedications}),
+                body.documentId, body.consent.signature,
+            )
+            await db_pool.executemany(
+                "INSERT INTO application_events(case_id,event,done,event_at) VALUES($1,$2,$3,$4)",
+                [(case_id, ev, done, now if done else None) for ev, done in _INITIAL_TIMELINE],
+            )
+        except Exception as e:
+            log.warning(f"create_application DB: {e}")
+    return {"case_id": case_id}
+
+
+@app.get("/api/v1/applications/{case_id}/status", tags=["applications"])
+async def get_application_status(case_id: str):
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    row = await db_pool.fetchrow("SELECT * FROM applications WHERE id=$1", case_id)
+    if not row:
+        raise HTTPException(404, f"Case {case_id} not found")
+    events = await db_pool.fetch(
+        "SELECT event,event_at,done FROM application_events WHERE case_id=$1 ORDER BY id",
+        case_id,
+    )
+    return {
+        "case_id":        case_id,
+        "status":         row["status"],
+        "submitted_at":   row["submitted_at"].isoformat() if row["submitted_at"] else None,
+        "applicant_name": row["full_name"],
+        "note":           _STATUS_NOTES.get(row["status"], "Your application is being processed."),
+        "timeline": [
+            {"event": e["event"], "timestamp": e["event_at"].isoformat() if e["event_at"] else None, "done": e["done"]}
+            for e in events
+        ],
+    }
+
+
+@app.post("/api/v1/documents/upload", tags=["applications"])
+async def upload_document(file: UploadFile = File(...)):
+    if file.content_type not in ("application/pdf", "image/jpeg", "image/png"):
+        raise HTTPException(400, "Only PDF, JPEG, and PNG files are accepted")
+    doc_id = f"DOC-{uuid.uuid4().hex[:8].upper()}"
+    await file.read()  # consume stream
+    if db_pool:
+        try:
+            await db_pool.execute(
+                "INSERT INTO documents(id,filename,upload_status) VALUES($1,$2,'uploaded')",
+                doc_id, file.filename,
+            )
+        except Exception as e:
+            log.warning(f"upload_document DB: {e}")
+    return {"id": doc_id, "filename": file.filename, "status": "uploaded", "extracted": None}
 
 
 @app.exception_handler(Exception)
