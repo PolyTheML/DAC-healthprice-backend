@@ -369,6 +369,15 @@ async def lifespan(app):
                 """)
                 log.info("Application schema OK")
             except Exception as e: log.warning(f"Application schema: {e}")
+            try:
+                await db_pool.execute("""
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS reviewer_id TEXT;
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS decision_notes TEXT;
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS decided_at TIMESTAMPTZ;
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS risk_level TEXT;
+                """)
+                log.info("Application columns OK")
+            except Exception as e: log.warning(f"Application columns: {e}")
             # Load active partner keys into memory cache
             try:
                 rows=await db_pool.fetch("SELECT key_hash,partner_name,daily_limit FROM hp_partner_keys WHERE is_active=TRUE")
@@ -999,6 +1008,65 @@ async def get_application_status(case_id: str):
             for e in events
         ],
     }
+
+
+@app.get("/api/v1/applications", tags=["applications"])
+async def list_applications(status: str = Query("submitted,in_review"), limit: int = Query(50, le=200)):
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    statuses = [s.strip() for s in status.split(",") if s.strip()]
+    rows = await db_pool.fetch(
+        "SELECT id,status,full_name,date_of_birth,gender,phone,email,region,occupation,"
+        "medical_data,risk_level,submitted_at,decided_at,reviewer_id FROM applications"
+        " WHERE status = ANY($1::text[]) ORDER BY submitted_at DESC LIMIT $2",
+        statuses, limit,
+    )
+    return {
+        "applications": [
+            {
+                "id": r["id"], "status": r["status"], "full_name": r["full_name"],
+                "date_of_birth": r["date_of_birth"], "gender": r["gender"],
+                "phone": r["phone"], "email": r["email"], "region": r["region"],
+                "occupation": r["occupation"],
+                "medical_data": r["medical_data"] if isinstance(r["medical_data"], dict) else
+                                (json.loads(r["medical_data"]) if r["medical_data"] else {}),
+                "risk_level": r["risk_level"],
+                "submitted_at": r["submitted_at"].isoformat() if r["submitted_at"] else None,
+                "decided_at": r["decided_at"].isoformat() if r["decided_at"] else None,
+                "reviewer_id": r["reviewer_id"],
+            }
+            for r in rows
+        ],
+        "total": len(rows),
+    }
+
+
+class DecisionBody(BaseModel):
+    outcome: str   # approved | declined | referred
+    notes: str = ""
+    reviewer_id: str
+
+
+@app.post("/api/v1/applications/{case_id}/decision", tags=["applications"])
+async def record_decision(case_id: str, body: DecisionBody):
+    valid = {"approved", "declined", "referred"}
+    if body.outcome not in valid:
+        raise HTTPException(400, f"outcome must be one of {valid}")
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    now = datetime.now(timezone.utc)
+    result = await db_pool.execute(
+        "UPDATE applications SET status=$1,reviewer_id=$2,decision_notes=$3,decided_at=$4,updated_at=$4"
+        " WHERE id=$5",
+        body.outcome, body.reviewer_id, body.notes, now, case_id,
+    )
+    if result == "UPDATE 0":
+        raise HTTPException(404, f"Case {case_id} not found")
+    await db_pool.execute(
+        "INSERT INTO application_events(case_id,event,done,event_at) VALUES($1,$2,TRUE,$3)",
+        case_id, f"Decision: {body.outcome} by {body.reviewer_id}", now,
+    )
+    return {"case_id": case_id, "status": body.outcome, "decided_at": now.isoformat()}
 
 
 @app.post("/api/v1/documents/upload", tags=["applications"])
