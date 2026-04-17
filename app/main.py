@@ -831,23 +831,30 @@ class MedicalInfo(BaseModel):
     height: float
     weight: float
     smokingStatus: str
-    alcoholConsumption: str
+    alcoholConsumption: str = "Not disclosed"
     exerciseFrequency: str
     bloodPressure: str = ""
     preexistingConditions: list = []
     familyHistory: list = []
     currentMedications: str = ""
 
+class CoverageInfo(BaseModel):
+    tier: str = "Silver"
+    include_opd: bool = False
+    include_dental: bool = False
+    include_maternity: bool = False
+
 class ConsentInfo(BaseModel):
-    terms: bool
-    privacy: bool
-    dataProcessing: bool
-    truthfulness: bool
+    terms: bool = True
+    privacy: bool = True
+    dataProcessing: bool = True
+    truthfulness: bool = True
     signature: str
 
 class ApplicationSubmit(BaseModel):
     personal: PersonalInfo
     medical: MedicalInfo
+    coverage: CoverageInfo = CoverageInfo()
     consent: ConsentInfo
     documentId: Optional[str] = None
 
@@ -937,6 +944,15 @@ async def review_case(case_id: str, body: CaseReviewBody):
     return {"case_id": case_id, "status": new_status, "reviewer_id": body.reviewer_id}
 
 
+_STATUS_DISPLAY = {
+    "submitted":    "Received",
+    "in_review":    "Under Review",
+    "approved":     "Approved",
+    "declined":     "Declined",
+    "referred":     "Decision Pending",
+    "pending_docs": "On Hold",
+}
+
 _STATUS_NOTES = {
     "submitted":    "Your application has been received and is awaiting review.",
     "in_review":    "Your application is currently under review by our underwriting team.",
@@ -974,7 +990,9 @@ async def create_application(body: ApplicationSubmit):
                             "bloodPressure": body.medical.bloodPressure,
                             "preexistingConditions": body.medical.preexistingConditions,
                             "familyHistory": body.medical.familyHistory,
-                            "currentMedications": body.medical.currentMedications}),
+                            "currentMedications": body.medical.currentMedications,
+                            "coverage": {"tier": body.coverage.tier, "include_opd": body.coverage.include_opd,
+                                         "include_dental": body.coverage.include_dental, "include_maternity": body.coverage.include_maternity}}),
                 body.documentId, body.consent.signature,
             )
             await db_pool.executemany(
@@ -999,12 +1017,17 @@ async def get_application_status(case_id: str):
     )
     return {
         "case_id":        case_id,
-        "status":         row["status"],
+        "status":         _STATUS_DISPLAY.get(row["status"], row["status"].replace("_", " ").title()),
         "submitted_at":   row["submitted_at"].isoformat() if row["submitted_at"] else None,
         "applicant_name": row["full_name"],
-        "note":           _STATUS_NOTES.get(row["status"], "Your application is being processed."),
+        "message":        _STATUS_NOTES.get(row["status"], "Your application is being processed."),
         "timeline": [
-            {"event": e["event"], "timestamp": e["event_at"].isoformat() if e["event_at"] else None, "done": e["done"]}
+            {
+                "label": e["event"],
+                "date":  e["event_at"].strftime("%d %b %Y") if e["event_at"] else "",
+                "note":  "",
+                "done":  e["done"],
+            }
             for e in events
         ],
     }
