@@ -1,0 +1,37 @@
+{
+  "health_ols": {
+    "intercept": 132.7459860551024,
+    "params": {
+      "age": -0.3784945805387134,
+      "bmi": -1.2534496272310678,
+      "is_smoking": -0.23253465546003493,
+      "is_exercise": -0.044958891749752095,
+      "has_family_history": 0.026108608344559414,
+      "condition_count": -0.42108202894881863,
+      "monthly_income_millions_vnd": 0.02357613431112009
+    },
+    "method": "OLS (Gaussian, identity link)"
+  },
+  "mortality_gamma": {
+    "intercept": -0.07031387015436737,
+    "params": {
+      "age": 0.013155507195010845,
+      "bmi": 0.004212761174094138,
+      "is_smoking": 0.1496017481865741,
+      "is_exercise": -0.08808721786548378,
+      "has_family_history": 0.010045089859581215,
+      "condition_count": 0.2171381550151138,
+      "monthly_income_millions_vnd": -0.002173673397442673
+    },
+    "method": "GLM (Gamma, log link) \u2014 predict = exp(X @ params)"
+  },
+  "feature_order": [
+    "age",
+    "bmi",
+    "is_smoking",
+    "is_exercise",
+    "has_family_history",
+    "condition_count",
+    "monthly_income_millions_vnd"
+  ]
+}

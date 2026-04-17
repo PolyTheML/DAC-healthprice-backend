@@ -1,0 +1,124 @@
+{
+  "health_model": {
+    "target": "health_score",
+    "description": "Predicts health risk score (48-95). Lower = higher claim risk.",
+    "glm": {
+      "model": "GLM (OLS)",
+      "rmse": 4.0381,
+      "mae": 3.2798,
+      "r2": 0.6597
+    },
+    "xgboost": {
+      "model": "XGBoost",
+      "rmse": 0.8515,
+      "mae": 0.5358,
+      "r2": 0.9849
+    },
+    "top_features": [
+      {
+        "feature": "age",
+        "label": "Age",
+        "importance": 3.6999
+      },
+      {
+        "feature": "bmi",
+        "label": "BMI",
+        "importance": 2.6063
+      },
+      {
+        "feature": "occupation_enc",
+        "label": "Occupation",
+        "importance": 0.7855
+      },
+      {
+        "feature": "monthly_income_millions_vnd",
+        "label": "Monthly Income (MVND)",
+        "importance": 0.1237
+      },
+      {
+        "feature": "region_enc",
+        "label": "Region",
+        "importance": 0.0395
+      }
+    ],
+    "train_size": 1600,
+    "test_size": 400
+  },
+  "mortality_model": {
+    "target": "mortality_multiplier",
+    "description": "Predicts mortality risk multiplier. 1.0 = standard rate.",
+    "glm": {
+      "model": "GLM (Gamma/log)",
+      "rmse": 0.202,
+      "mae": 0.1408,
+      "r2": 0.716
+    },
+    "xgboost": {
+      "model": "XGBoost",
+      "rmse": 0.0286,
+      "mae": 0.0179,
+      "r2": 0.9943
+    },
+    "top_features": [
+      {
+        "feature": "age",
+        "label": "Age",
+        "importance": 0.1852
+      },
+      {
+        "feature": "occupation_enc",
+        "label": "Occupation",
+        "importance": 0.136
+      },
+      {
+        "feature": "is_smoking",
+        "label": "Smoker",
+        "importance": 0.0756
+      },
+      {
+        "feature": "condition_count",
+        "label": "# Pre-existing Conditions",
+        "importance": 0.0731
+      },
+      {
+        "feature": "is_exercise",
+        "label": "Exercises Regularly",
+        "importance": 0.049
+      }
+    ],
+    "train_size": 1600,
+    "test_size": 400
+  },
+  "feature_names": [
+    "age",
+    "bmi",
+    "is_smoking",
+    "is_exercise",
+    "has_family_history",
+    "monthly_income_millions_vnd",
+    "condition_count",
+    "has_hypertension",
+    "has_diabetes",
+    "has_heart_disease",
+    "has_copd_asthma",
+    "has_arthritis",
+    "region_enc",
+    "occupation_enc"
+  ],
+  "feature_labels": {
+    "age": "Age",
+    "bmi": "BMI",
+    "is_smoking": "Smoker",
+    "is_exercise": "Exercises Regularly",
+    "has_family_history": "Family History",
+    "monthly_income_millions_vnd": "Monthly Income (MVND)",
+    "condition_count": "# Pre-existing Conditions",
+    "has_hypertension": "Hypertension",
+    "has_diabetes": "Diabetes",
+    "has_heart_disease": "Heart Disease",
+    "has_copd_asthma": "COPD/Asthma",
+    "has_arthritis": "Arthritis",
+    "region_enc": "Region",
+    "occupation_enc": "Occupation"
+  }
+}

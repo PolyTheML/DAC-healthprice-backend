@@ -445,6 +445,13 @@ try:
 except Exception as _esc_err:
     log.warning(f"Escalation routes not loaded: {_esc_err}")
 
+# Vietnam case study — dual GLM + XGBoost pricing (demo endpoint)
+try:
+    from app.routes.vietnam_pricing import router as vietnam_router
+    app.include_router(vietnam_router)
+except Exception as _vn_err:
+    log.warning(f"Vietnam pricing routes not loaded: {_vn_err}")
+
 @app.middleware("http")
 async def mw(request:Request,call_next):
     ip=request.client.host if request.client else "x"
