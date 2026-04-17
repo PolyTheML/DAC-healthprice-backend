@@ -6,14 +6,16 @@ full audit trail, 6-layer anti-scraping protection,
 client-specific partner API keys.
 """
 import os, re, time, uuid, logging, json, hashlib, secrets
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from typing import Optional, List
 from collections import defaultdict, deque
 import numpy as np
+import jwt as pyjwt
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, field_validator, model_validator
 import asyncpg
 
@@ -55,6 +57,37 @@ def _rl(ip):
     now=time.monotonic();b=_buckets[ip];b["t"]=min(RL,b["t"]+(now-b["last"])*(RL/60));b["last"]=now
     if b["t"]>=1: b["t"]-=1; return True
     return False
+
+# ── JWT Staff Auth ────────────────────────────────────────────────────────────
+JWT_SECRET  = os.getenv("JWT_SECRET", "dac-dev-secret-change-in-production")
+JWT_ALGO    = "HS256"
+JWT_EXP_HRS = 8
+
+STAFF_USERS = {
+    "admin":   {"password": os.getenv("STAFF_ADMIN_PASS",   "dac2026!"), "role": "admin"},
+    "radet":   {"password": os.getenv("STAFF_RADET_PASS",   "dac2026!"), "role": "underwriter"},
+    "analyst": {"password": os.getenv("STAFF_ANALYST_PASS", "dac2026!"), "role": "analyst"},
+}
+
+_bearer = HTTPBearer(auto_error=False)
+
+async def get_current_staff(creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer)):
+    if not creds:
+        raise HTTPException(401, "Authentication required")
+    try:
+        payload = pyjwt.decode(creds.credentials, JWT_SECRET, algorithms=[JWT_ALGO])
+    except pyjwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token expired")
+    except pyjwt.InvalidTokenError:
+        raise HTTPException(401, "Invalid token")
+    return {"username": payload["sub"], "role": payload["role"]}
+
+def require_roles(*roles):
+    async def _check(user: dict = Depends(get_current_staff)):
+        if user["role"] not in roles:
+            raise HTTPException(403, f"Role '{user['role']}' cannot perform this action")
+        return user
+    return _check
 
 VALID_GENDERS=["Male","Female","Other"]
 VALID_SMOKING=["Never","Former","Current"]
@@ -560,6 +593,21 @@ async def _log_b(qid,req,browser_id:str="",email:str="",anomaly_flag:bool=False)
 async def health():
     return {"status":"healthy","service":"DAC HealthPrice v2.3","pricing_approach":"Poisson-Gamma GLM","coefficient_version":COEFF["version"],"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/auth/login", tags=["auth"])
+async def login(body: LoginRequest):
+    user = STAFF_USERS.get(body.username.strip().lower())
+    if not user or not secrets.compare_digest(body.password, user["password"]):
+        raise HTTPException(401, "Invalid credentials")
+    token = pyjwt.encode(
+        {"sub": body.username, "role": user["role"], "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXP_HRS)},
+        JWT_SECRET, algorithm=JWT_ALGO,
+    )
+    return {"access_token": token, "token_type": "bearer", "role": user["role"], "username": body.username}
+
 # ── Partner key verification ─────────────────────────────────────────────────
 def _check_partner_daily(key_hash:str)->bool:
     today=datetime.now(timezone.utc).date().isoformat()
@@ -860,7 +908,7 @@ class ApplicationSubmit(BaseModel):
 
 
 @app.get("/dashboard/stats", tags=["dashboard"])
-async def dashboard_stats():
+async def dashboard_stats(_: dict = Depends(get_current_staff)):
     """Underwriter dashboard KPIs: PSI, HITL manual-review queue, province distribution."""
     quotes  = []
     pending = []
@@ -930,7 +978,7 @@ async def dashboard_stats():
 
 
 @app.post("/cases/{case_id}/review", tags=["dashboard"])
-async def review_case(case_id: str, body: CaseReviewBody):
+async def review_case(case_id: str, body: CaseReviewBody, _: dict = Depends(require_roles("admin", "underwriter"))):
     """Approve or decline a manual-review case from the underwriter dashboard."""
     if not db_pool:
         raise HTTPException(503, "Database unavailable")
@@ -1034,7 +1082,7 @@ async def get_application_status(case_id: str):
 
 
 @app.get("/api/v1/applications", tags=["applications"])
-async def list_applications(status: str = Query("submitted,in_review"), limit: int = Query(50, le=200)):
+async def list_applications(status: str = Query("submitted,in_review"), limit: int = Query(50, le=200), _: dict = Depends(get_current_staff)):
     if not db_pool:
         raise HTTPException(503, "Database unavailable")
     statuses = [s.strip() for s in status.split(",") if s.strip()]
@@ -1071,7 +1119,7 @@ class DecisionBody(BaseModel):
 
 
 @app.post("/api/v1/applications/{case_id}/decision", tags=["applications"])
-async def record_decision(case_id: str, body: DecisionBody):
+async def record_decision(case_id: str, body: DecisionBody, _: dict = Depends(require_roles("admin", "underwriter"))):
     valid = {"approved", "declined", "referred"}
     if body.outcome not in valid:
         raise HTTPException(400, f"outcome must be one of {valid}")
