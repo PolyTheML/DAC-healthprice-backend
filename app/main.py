@@ -1086,6 +1086,103 @@ async def upload_document(file: UploadFile = File(...)):
     return {"id": doc_id, "filename": file.filename, "status": "uploaded", "extracted": None}
 
 
+# ── Public Advisor Chat ──────────────────────────────────────────────────────
+ADVISOR_SYSTEM = """You are the DAC HealthPrice AI advisor — a friendly, knowledgeable assistant for customers applying for health insurance in Cambodia.
+
+Your role:
+- Help customers understand health insurance plans, pricing, coverage, and the application process
+- Answer questions about DAC HealthPrice's specific offerings
+- Guide customers through the portal (apply, track, documents)
+
+Key product knowledge:
+COVERAGE TIERS (IPD — inpatient hospital):
+- Bronze: $18/month, $10,000 annual limit, $500 deductible
+- Silver: $32/month, $40,000 annual limit, $250 deductible (most popular)
+- Gold: $58/month, $80,000 annual limit, $100 deductible
+- Platinum: $95/month, $150,000 annual limit, $0 deductible
+
+OPTIONAL RIDERS (add to any tier):
+- OPD (outpatient): +$12/month — doctor visits, lab tests, prescriptions
+- Dental: +$6/month — cleanings, fillings, emergency dental
+- Maternity: +$14/month — prenatal, delivery, postnatal, newborn care
+
+UNDERWRITING FACTORS that may affect your premium:
+- Smoking: +15–25%
+- High BMI (>30): +10–20%
+- Controlled hypertension: +10%
+- Diabetes: may require exclusion or loading
+- Cancer (within 5 years): case-by-case review
+
+APPLICATION PROCESS:
+1. Fill personal info and health profile (3 min)
+2. Choose coverage tier and optional riders
+3. Upload documents (National ID required; medical reports optional but speed up review)
+4. Sign consent and submit — receive a case reference number immediately
+5. Underwriting review: 3–5 business days
+6. Decision: Approved / Declined / On Hold
+
+DOCUMENTS NEEDED:
+- National ID or Passport (required, front side)
+- Medical reports from past 2 years (optional, speeds up review)
+- Employer/income letter (optional, helps with group pricing)
+
+CASE TRACKING: Customers use their case reference (format: DAC-XXXXXX) on the "Track My Case" page.
+
+CONTACT: radet@dactuaries.com | +855 85 508 860 | Phnom Penh, Cambodia | Mon–Fri 8am–5pm ICT
+
+Rules:
+- Stay focused on health insurance and the DAC platform. Politely decline off-topic requests.
+- Never give specific medical advice. Recommend consulting a doctor for medical questions.
+- Keep responses concise (2–5 sentences). Use bullet points for structured lists.
+- Be warm, professional, and clear — customers may be new to insurance.
+- If asked something you don't know, say so and direct to radet@dactuaries.com."""
+
+class AdvisorMessage(BaseModel):
+    role: str
+    content: str
+
+class AdvisorChatRequest(BaseModel):
+    messages: List[AdvisorMessage]
+    context: dict = {}
+
+@app.post("/api/v1/advisor/chat", tags=["advisor"])
+async def advisor_chat(body: AdvisorChatRequest, request: Request):
+    ip = request.client.host or "anon"
+    if not _rl(ip):
+        raise HTTPException(429, "Too many requests. Please wait a moment.")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(503, "Advisor service unavailable.")
+    messages = [{"role": m.role, "content": m.content} for m in body.messages[-10:]]
+    ctx_parts = []
+    if body.context.get("tier"): ctx_parts.append(f"Customer selected {body.context['tier']} tier")
+    if body.context.get("case_status"): ctx_parts.append(f"Case status: {body.context['case_status']}")
+    if body.context.get("case_id"): ctx_parts.append(f"Case reference: {body.context['case_id']}")
+    system = ADVISOR_SYSTEM + (f"\n\n[Current context: {'. '.join(ctx_parts)}.]" if ctx_parts else "")
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        r = await client.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "anthropic-beta": "prompt-caching-2024-07-31",
+                "content-type": "application/json",
+            },
+            json={
+                "model": "claude-haiku-4-5-20251001",
+                "max_tokens": 500,
+                "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+                "messages": messages,
+            },
+        )
+    if r.status_code != 200:
+        log.warning(f"Advisor chat error {r.status_code}: {r.text[:300]}")
+        raise HTTPException(502, "Advisor temporarily unavailable.")
+    data = r.json()
+    reply = data["content"][0]["text"] if data.get("content") else "I'm sorry, I couldn't respond right now. Please try again or email radet@dactuaries.com."
+    return {"reply": reply}
+
+
 @app.exception_handler(Exception)
 async def err(request:Request,exc:Exception):
     rid=getattr(request.state,"rid","?") if hasattr(request,"state") else "?"
