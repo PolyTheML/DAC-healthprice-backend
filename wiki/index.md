@@ -1,11 +1,23 @@
 # Knowledge Base Index
 
+## 📋 Implementation Plans
+
+**All project plans are organized in [`wiki/plans/`](./plans/index.md)** — a master index of:
+- Phase 0: Pricing Engine Enhancement
+- Phase 3: LangGraph Command Center
+- Phase 4: FastAPI REST API + Cloud Deployment
+- Phase 5: React Actuarial Integration
+
+**Start here** if you want to understand project timelines, team assignments, or upcoming work.
+
+---
+
 ## Metadata
 - **Created**: 2026-04-09
-- **Last Updated**: 2026-04-14 (React Frontend — Life Insurance Pricer + Cloudflare Proxy Removal)
-- **Total Pages**: 114 (3 hubs + 55 topics + 34 sources + 22 entities)
-- **Total Sources Ingested**: 32+ (50+ resources + Medical Reader + Phase 2B + Phase 3 + Phase 4 FastAPI + ... + AutoResearch Tutorial + Pricing Engine Enhancement Plan + **Synthetic Portfolio Prototype** + **Cambodia Smart Underwriting Implementation** + **Peter Feedback & Frontend Deployment**)
-- **Working Prototypes**: 8 ✅
+- **Last Updated**: 2026-04-17 (Phase 4 Week 1 — ApplicationWizard + StatusTracker — DEPLOYED)
+- **Total Pages**: 121 (3 hubs + 59 topics + 38 sources + 22 entities)
+- **Total Sources Ingested**: 34+
+- **Working Prototypes**: 11 ✅
   1. Medical Reader Phase 2 (PDF extraction, validation, routing)
   2. LangGraph Orchestration Phase 3 (HITL workflow)
   3. FastAPI REST API Phase 4 (6 endpoints, 100% test pass)
@@ -13,10 +25,122 @@
   5. DAC HealthPrice Platform Integration (health insurance + v2 compatibility)
   6. Synthetic Portfolio + Calibration + Demo (Cambodia digital insurer)
   7. Cambodia Smart Underwriting Engine (v3.0, IRC-compliant)
-  8. **React Frontend — Life Insurance Pricer** ← **NEW (April 14, DEPLOYED)**
+  8. React Frontend — Life Insurance Pricer (April 14, DEPLOYED)
+  9. Underwriter Dashboard + PSI Drift Monitor (April 15, DEPLOYED)
+  10. ETL Pipeline + Recalibration Engine (April 16, built; ⏳ pending Render endpoint)
+  11. **ApplicationWizard + StatusTracker (April 17, DEPLOYED)** ← NEW
 - **Paper Discovery System**: ✅ Complete
-- **GitHub Status**: ✅ Frontend pushed (Vercel auto-deployed), backend on Render
-- **Wiki Health**: ✅ 0 contradictions, 0 orphans (pending lint pass 2026-04-14)
+- **GitHub Status**: ✅ Frontend (Vercel), health backend `PolyTheML/DAC-healthprice-backend` (Render) — both deployed
+- **Wiki Health**: ✅ 0 contradictions, 0 orphans (lint pass 2026-04-14; next recommended ~2026-04-24)
+- **Key Architecture Note**: Two backends. LIVE: `C:\DAC\dac-health\backend` (submodule → Render). LOCAL ONLY: `C:\DAC-UW-Agent`.
+
+---
+
+## Phase 4: Full Underwriting Platform (April 17, 2026 — IN PROGRESS 🚧)
+
+**STATUS**: 🚧 **WEEK 1 COMPLETE** — 9-week build to transform DAC HealthPrice from a pricing calculator into a full underwriting platform. Frontend Week 1 shipped; backend Week 2 is next.
+
+**Commit**: `a4a5971` on `dac-healthprice-frontend` — live at https://dac-healthprice-frontend.vercel.app
+
+**Phase 4 Checklist**:
+| Week | What | Status |
+|------|------|--------|
+| Day 1 | Delete PricingWizard, update nav | ✅ Done |
+| Week 1 | ApplicationWizard (5-step) + StatusTracker | ✅ Done |
+| Week 2 | Backend: POST /api/v1/applications, documents/upload, status | ⬜ NEXT |
+| Week 2.5 | Actuarial Pricing Workbench (SHAP, sensitivity, assumptions editor) | ⬜ |
+| Week 3 | Underwriter Dashboard (ReviewQueue, CaseDetail, DecisionForm) | ⬜ |
+| Week 4 | Admin Console (ModelManagement, RulesManagement, SystemHealth) | ⬜ |
+| Week 5 | LangGraph workflow integration (FastAPI + Celery) | ⬜ |
+| Week 6 | Database schema + async processing (Redis + Celery) | ⬜ |
+| Week 7 | JWT auth + role-based access | ⬜ |
+| Week 8 | Integration + load testing | ⬜ |
+| Week 9 | Staging → production launch | ⬜ |
+
+**New Files (Week 1)**:
+- `src/ApplicationWizard.jsx` — 5-step applicant portal with localStorage draft persistence
+- `src/wizard/Step1_PersonalInfo.jsx` — personal info form
+- `src/wizard/Step2_MedicalHistory.jsx` — BMI calculator + condition checklist
+- `src/wizard/Step3_DocumentUpload.jsx` — drag-drop PDF upload
+- `src/wizard/Step4_DataReview.jsx` — review + per-section edit
+- `src/wizard/Step5_Consent.jsx` — 4 consent items + electronic signature
+- `src/StatusTracker.jsx` — case lookup + 30s auto-poll timeline
+
+**Resume Point**: `C:\DAC\dac-health\backend` — Week 2 endpoints.
+
+---
+
+## ETL Pipeline + Recalibration Engine (April 16, 2026 — BUILT ✅ | ⏳ Render endpoint pending)
+
+**STATUS**: ✅ **Code complete & tested locally** — data-feedback loop from Render production DB to versioned assumption updates. Full end-to-end run blocked pending one backend endpoint.
+
+**Context**: Cambodia pricer shipped on synthetic bootstrap (`v3.0-cambodia-2026-04-14`). No live feedback loop existed. Team discussed periodic sync approach; this build delivers it. **Pivot**: no real claims data yet → system does **distribution monitoring** (mix-feedback loop), not A/E mortality recalibration.
+
+**What Was Built** (commit `b7b4441`):
+- `etl/config.py` — `ETLConfig` frozen dataclass; reads all config from env vars with safe defaults
+- `etl/fetch.py` — async `ProductionDataFetcher`; calls `GET /admin/etl/quotes?since=<iso>` with `X-API-Key`
+- `etl/validate.py` — `SchemaValidator` (required fields, type coercion, range checks) + `OutlierDetector` (premium > 10× median → quarantine)
+- `etl/storage.py` — `LocalDatasetWriter`; single `data/synced/quotes.db` with `UNIQUE(source_hash)` dedup; append-only JSONL audit log
+- `etl/pipeline.py` — `ETLPipeline.run_sync()` orchestrator returning `SyncResult`
+- `medical_reader/calibration.py` — `CalibrationEngine`; cohort segmentation → stability-weighted candidate proposals → fairness gate → JSON version write
+- `medical_reader/pricing/versioning.py` — `load_version_raw()`, `materialize_assumptions()`, `promote_version()`, `rollback_to()`, `register_candidate_version()`
+- `medical_reader/pricing/assumptions_versions/v3.0-cambodia-2026-04-14.json` — active version (mirrors all dataclass defaults)
+- `medical_reader/pricing/assumptions_versions/VERSION_MANIFEST.json` — version registry + recalibration log
+- `api/routers/calibration.py` — 9 endpoints at `/api/v1/calibration/*`, all `admin_required`
+- `test_etl_pipeline.py` (13 tests) + `test_calibration_engine.py` (6 tests) — 19 passing
+
+**Guardrails**:
+| Guardrail | Value | Defeats |
+|-----------|-------|---------|
+| `MIN_COHORT_N` | 5 | Cohort-of-one noise |
+| `STABILITY_WEIGHT` | 0.9 | Single-cycle overreaction |
+| `MAX_CHANGE_PCT` | ±20% | Runaway multiplier drift |
+| `ABSOLUTE_MULTIPLIER_BOUNDS` | [0.75, 1.50] | Pathological extremes |
+| `FAIRNESS_DI_PASS` | ≥ 0.80 | Prakas 093 disparate-impact violation |
+
+**Auto-promote rule**: New version is auto-promoted if fairness pass + all guardrails OK. Otherwise stays as candidate for admin review.
+
+**Scoped for proposals**: `cambodia_occupational`, `cambodia_healthcare_tier`
+**Monitored-only (never auto-adjusted)**: `cambodia_endemic` (epidemiological — requires medical officer sign-off)
+
+**⚠️ Hard Blocker — Must do before pipeline can run end-to-end**:
+1. Deploy `GET /admin/etl/quotes?since=<iso>` in `C:\DAC\dac-health\backend` (Render backend)
+2. Set `PRODUCTION_API_KEY` + `ADMIN_TOKEN` env vars on local service
+3. Wire PSI monitor → `POST /api/v1/calibration/recalibrate?dry_run=true` when PSI > 0.25
+
+**Next to build** (see [ETL Pipeline topic](./topics/etl-pipeline-recalibration.md#next-to-build)):
+- Render backend endpoint (blocker)
+- Nightly APScheduler job (deferred; manual admin trigger sufficient for v1)
+- Real A/E claims integration path (when first claims data arrives)
+- CI gate: add calibration tests to GitHub Actions
+
+**New Wiki Pages**:
+- [ETL Pipeline + Recalibration (Source)](./sources/2026-04-16_etl-pipeline-recalibration.md) — full build record, deviations from design spec, open-question resolutions
+- [ETL Pipeline + Recalibration (Topic)](./topics/etl-pipeline-recalibration.md) — ⭐ living page: system diagram, guardrails table, API surface, next-to-build roadmap, design trade-offs
+
+---
+
+## Underwriter Dashboard & PSI Drift Monitor (April 15, 2026 — DEPLOYED ✅)
+
+**STATUS**: ✅ **LIVE** — Dashboard tab live at `https://dac-healthprice-frontend.vercel.app` (Life Insurance page → Underwriter Dashboard tab).
+
+**Context**: Actuaries need real-time visibility into model drift and HITL queue. Dashboard reads from `hp_quote_log` (the deployed health backend's PostgreSQL table).
+
+**What Was Built**:
+- `DriftMonitor.jsx` — 30-day PSI line chart (Recharts); reference lines at 0.10 (warn) / 0.25 (drift); reads `GET /dashboard/stats`
+- `UnderwriterQueue.jsx` — expandable HITL queue; reasoning trace per case; Approve/Decline buttons (`POST /cases/{id}/review`)
+- `LifeInsurancePricer.jsx` — two-tab layout (Pricing Calculator | Underwriter Dashboard)
+- `GET /dashboard/stats` — health backend endpoint: PSI on `total_annual_premium`, province split, `manual_review` queue, 30-day time series
+- `POST /cases/{id}/review` — updates `hp_quote_log.underwriting_status` to `approved` / `declined`
+
+**Key Repo / Path Facts**:
+- Live backend: `C:\DAC\dac-health\backend\app\main.py` (submodule → `PolyTheML/DAC-healthprice-backend`) — commit from INSIDE `C:\DAC\dac-health\backend`
+- Frontend: `C:\Users\TRC\dac-healthprice-frontend\src\`
+- UW agent (local only): `C:\DAC-UW-Agent`
+
+**New Wiki Pages**:
+- [Dashboard & Drift Monitor Deployment](./sources/2026-04-15_dashboard-drift-monitor-deployment.md) — full build record, DB schema, repo map
+- [Dashboard & Drift Monitor Plan](./topics/dashboard-drift-monitor-plan.md) — original spec (status updated to ✅ Complete)
 
 ---
 
@@ -328,6 +452,74 @@ Closes the loop between PDF extraction (life insurance intake) and health insura
 **How to Use**:
 1. **Start**: [Pricing Engine Phases](./topics/pricing-engine-phases.md) — understand all 5 phases
 2. **Reference**: [Pricing Engine Enhancement Plan](./sources/2026-04-11_pricing-engine-enhancement-plan.md) — detailed specs, file-by-file
+
+---
+
+## Thesis: Stress-Testing AI Underwriting in Emerging Markets (April 17, 2026 — NEW ✅)
+
+**STATUS**: ✅ **THESIS FRAMEWORK + PRESENTATION + INTEGRATION COMPLETE** — Full suite: master plan + 10-slide defense presentation + formatting guides + chapter templates + DAC platform integration roadmap. Ready for 8-week completion (~June 26, 2026).
+
+**What Was Delivered** (11 new wiki pages + presentation HTML + integration guide):
+
+### Thesis Master Planning & Presentation
+- [Thesis Defense: Stress-Testing Harness](./topics/thesis-defense-stress-testing-framework.md) — ⭐ **MASTER THESIS DOCUMENT**: Complete roadmap covering thesis structure (5 chapters), 3 experiments (baseline, PSI responsiveness, adversarial failure modes), LangGraph 5-phase implementation (optional), week-by-week timeline, success metrics, and critical files/references. **START HERE**.
+- [Thesis Defense Presentation Guide](./topics/thesis-presentation-guide.md) — ⭐ **NEW (2026-04-17)**: Interactive 10-slide HTML presentation (open `thesis/presentation.html` in browser); detailed speaker notes for all slides; anticipated examiner questions + answers; best practices for 45-minute defense talk.
+- [Thesis & DAC HealthPrice Integration](./sources/2026-04-17_thesis-dac-integration.md) — ⭐ **NEW (2026-04-17)**: Roadmap for parallel thesis + platform work; shows where thesis research becomes DAC production code; code change points in monitoring module, decision nodes, dashboard; week-by-week timeline.
+- [Thesis Defense: Presentation Slides](./sources/2026-04-17_thesis-presentation-slides.md) — ⭐ **NEW (2026-04-17)**: Complete documentation of 10-slide HTML presentation; slide-by-slide content, design features, usage instructions.
+
+### Formatting & Templates
+- [ITC Cambodia Thesis Formatting Guide](./sources/thesis-formatting-guide.md) — ⭐ **ESSENTIAL**: Complete font/spacing/margins specs (Times New Roman 12pt, 1.5 spacing, justified), front matter order (cover→acknowledgement→abstract→TOC), chapter structure, figure/table formatting, citations, and ITC-specific requirements based on sample theses.
+
+### Chapter Templates (Ready to Write)
+- [Thesis Cover Page Template](./sources/thesis-cover-template.md) — Front cover + back cover/title page format with metadata (institution, advisor, defense date, signature blocks)
+- [Thesis Acknowledgement Template](./sources/thesis-acknowledgement-template.md) — 3 example acknowledgements (standard, bilingual, internship-focused, research-focused); tone guidance; what to include/exclude
+- [Thesis Abstract & Résumé Template](./sources/thesis-abstract-template.md) — Abstract format (page iii), Résumé in French (page iv), optional Khmer summary; 5-paragraph structure; 250-400 word count; DO NOT include citations
+- [Thesis Chapter 1: Introduction Template](./sources/thesis-introduction-template.md) — 5-section structure (motivation, problem statement, objectives, contributions, organization); 3-5 pages; example for stress-testing thesis + general technical project
+- [Thesis Chapter 3: Methodology Template](./sources/thesis-methodology-template.md) — 6-section structure (research design, data generation, procedures, experimental design, evaluation metrics, implementation); 4-8 pages; complete synthetic data + PSI calculation walkthrough; reproducibility details
+- [Thesis Chapter 4: Results Template](./sources/thesis-results-template.md) — 3 experiments with tables/figures; factual presentation (no interpretation); example results tables with exact PSI values; failure mode detection results
+- [Thesis Chapter 5: Discussion & Conclusion Template](./sources/thesis-discussion-template.md) — 5-section structure (interpretation, literature comparison, limitations, practical implications, future work); 4-8 pages; example discussion connecting findings to prior work and Cambodia context
+
+### Thesis Progress Tracking
+The thesis wiki pages include:
+- **Week-by-week breakdown** (8 weeks total) with specific deliverables
+- **Key success metrics** for thesis quality, LangGraph implementation, and defense presentation
+- **Critical files** (experiment code locations, data paths, template references)
+- **Defense narrative** (45-minute talk structure with timing markers)
+- **Examiner Q&A prep** (anticipated questions + answer strategies)
+
+### Timeline Summary
+- **Weeks 1-2**: Draft Chapters 1-3, run EXP-003 tests, create figures
+- **Weeks 2-4**: Complete Chapters 4-5, implement LangGraph Phase 1 (intelligent routing)
+- **Weeks 3-8**: Implement LangGraph Phases 2-5 (anomaly detection, expert agent, persistent memory, versioning)
+- **Week 8**: Final revisions, presentation prep, **DEFENSE** 🎓
+
+### Integration with Stress-Testing Framework
+All chapter templates align with the completed stress-testing harness:
+- EXP-001 baseline validation (PSI = 0 by construction) ✅ PASSED
+- EXP-002 PSI responsiveness (monotonic increase 0%→50% distortion) ✅ PASSED
+- EXP-003 adversarial failure modes (3 scenarios + secondary metric detection) ✅ READY TO RUN
+
+### Optional: LangGraph Intelligent Routing
+If you implement Phase 1 (2-3 weeks):
+- Replaces hard-coded decision logic with Claude reasoning
+- Adds conditional routing: STP | HITL | ESCALATE | DECLINE
+- Integrates with multi-metric monitoring (PSI + 3 secondary metrics)
+- Includes working code example in `LANGGRAPH_IMPLEMENTATION_EXAMPLE.py`
+
+### Quick Start for Writing
+1. **Today**: Read [Master Thesis Document](./topics/thesis-defense-stress-testing-framework.md) (understand structure & timeline)
+2. **Chapter Writing**: Use templates (introduction → methodology → results → discussion)
+3. **Formatting**: Follow [Formatting Guide](./sources/thesis-formatting-guide.md) (Times New Roman 12pt, 1.5 spacing, justified)
+4. **Figures/Tables**: Use examples from [Results Template](./sources/thesis-results-template.md)
+5. **Defense**: Prepare using 45-minute talk structure in master document
+
+### Sample Thesis Analysis
+Templates are based on analysis of 3 actual ITC Cambodia theses:
+- Final Draft Thesis Year 5 by Tyda.pdf (violence detection)
+- Offical_Thesis_Vannak_Vireakyuth.pdf (video violence detection)
+- DORN_Dawin_Thesis_Final_Reported.pdf (automated passenger counting)
+
+All formatting guidelines extracted and codified for consistency.
 
 ---
 

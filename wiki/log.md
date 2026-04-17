@@ -4,6 +4,129 @@ Chronological record of all ingestions, queries, and maintenance operations on t
 
 ---
 
+## [2026-04-17 22:00] build | Phase 4 Day 1 + Week 1 — ApplicationWizard + StatusTracker
+
+Started Phase 4 (9-week full underwriting platform build). Completed Day 1 deletion and Week 1 frontend.
+
+**Day 1 — Deletion (complete)**:
+- Deleted `PricingWizard.jsx` (superseded by ApplicationWizard)
+- Removed `PricingPage` component + all "Pricing" references from `App.jsx`
+- Nav updated: Home | Apply | Track | Life Insurance | About | Contact
+
+**Week 1 — ApplicationWizard + StatusTracker (complete)**:
+- `ApplicationWizard.jsx` — 5-step wizard: progress bar, localStorage draft, step validation, graceful API fallback, success screen
+- `wizard/Step1_PersonalInfo.jsx` — personal info (8 fields)
+- `wizard/Step2_MedicalHistory.jsx` — BMI live calculator, conditions checklist, lifestyle toggles
+- `wizard/Step3_DocumentUpload.jsx` — drag-drop PDF (graceful fallback until backend deployed)
+- `wizard/Step4_DataReview.jsx` — full summary + per-section Edit buttons
+- `wizard/Step5_Consent.jsx` — 4 consent items + electronic signature
+- `StatusTracker.jsx` — case reference lookup, timeline view, 30s auto-poll
+
+**Commit**: `a4a5971` on `dac-healthprice-frontend` main — pushed to GitHub, Vercel auto-deploys
+
+**Next**: Week 2 — backend endpoints (`POST /api/v1/applications`, `POST /api/v1/documents/upload`, `GET /api/v1/applications/{id}/status`) in `C:\DAC\dac-health\backend`
+
+Metrics: 7 new files, 1 deleted, 1184 net lines added.
+
+---
+
+## [2026-04-17] experiment | EXP-003 Adversarial Failure Mode Detection — PASSED
+
+Ran EXP-003 end-to-end. All 3 failure modes caught (3/3) after fixing two bugs and redesigning test scenarios.
+
+**Bugs fixed**:
+- `stress_testing/adversarial.py` FM1: was using diabetic-only subset (not full 10K), inflating MR PSI; fixed to use full population with tight BP values (Normal(110,5) clipped to [90,118])
+- `stress_testing/adversarial.py` FM2: `DistortionScenario._replace()` → `dataclasses.replace()` (dataclass, not NamedTuple)
+- `stress_testing/adversarial.py` FM3: `motorbike_usage` override has no effect on MR calculator; redesigned to add hyperlipidemia+overweight to FHx applicants
+- `analytics/monitor.py` REFERENCE_DISTRIBUTION: was hand-crafted (PSI=1.07 for baseline); updated to match actual generator output ([0.00, 0.53, 0.25, 0.15, 0.06, 0.01, 0.00, 0.00])
+
+**Results**:
+| Failure Mode | MR PSI | Secondary Metric | Result |
+|---|---|---|---|
+| FM1: Label Drift (Comorbidity) | 0.0065 GREEN | Co-occurrence PSI: 0.079 | CAUGHT |
+| FM2: Feature Decoupling (Age) | 0.0037 GREEN | Age distribution PSI: 8.31 | CAUGHT |
+| FM3: Bin Edge Camouflage | 0.0083 GREEN | HITL rate change: +3.6% | CAUGHT |
+
+**Written**: `thesis/chapter1_introduction.md` — full Chapter 1 (~1,650 words, ITC format, 5 sections)
+
+---
+
+## [2026-04-17 18:45] ingest | Thesis Presentation + DAC HealthPrice Integration
+
+Ingested thesis presentation slides and platform integration roadmap into wiki.
+
+**New pages**:
+- `wiki/sources/2026-04-17_thesis-presentation-slides.md` — Documentation of 10-slide interactive HTML presentation; slide content, design features, usage instructions
+- `wiki/sources/2026-04-17_thesis-dac-integration.md` — Roadmap for parallel thesis + platform work; code integration points, week-by-week timeline, success criteria
+- `wiki/topics/thesis-presentation-guide.md` — Complete speaker notes for defense; slide-by-slide talking points, anticipated examiner questions + answers, best practices for 45-minute defense
+
+**Updated pages**:
+- `wiki/index.md` — Thesis section expanded; page count 118→121; new pages linked
+
+**Key artifacts created (outside wiki)**:
+- `thesis/presentation.html` — 10-slide interactive presentation (open in browser)
+- `thesis/THESIS_DAC_INTEGRATION.md` — Integration roadmap document
+
+**How to use**:
+1. **Present**: Open `thesis/presentation.html` in browser; use arrow keys to navigate
+2. **Prepare**: Read `wiki/topics/thesis-presentation-guide.md` for speaker notes + Q&A prep
+3. **Plan**: Review `wiki/sources/2026-04-17_thesis-dac-integration.md` for week-by-week platform integration
+
+Metrics: 3 new wiki pages, 1 page updated, 0 contradictions found.
+
+---
+
+## [2026-04-16 16:30] ingest | ETL Pipeline + Recalibration Engine build record
+
+Ingested design + build record from 2026-04-16 Opus coding session into wiki.
+Session was interrupted by usage limit mid-way; all code was committed (commit `b7b4441`) but some wiki bookkeeping was left unfinished.
+
+**New pages**:
+- `wiki/sources/2026-04-16_etl-pipeline-recalibration.md` — full build record: architecture, deviations from design spec, open-question resolutions, file manifest, test results, blockers
+- `wiki/topics/etl-pipeline-recalibration.md` — living topic page: system overview, pivot rationale, guardrails, API surface, next-to-build roadmap, design trade-offs
+
+**Updated pages**:
+- `wiki/index.md` — prototype #10 added; page count 116→118; sources 33→34; sources ingested list updated; key architecture note extended with ETL/calibration layer
+
+**Key facts captured for future sessions**:
+- ETL layer lives in `C:\DAC-UW-Agent\etl\` (5 files); calibration in `medical_reader/calibration.py`; versioning in `medical_reader/pricing/versioning.py`
+- Version store: `medical_reader/pricing/assumptions_versions/` — active: `v3.0-cambodia-2026-04-14.json`; manifest: `VERSION_MANIFEST.json`
+- API: 9 endpoints at `/api/v1/calibration/*`, all gated by `admin_required`
+- **Hard blocker**: `/admin/etl/quotes` endpoint does NOT yet exist on Render backend (`C:\DAC\dac-health\backend`). `POST /api/v1/calibration/sync` will 404 until it is deployed.
+- Pivot: No real claims data → system does **distribution monitoring** (mix-feedback), not A/E mortality feedback
+- 19 tests passing. 3 pre-existing failures in `test_pricing_calculator.py` (version string mismatch, unrelated to ETL)
+
+**Immediate blockers (must do before ETL pipeline can run end-to-end)**:
+1. Deploy `GET /admin/etl/quotes?since=<iso>` in `C:\DAC\dac-health\backend`
+2. Set `PRODUCTION_API_KEY` + `ADMIN_TOKEN` env vars on local service
+3. Wire PSI drift monitor → `POST /api/v1/calibration/recalibrate?dry_run=true` on PSI > 0.25
+
+Metrics: 2 new wiki pages, 1 page updated, 0 contradictions found.
+
+---
+
+## [2026-04-15 12:00] ingest | Dashboard & Drift Monitor deployment session
+
+Ingested full build record from 2026-04-15 coding session into wiki.
+
+**New pages**:
+- `wiki/sources/2026-04-15_dashboard-drift-monitor-deployment.md` — complete deployment record: repo map, DB schema, file list, endpoint specs, deployment status table
+
+**Updated pages**:
+- `wiki/topics/dashboard-drift-monitor-plan.md` — status updated from 📋 Planned → ✅ Complete; build record link added
+- `wiki/topics/react-frontend-architecture.md` — added `DriftMonitor.jsx` and `UnderwriterQueue.jsx` entries; updated backend API table with `/dashboard/stats` and `/cases/{id}/review`; corrected repo path (`C:\DAC\dac-health\backend` not `C:\DAC-UW-Agent`); added 2 new known limitations
+- `wiki/index.md` — prototype #9 added (Underwriter Dashboard); page count 115→116, sources 32→33; key architecture note added (two backends, live vs local)
+
+**Key facts captured for future sessions**:
+- Live backend = `C:\DAC\dac-health\backend` (git submodule) — commit from inside that dir
+- Frontend = `C:\Users\TRC\dac-healthprice-frontend\src\`
+- `UW_API_URL` in `LifeInsurancePricer.jsx` = `https://dac-healthprice-api.onrender.com`
+- HITL queue = `hp_quote_log` rows where `underwriting_status = 'manual_review'`
+
+Metrics: 1 new source page, 3 pages updated, 0 contradictions found.
+
+---
+
 ## [2026-04-15 00:00] implementation | Underwriter Dashboard & Drift Monitor
 
 Built all three tasks from `wiki/topics/dashboard-drift-monitor-plan.md`.
