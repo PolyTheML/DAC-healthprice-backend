@@ -6,16 +6,18 @@ full audit trail, 6-layer anti-scraping protection,
 client-specific partner API keys.
 """
 import os, re, time, uuid, logging, json, hashlib, secrets
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from typing import Optional, List
 from types import SimpleNamespace
 import httpx
 from collections import defaultdict, deque
 import numpy as np
+import jwt as pyjwt
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, field_validator, model_validator
 import asyncpg
 
@@ -57,6 +59,37 @@ def _rl(ip):
     now=time.monotonic();b=_buckets[ip];b["t"]=min(RL,b["t"]+(now-b["last"])*(RL/60));b["last"]=now
     if b["t"]>=1: b["t"]-=1; return True
     return False
+
+# ── JWT Staff Auth ────────────────────────────────────────────────────────────
+JWT_SECRET  = os.getenv("JWT_SECRET", "dac-dev-secret-change-in-production")
+JWT_ALGO    = "HS256"
+JWT_EXP_HRS = 8
+
+STAFF_USERS = {
+    "admin":   {"password": os.getenv("STAFF_ADMIN_PASS",   "dac2026!"), "role": "admin"},
+    "radet":   {"password": os.getenv("STAFF_RADET_PASS",   "dac2026!"), "role": "underwriter"},
+    "analyst": {"password": os.getenv("STAFF_ANALYST_PASS", "dac2026!"), "role": "analyst"},
+}
+
+_bearer = HTTPBearer(auto_error=False)
+
+async def get_current_staff(creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer)):
+    if not creds:
+        raise HTTPException(401, "Authentication required")
+    try:
+        payload = pyjwt.decode(creds.credentials, JWT_SECRET, algorithms=[JWT_ALGO])
+    except pyjwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token expired")
+    except pyjwt.InvalidTokenError:
+        raise HTTPException(401, "Invalid token")
+    return {"username": payload["sub"], "role": payload["role"]}
+
+def require_roles(*roles):
+    async def _check(user: dict = Depends(get_current_staff)):
+        if user["role"] not in roles:
+            raise HTTPException(403, f"Role '{user['role']}' cannot perform this action")
+        return user
+    return _check
 
 VALID_GENDERS=["Male","Female","Other"]
 VALID_SMOKING=["Never","Former","Current"]
@@ -334,6 +367,52 @@ async def lifespan(app):
                 """)
                 log.info("Schema migrations OK")
             except Exception as e: log.warning(f"Schema migration: {e}")
+            try:
+                await db_pool.execute("""
+                    CREATE TABLE IF NOT EXISTS applications (
+                        id TEXT PRIMARY KEY,
+                        status TEXT NOT NULL DEFAULT 'submitted',
+                        full_name TEXT,
+                        date_of_birth TEXT,
+                        gender TEXT,
+                        phone TEXT,
+                        email TEXT,
+                        region TEXT,
+                        occupation TEXT,
+                        national_id TEXT,
+                        medical_data JSONB,
+                        document_id TEXT,
+                        consent_signature TEXT,
+                        submitted_at TIMESTAMPTZ DEFAULT NOW(),
+                        updated_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                    CREATE TABLE IF NOT EXISTS application_events (
+                        id SERIAL PRIMARY KEY,
+                        case_id TEXT NOT NULL,
+                        event TEXT NOT NULL,
+                        done BOOLEAN DEFAULT TRUE,
+                        event_at TIMESTAMPTZ
+                    );
+                    CREATE TABLE IF NOT EXISTS documents (
+                        id TEXT PRIMARY KEY,
+                        case_id TEXT,
+                        filename TEXT,
+                        upload_status TEXT DEFAULT 'pending',
+                        extracted_data JSONB,
+                        created_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                """)
+                log.info("Application schema OK")
+            except Exception as e: log.warning(f"Application schema: {e}")
+            try:
+                await db_pool.execute("""
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS reviewer_id TEXT;
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS decision_notes TEXT;
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS decided_at TIMESTAMPTZ;
+                    ALTER TABLE applications ADD COLUMN IF NOT EXISTS risk_level TEXT;
+                """)
+                log.info("Application columns OK")
+            except Exception as e: log.warning(f"Application columns: {e}")
             # Load active partner keys into memory cache
             try:
                 rows=await db_pool.fetch("SELECT key_hash,partner_name,daily_limit FROM hp_partner_keys WHERE is_active=TRUE")
@@ -367,6 +446,13 @@ try:
     app.include_router(escalation_router)
 except Exception as _esc_err:
     log.warning(f"Escalation routes not loaded: {_esc_err}")
+
+# Vietnam case study — dual GLM + XGBoost pricing (demo endpoint)
+try:
+    from app.routes.vietnam_pricing import router as vietnam_router
+    app.include_router(vietnam_router)
+except Exception as _vn_err:
+    log.warning(f"Vietnam pricing routes not loaded: {_vn_err}")
 
 @app.middleware("http")
 async def mw(request:Request,call_next):
@@ -515,6 +601,21 @@ async def _log_b(qid,req,browser_id:str="",email:str="",anomaly_flag:bool=False)
 @app.get("/health")
 async def health():
     return {"status":"healthy","service":"DAC HealthPrice v2.3","pricing_approach":"Poisson-Gamma GLM","coefficient_version":COEFF["version"],"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/auth/login", tags=["auth"])
+async def login(body: LoginRequest):
+    user = STAFF_USERS.get(body.username.strip().lower())
+    if not user or not secrets.compare_digest(body.password, user["password"]):
+        raise HTTPException(401, "Invalid credentials")
+    token = pyjwt.encode(
+        {"sub": body.username, "role": user["role"], "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXP_HRS)},
+        JWT_SECRET, algorithm=JWT_ALGO,
+    )
+    return {"access_token": token, "token_type": "bearer", "role": user["role"], "username": body.username}
 
 # ── Partner key verification ─────────────────────────────────────────────────
 def _check_partner_daily(key_hash:str)->bool:
@@ -1114,6 +1215,477 @@ async def vietnam_select_model(body: VietnamSelectModelRequest):
         "confirmed_at": datetime.now(timezone.utc).isoformat(),
         "note": "This quote is valid for 30 days. Present policy_reference to your advisor to bind coverage.",
     }
+
+
+# ─── Dashboard helpers ────────────────────────────────────────────────────────
+# PSI reference distribution for total_annual_premium (Cambodia Silver-tier baseline)
+_HEALTH_PSI_REF = {
+    "bins":        [0, 200, 500, 800, 1200, 1800, 2500, 4000, float("inf")],
+    "proportions": [0.02, 0.20, 0.25, 0.20, 0.15, 0.10, 0.06, 0.02],
+}
+_PHNOM_PENH_ALIASES = {"phnom penh", "phonm penh", "pp"}
+
+def _psi_health(premiums: list) -> float:
+    """PSI on annual premium distribution vs baseline reference."""
+    if len(premiums) < 5:
+        return 0.0
+    bins     = _HEALTH_PSI_REF["bins"]
+    expected = np.array(_HEALTH_PSI_REF["proportions"], dtype=float)
+    values   = np.array(premiums, dtype=float)
+    bin_idx  = np.digitize(values, bins[1:])
+    counts   = np.bincount(bin_idx, minlength=8)[:8]
+    actual   = counts.astype(float) / max(len(values), 1)
+    eps = 1e-6
+    actual   = np.clip(actual,   eps, 1.0)
+    expected = np.clip(expected, eps, 1.0)
+    return round(float(max(np.sum((actual - expected) * np.log(actual / expected)), 0.0)), 6)
+
+def _classify_health_risk(inp: dict) -> str:
+    score = 0
+    if inp.get("smoking_status") == "Current":    score += 2
+    elif inp.get("smoking_status") == "Former":   score += 1
+    conds = inp.get("pre_existing_conditions") or inp.get("preexist_conditions") or []
+    if len(conds) >= 3:  score += 2
+    elif len(conds) >= 1: score += 1
+    if inp.get("occupation_type") in ("Industrial/High-Risk", "Manual Labor"): score += 1
+    if inp.get("ipd_tier") in ("Gold", "Platinum"): score += 1
+    if score >= 4: return "decline"
+    if score >= 3: return "high"
+    if score >= 1: return "medium"
+    return "low"
+
+def _health_reasoning(inp: dict, res: dict) -> str:
+    lines = [
+        f"Tier: {inp.get('ipd_tier','?')}  |  {inp.get('country','?')} / {inp.get('region','?')}",
+        f"Age {inp.get('age','?')} · {inp.get('gender','?')} · Smoking: {inp.get('smoking_status','?')}",
+    ]
+    conds = inp.get("pre_existing_conditions") or inp.get("preexist_conditions") or []
+    if conds: lines.append(f"Pre-existing: {', '.join(conds)}")
+    if inp.get("occupation_type"): lines.append(f"Occupation: {inp['occupation_type']}")
+    total = res.get("total_annual_premium", 0)
+    if total: lines.append(f"Annual premium: ${total:,.2f}")
+    uw = res.get("underwriting")
+    if uw and uw not in ("auto_approved", None): lines.append(f"UW flag: {uw}")
+    return "\n".join(lines)
+
+def _psi_series_health(rows: list, window_days: int = 30) -> list:
+    from collections import defaultdict as _dd
+    from datetime import date as _date, timedelta as _td
+    by_date: dict = _dd(list)
+    for row in rows:
+        try:
+            ca = row.get("created_at")
+            d  = ca.strftime("%Y-%m-%d") if hasattr(ca, "strftime") else str(ca)[:10]
+            rj = row.get("result_json", "{}")
+            res = json.loads(rj) if isinstance(rj, str) else dict(rj)
+            p = res.get("total_annual_premium", 0)
+            if p: by_date[d].append(float(p))
+        except Exception: pass
+    today  = datetime.now(timezone.utc).date()
+    result = []
+    for offset in range(window_days - 1, -1, -1):
+        target   = today - _td(days=offset)
+        date_str = target.strftime("%Y-%m-%d")
+        rolling  = [v for d, vals in by_date.items() if d <= date_str for v in vals]
+        batch    = rolling[-20:] if len(rolling) >= 20 else rolling
+        psi      = _psi_health(batch) if len(batch) >= 5 else 0.0
+        result.append({"date": date_str, "psi": psi, "n_cases": len(batch)})
+    return result
+
+
+class CaseReviewBody(BaseModel):
+    approved: bool
+    reviewer_id: str = "dashboard-user"
+    notes: str = ""
+
+
+class PersonalInfo(BaseModel):
+    fullName: str
+    dateOfBirth: str
+    gender: str
+    phone: str
+    email: str
+    region: str
+    occupation: str
+    nationalId: str = ""
+
+class MedicalInfo(BaseModel):
+    height: float
+    weight: float
+    smokingStatus: str
+    alcoholConsumption: str = "Not disclosed"
+    exerciseFrequency: str
+    bloodPressure: str = ""
+    preexistingConditions: list = []
+    familyHistory: list = []
+    currentMedications: str = ""
+
+class CoverageInfo(BaseModel):
+    tier: str = "Silver"
+    include_opd: bool = False
+    include_dental: bool = False
+    include_maternity: bool = False
+
+class ConsentInfo(BaseModel):
+    terms: bool = True
+    privacy: bool = True
+    dataProcessing: bool = True
+    truthfulness: bool = True
+    signature: str
+
+class ApplicationSubmit(BaseModel):
+    personal: PersonalInfo
+    medical: MedicalInfo
+    coverage: CoverageInfo = CoverageInfo()
+    consent: ConsentInfo
+    documentId: Optional[str] = None
+
+
+@app.get("/dashboard/stats", tags=["dashboard"])
+async def dashboard_stats(_: dict = Depends(get_current_staff)):
+    """Underwriter dashboard KPIs: PSI, HITL manual-review queue, province distribution."""
+    quotes  = []
+    pending = []
+    if db_pool:
+        try:
+            rows = await db_pool.fetch(
+                "SELECT quote_ref, input_json::text AS input_json, "
+                "result_json::text AS result_json, underwriting_status, created_at "
+                "FROM hp_quote_log ORDER BY created_at DESC LIMIT 200"
+            )
+            quotes = [dict(r) for r in rows]
+            pr = await db_pool.fetch(
+                "SELECT quote_ref, input_json::text AS input_json, "
+                "result_json::text AS result_json, underwriting_status, created_at "
+                "FROM hp_quote_log WHERE underwriting_status='manual_review' "
+                "ORDER BY created_at DESC LIMIT 10"
+            )
+            pending = [dict(r) for r in pr]
+        except Exception as e:
+            log.warning(f"dashboard DB: {e}")
+
+    # PSI on last 100 non-manual premiums
+    premiums = []
+    for q in quotes[:100]:
+        try:
+            r = json.loads(q["result_json"])
+            p = r.get("total_annual_premium", 0)
+            if p and q.get("underwriting_status") != "manual_review":
+                premiums.append(float(p))
+        except Exception: pass
+    psi_score  = _psi_health(premiums)
+    psi_status = "stable" if psi_score < 0.10 else ("warning" if psi_score < 0.25 else "drift")
+
+    # Province distribution
+    regions = []
+    for q in quotes:
+        try: regions.append(json.loads(q["input_json"]).get("region", "").lower())
+        except Exception: pass
+    pp = sum(1 for r in regions if r in _PHNOM_PENH_ALIASES)
+
+    # HITL summaries
+    pending_summaries = []
+    for row in pending:
+        try:
+            inp = json.loads(row["input_json"])
+            res = json.loads(row["result_json"])
+            pending_summaries.append({
+                "case_id":      row["quote_ref"],
+                "risk_level":   _classify_health_risk(inp),
+                "final_premium": res.get("total_annual_premium", 0),
+                "extracted_data": {
+                    "age":             inp.get("age"),
+                    "province":        inp.get("region"),
+                    "occupation_type": inp.get("occupation_type"),
+                },
+                "reasoning_trace": _health_reasoning(inp, res),
+            })
+        except Exception: pass
+
+    return {
+        "psi":                 {"current": round(psi_score, 4), "status": psi_status},
+        "province_distribution": {"phnom_penh": pp, "provinces": len(regions) - pp, "total": len(regions)},
+        "hitl_queue":          {"pending_count": len(pending_summaries), "pending_cases": pending_summaries},
+        "human_override_rate": {"total_reviewed": 0, "total_overridden": 0, "override_rate": 0.0, "by_risk_level": {}},
+        "psi_time_series":     _psi_series_health(quotes, window_days=30),
+    }
+
+
+@app.post("/cases/{case_id}/review", tags=["dashboard"])
+async def review_case(case_id: str, body: CaseReviewBody, _: dict = Depends(require_roles("admin", "underwriter"))):
+    """Approve or decline a manual-review case from the underwriter dashboard."""
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    new_status = "approved" if body.approved else "declined"
+    result = await db_pool.execute(
+        "UPDATE hp_quote_log SET underwriting_status=$1 WHERE quote_ref=$2",
+        new_status, case_id,
+    )
+    if result == "UPDATE 0":
+        raise HTTPException(404, f"Case {case_id} not found")
+    return {"case_id": case_id, "status": new_status, "reviewer_id": body.reviewer_id}
+
+
+_STATUS_DISPLAY = {
+    "submitted":    "Received",
+    "in_review":    "Under Review",
+    "approved":     "Approved",
+    "declined":     "Declined",
+    "referred":     "Decision Pending",
+    "pending_docs": "On Hold",
+}
+
+_STATUS_NOTES = {
+    "submitted":    "Your application has been received and is awaiting review.",
+    "in_review":    "Your application is currently under review by our underwriting team.",
+    "approved":     "Congratulations! Your application has been approved.",
+    "declined":     "After careful review, we are unable to offer coverage at this time.",
+    "referred":     "Your application requires additional review. We will contact you shortly.",
+    "pending_docs": "Additional documentation is required to process your application.",
+}
+
+_INITIAL_TIMELINE = [
+    ("Application received", True),
+    ("Initial review",       False),
+    ("Underwriter decision", False),
+    ("Policy issued",        False),
+]
+
+
+@app.post("/api/v1/applications", tags=["applications"])
+async def create_application(body: ApplicationSubmit):
+    case_id = f"DAC-{uuid.uuid4().hex[:8].upper()}"
+    now = datetime.now(timezone.utc)
+    if db_pool:
+        try:
+            await db_pool.execute(
+                "INSERT INTO applications(id,status,full_name,date_of_birth,gender,phone,email,region,occupation,national_id,medical_data,document_id,consent_signature)"
+                " VALUES($1,'submitted',$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11,$12)",
+                case_id,
+                body.personal.fullName, body.personal.dateOfBirth, body.personal.gender,
+                body.personal.phone, body.personal.email, body.personal.region,
+                body.personal.occupation, body.personal.nationalId,
+                json.dumps({"height": body.medical.height, "weight": body.medical.weight,
+                            "smokingStatus": body.medical.smokingStatus,
+                            "alcoholConsumption": body.medical.alcoholConsumption,
+                            "exerciseFrequency": body.medical.exerciseFrequency,
+                            "bloodPressure": body.medical.bloodPressure,
+                            "preexistingConditions": body.medical.preexistingConditions,
+                            "familyHistory": body.medical.familyHistory,
+                            "currentMedications": body.medical.currentMedications,
+                            "coverage": {"tier": body.coverage.tier, "include_opd": body.coverage.include_opd,
+                                         "include_dental": body.coverage.include_dental, "include_maternity": body.coverage.include_maternity}}),
+                body.documentId, body.consent.signature,
+            )
+            await db_pool.executemany(
+                "INSERT INTO application_events(case_id,event,done,event_at) VALUES($1,$2,$3,$4)",
+                [(case_id, ev, done, now if done else None) for ev, done in _INITIAL_TIMELINE],
+            )
+        except Exception as e:
+            log.warning(f"create_application DB: {e}")
+    return {"case_id": case_id}
+
+
+@app.get("/api/v1/applications/{case_id}/status", tags=["applications"])
+async def get_application_status(case_id: str):
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    row = await db_pool.fetchrow("SELECT * FROM applications WHERE id=$1", case_id)
+    if not row:
+        raise HTTPException(404, f"Case {case_id} not found")
+    events = await db_pool.fetch(
+        "SELECT event,event_at,done FROM application_events WHERE case_id=$1 ORDER BY id",
+        case_id,
+    )
+    return {
+        "case_id":        case_id,
+        "status":         _STATUS_DISPLAY.get(row["status"], row["status"].replace("_", " ").title()),
+        "submitted_at":   row["submitted_at"].isoformat() if row["submitted_at"] else None,
+        "applicant_name": row["full_name"],
+        "message":        _STATUS_NOTES.get(row["status"], "Your application is being processed."),
+        "timeline": [
+            {
+                "label": e["event"],
+                "date":  e["event_at"].strftime("%d %b %Y") if e["event_at"] else "",
+                "note":  "",
+                "done":  e["done"],
+            }
+            for e in events
+        ],
+    }
+
+
+@app.get("/api/v1/applications", tags=["applications"])
+async def list_applications(status: str = Query("submitted,in_review"), limit: int = Query(50, le=200), _: dict = Depends(get_current_staff)):
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    statuses = [s.strip() for s in status.split(",") if s.strip()]
+    rows = await db_pool.fetch(
+        "SELECT id,status,full_name,date_of_birth,gender,phone,email,region,occupation,"
+        "medical_data,risk_level,submitted_at,decided_at,reviewer_id FROM applications"
+        " WHERE status = ANY($1::text[]) ORDER BY submitted_at DESC LIMIT $2",
+        statuses, limit,
+    )
+    return {
+        "applications": [
+            {
+                "id": r["id"], "status": r["status"], "full_name": r["full_name"],
+                "date_of_birth": r["date_of_birth"], "gender": r["gender"],
+                "phone": r["phone"], "email": r["email"], "region": r["region"],
+                "occupation": r["occupation"],
+                "medical_data": r["medical_data"] if isinstance(r["medical_data"], dict) else
+                                (json.loads(r["medical_data"]) if r["medical_data"] else {}),
+                "risk_level": r["risk_level"],
+                "submitted_at": r["submitted_at"].isoformat() if r["submitted_at"] else None,
+                "decided_at": r["decided_at"].isoformat() if r["decided_at"] else None,
+                "reviewer_id": r["reviewer_id"],
+            }
+            for r in rows
+        ],
+        "total": len(rows),
+    }
+
+
+class DecisionBody(BaseModel):
+    outcome: str   # approved | declined | referred
+    notes: str = ""
+    reviewer_id: str
+
+
+@app.post("/api/v1/applications/{case_id}/decision", tags=["applications"])
+async def record_decision(case_id: str, body: DecisionBody, _: dict = Depends(require_roles("admin", "underwriter"))):
+    valid = {"approved", "declined", "referred"}
+    if body.outcome not in valid:
+        raise HTTPException(400, f"outcome must be one of {valid}")
+    if not db_pool:
+        raise HTTPException(503, "Database unavailable")
+    now = datetime.now(timezone.utc)
+    result = await db_pool.execute(
+        "UPDATE applications SET status=$1,reviewer_id=$2,decision_notes=$3,decided_at=$4,updated_at=$4"
+        " WHERE id=$5",
+        body.outcome, body.reviewer_id, body.notes, now, case_id,
+    )
+    if result == "UPDATE 0":
+        raise HTTPException(404, f"Case {case_id} not found")
+    await db_pool.execute(
+        "INSERT INTO application_events(case_id,event,done,event_at) VALUES($1,$2,TRUE,$3)",
+        case_id, f"Decision: {body.outcome} by {body.reviewer_id}", now,
+    )
+    return {"case_id": case_id, "status": body.outcome, "decided_at": now.isoformat()}
+
+
+@app.post("/api/v1/documents/upload", tags=["applications"])
+async def upload_document(file: UploadFile = File(...)):
+    if file.content_type not in ("application/pdf", "image/jpeg", "image/png"):
+        raise HTTPException(400, "Only PDF, JPEG, and PNG files are accepted")
+    doc_id = f"DOC-{uuid.uuid4().hex[:8].upper()}"
+    await file.read()  # consume stream
+    if db_pool:
+        try:
+            await db_pool.execute(
+                "INSERT INTO documents(id,filename,upload_status) VALUES($1,$2,'uploaded')",
+                doc_id, file.filename,
+            )
+        except Exception as e:
+            log.warning(f"upload_document DB: {e}")
+    return {"id": doc_id, "filename": file.filename, "status": "uploaded", "extracted": None}
+
+
+# ── Public Advisor Chat ──────────────────────────────────────────────────────
+ADVISOR_SYSTEM = """You are the DAC HealthPrice AI advisor — a friendly, knowledgeable assistant for customers applying for health insurance in Cambodia.
+
+Your role:
+- Help customers understand health insurance plans, pricing, coverage, and the application process
+- Answer questions about DAC HealthPrice's specific offerings
+- Guide customers through the portal (apply, track, documents)
+
+Key product knowledge:
+COVERAGE TIERS (IPD — inpatient hospital):
+- Bronze: $18/month, $10,000 annual limit, $500 deductible
+- Silver: $32/month, $40,000 annual limit, $250 deductible (most popular)
+- Gold: $58/month, $80,000 annual limit, $100 deductible
+- Platinum: $95/month, $150,000 annual limit, $0 deductible
+
+OPTIONAL RIDERS (add to any tier):
+- OPD (outpatient): +$12/month — doctor visits, lab tests, prescriptions
+- Dental: +$6/month — cleanings, fillings, emergency dental
+- Maternity: +$14/month — prenatal, delivery, postnatal, newborn care
+
+UNDERWRITING FACTORS that may affect your premium:
+- Smoking: +15–25%
+- High BMI (>30): +10–20%
+- Controlled hypertension: +10%
+- Diabetes: may require exclusion or loading
+- Cancer (within 5 years): case-by-case review
+
+APPLICATION PROCESS:
+1. Fill personal info and health profile (3 min)
+2. Choose coverage tier and optional riders
+3. Upload documents (National ID required; medical reports optional but speed up review)
+4. Sign consent and submit — receive a case reference number immediately
+5. Underwriting review: 3–5 business days
+6. Decision: Approved / Declined / On Hold
+
+DOCUMENTS NEEDED:
+- National ID or Passport (required, front side)
+- Medical reports from past 2 years (optional, speeds up review)
+- Employer/income letter (optional, helps with group pricing)
+
+CASE TRACKING: Customers use their case reference (format: DAC-XXXXXX) on the "Track My Case" page.
+
+CONTACT: radet@dactuaries.com | +855 85 508 860 | Phnom Penh, Cambodia | Mon–Fri 8am–5pm ICT
+
+Rules:
+- Stay focused on health insurance and the DAC platform. Politely decline off-topic requests.
+- Never give specific medical advice. Recommend consulting a doctor for medical questions.
+- Keep responses concise (2–5 sentences). Use bullet points for structured lists.
+- Be warm, professional, and clear — customers may be new to insurance.
+- If asked something you don't know, say so and direct to radet@dactuaries.com."""
+
+class AdvisorMessage(BaseModel):
+    role: str
+    content: str
+
+class AdvisorChatRequest(BaseModel):
+    messages: List[AdvisorMessage]
+    context: dict = {}
+
+@app.post("/api/v1/advisor/chat", tags=["advisor"])
+async def advisor_chat(body: AdvisorChatRequest, request: Request):
+    ip = request.client.host or "anon"
+    if not _rl(ip):
+        raise HTTPException(429, "Too many requests. Please wait a moment.")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(503, "Advisor service unavailable.")
+    messages = [{"role": m.role, "content": m.content} for m in body.messages[-10:]]
+    ctx_parts = []
+    if body.context.get("tier"): ctx_parts.append(f"Customer selected {body.context['tier']} tier")
+    if body.context.get("case_status"): ctx_parts.append(f"Case status: {body.context['case_status']}")
+    if body.context.get("case_id"): ctx_parts.append(f"Case reference: {body.context['case_id']}")
+    system = ADVISOR_SYSTEM + (f"\n\n[Current context: {'. '.join(ctx_parts)}.]" if ctx_parts else "")
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        r = await client.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "anthropic-beta": "prompt-caching-2024-07-31",
+                "content-type": "application/json",
+            },
+            json={
+                "model": "claude-haiku-4-5-20251001",
+                "max_tokens": 500,
+                "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+                "messages": messages,
+            },
+        )
+    if r.status_code != 200:
+        log.warning(f"Advisor chat error {r.status_code}: {r.text[:300]}")
+        raise HTTPException(502, "Advisor temporarily unavailable.")
+    data = r.json()
+    reply = data["content"][0]["text"] if data.get("content") else "I'm sorry, I couldn't respond right now. Please try again or email radet@dactuaries.com."
+    return {"reply": reply}
 
 
 @app.exception_handler(Exception)

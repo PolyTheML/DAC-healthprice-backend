@@ -12,3 +12,6 @@ joblib
 lightgbm
 googlemaps
 polyline
+xgboost
+shap
+PyJWT>=2.8.0
