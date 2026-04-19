@@ -955,18 +955,39 @@ except Exception as _ve: log.warning(f"Vietnam XGBoost not loaded (GLM fallback)
 
 class VietnamPriceRequest(BaseModel):
     age:int=Field(30,ge=18,le=85); bmi:float=Field(22.0,ge=14,le=50)
-    is_smoking:bool=False; is_exercise:bool=True; has_family_history:bool=False
+    gender:str=Field("Male")
+    smoking_status:str=Field("Never")         # Never | Former | Current
+    exercise_frequency:str=Field("Moderate")  # Sedentary | Light | Moderate | Active
+    has_family_history:bool=False
     monthly_income_millions_vnd:float=Field(15.0,ge=0)
     pre_existing_conditions:list=Field(default_factory=list)
     region:str="Ho Chi Minh City"; occupation:str="Office/Desk"
+    # Extended inputs — full parity with main pricing engine v2.3
+    alcohol:Optional[str]=Field(None)
+    prev_hospitalizations:Optional[int]=Field(None,ge=0,le=10)
+    medications_count:Optional[int]=Field(None,ge=0,le=20)
+    family_history:Optional[List[str]]=Field(default_factory=list)
+    marital_status:Optional[str]=Field(None)
+    diet:Optional[str]=Field(None)
+    sleep_quality:Optional[str]=Field(None)
+    stress_level:Optional[str]=Field(None)
+    motorbike_daily:Optional[str]=Field(None)
+    water_access:Optional[str]=Field(None)
+    healthcare_proximity:Optional[str]=Field(None)
+    family_size:int=Field(1,ge=1,le=10)
+    bmi_height:Optional[float]=Field(None); bmi_weight:Optional[float]=Field(None)
 
 def _vn_glm(req:VietnamPriceRequest)->dict:
     cc=len([c for c in req.pre_existing_conditions if c and c.lower()!="none"])
+    is_smoking=req.smoking_status=="Current"
+    is_exercise=req.exercise_frequency in ("Moderate","Active")
     h=_VN_GLM_COEFF["health_ols"]
-    hs=h["intercept"]+h["params"]["age"]*req.age+h["params"]["bmi"]*req.bmi+h["params"]["is_smoking"]*int(req.is_smoking)+h["params"]["is_exercise"]*int(req.is_exercise)+h["params"]["has_family_history"]*int(req.has_family_history)+h["params"]["condition_count"]*cc+h["params"]["monthly_income_millions_vnd"]*req.monthly_income_millions_vnd
+    hs=h["intercept"]+h["params"]["age"]*req.age+h["params"]["bmi"]*req.bmi+h["params"]["is_smoking"]*int(is_smoking)+h["params"]["is_exercise"]*int(is_exercise)+h["params"]["has_family_history"]*int(req.has_family_history)+h["params"]["condition_count"]*cc+h["params"]["monthly_income_millions_vnd"]*req.monthly_income_millions_vnd
     m=_VN_GLM_COEFF["mortality_gamma"]
-    lm=m["intercept"]+m["params"]["age"]*req.age+m["params"]["bmi"]*req.bmi+m["params"]["is_smoking"]*int(req.is_smoking)+m["params"]["is_exercise"]*int(req.is_exercise)+m["params"]["has_family_history"]*int(req.has_family_history)+m["params"]["condition_count"]*cc+m["params"]["monthly_income_millions_vnd"]*req.monthly_income_millions_vnd
-    return {"health_score":round(float(np.clip(hs,20,95)),1),"mortality_multiplier":round(float(np.clip(np.exp(lm),0.5,5.0)),3)}
+    lm=m["intercept"]+m["params"]["age"]*req.age+m["params"]["bmi"]*req.bmi+m["params"]["is_smoking"]*int(is_smoking)+m["params"]["is_exercise"]*int(is_exercise)+m["params"]["has_family_history"]*int(req.has_family_history)+m["params"]["condition_count"]*cc+m["params"]["monthly_income_millions_vnd"]*req.monthly_income_millions_vnd
+    ext_freq,_,_=_extended_factors(req,COEFF)
+    final_mm=float(np.clip(np.exp(lm)*ext_freq,0.5,5.0))
+    return {"health_score":round(float(np.clip(hs,20,95)),1),"mortality_multiplier":round(final_mm,3)}
 
 def _vn_premium(hs:float,mm:float)->dict:
     annual=round(float(np.clip(480.0*mm*(1+(70-hs)/250),80,8000)),0)
@@ -983,8 +1004,10 @@ def _vn_xgb(req:VietnamPriceRequest):
         le_r=_LE();le_r.fit(sorted(["Red River Delta","Northeast","Northwest","North Central","South Central Coast","Central Highlands","Southeast","Mekong Delta"]))
         CONDS=["Hypertension","Diabetes","Heart Disease","COPD/Asthma","Arthritis"]
         cf={f"has_{c.lower().replace('/','_').replace(' ','_')}":int(c in req.pre_existing_conditions) for c in CONDS}
-        feats=_pd.DataFrame([{"age":req.age,"bmi":req.bmi,"is_smoking":int(req.is_smoking),"is_exercise":int(req.is_exercise),"has_family_history":int(req.has_family_history),"monthly_income_millions_vnd":req.monthly_income_millions_vnd,"condition_count":sum(cf.values()),**cf,"region_enc":le_r.transform([_RM.get(req.region,"Southeast")])[0],"occupation_enc":le_o.transform([_OM.get(req.occupation,"Office Worker")])[0]}])
+        is_smoking=req.smoking_status=="Current"; is_exercise=req.exercise_frequency in ("Moderate","Active")
+        feats=_pd.DataFrame([{"age":req.age,"bmi":req.bmi,"is_smoking":int(is_smoking),"is_exercise":int(is_exercise),"has_family_history":int(req.has_family_history),"monthly_income_millions_vnd":req.monthly_income_millions_vnd,"condition_count":sum(cf.values()),**cf,"region_enc":le_r.transform([_RM.get(req.region,"Southeast")])[0],"occupation_enc":le_o.transform([_OM.get(req.occupation,"Office Worker")])[0]}])
         hs=float(np.clip(_vn_xgb_health.predict(feats)[0],20,95)); mm=float(np.clip(_vn_xgb_life.predict(feats)[0],0.5,5.0))
+        ext_freq,_,_=_extended_factors(req,COEFF); mm=float(np.clip(mm*ext_freq,0.5,5.0))
         FL={"age":"Age","bmi":"BMI","is_smoking":"Smoker","is_exercise":"Exercises","has_family_history":"Family History","monthly_income_millions_vnd":"Monthly Income","condition_count":"# Conditions","has_hypertension":"Hypertension","has_diabetes":"Diabetes","has_heart_disease":"Heart Disease","has_copd_asthma":"COPD/Asthma","has_arthritis":"Arthritis","region_enc":"Region","occupation_enc":"Occupation"}
         def _shap3(model,X):
             sv=_shap.TreeExplainer(model)(X);vals=sv.values[0];cols=list(X.columns)
