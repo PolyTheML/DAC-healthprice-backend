@@ -7,3 +7,23 @@ __pycache__/
 data/synced/*.db
 data/synced/*.db-journal
 data/synced/etl_audit_log.json
+
+# Local tooling / IDE state (user-specific, not for version control)
+.claude/
+.obsidian/
+.mcp.json.local
+.graphify_uncached.txt
+graphify-out/
+
+# User-private article clippings (may contain copyrighted content)
+Clippings/
+
+# Generated test outputs
+test_outputs/
+
+# SQLite dev database (created automatically on first run)
+*.db
+*.db-journal
+
+# Accidental scratch dir
+path/

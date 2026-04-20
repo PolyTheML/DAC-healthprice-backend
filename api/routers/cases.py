@@ -4,24 +4,25 @@ import tempfile
 from datetime import datetime
 from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
-from api.deps import get_graph, get_case_store
+from api import crud
+from api.database import get_db
+from api.deps import get_graph
 from api.models import (
-    CaseSubmitResponse,
+    CaseDetailResponse,
     CaseListItem,
+    CaseSubmitResponse,
     ReviewRequest,
     ReviewResponse,
-    CaseDetailResponse,
-    AuditReportResponse,
 )
 from medical_reader.state import UnderwritingState
 
 
 class HealthQuoteRequest(BaseModel):
-    """Optional overrides when bridging a case to health insurance pricing."""
     country: str = Field(default="cambodia", description="cambodia | vietnam")
     region: str = Field(default="Phnom Penh")
     ipd_tier: str = Field(default="Silver", description="Bronze | Silver | Gold | Platinum")
@@ -29,46 +30,35 @@ class HealthQuoteRequest(BaseModel):
     face_amount: float = Field(default=50_000.0, ge=10_000.0, le=500_000.0)
     policy_term_years: int = Field(default=1, ge=1, le=40)
 
+
 router = APIRouter()
 
 
 def generate_case_id() -> str:
-    """Generate a unique case ID."""
     return f"CASE-{datetime.now():%Y%m%d-%H%M%S}"
 
 
 @router.post("", response_model=CaseSubmitResponse)
-async def submit_case(file: UploadFile = File(...)):
-    """
-    Submit a new case: upload PDF and run through underwriting workflow.
-
-    Returns immediately with current state (may be approved, declined, or pending review).
-    """
+async def submit_case(file: UploadFile = File(...), db: Session = Depends(get_db)):
     graph = get_graph()
-    case_store = get_case_store()
-
     case_id = generate_case_id()
 
-    # Write uploaded file to temp location
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
         content = await file.read()
         tmp.write(content)
         pdf_path = tmp.name
 
-    # Run the case through the workflow
     try:
-        state = graph.invoke(
+        result = graph.invoke(
             {"case_id": case_id, "source_document_path": pdf_path},
-            config={"configurable": {"thread_id": case_id}}
+            config={"configurable": {"thread_id": case_id}},
         )
-        state = UnderwritingState(**state)
+        state = UnderwritingState(**result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Workflow execution failed: {str(e)}")
 
-    # Store in case registry
-    case_store[case_id] = state
+    crud.upsert_case(db, state)
 
-    # Return summary
     return CaseSubmitResponse(
         case_id=state.case_id,
         status=state.status,
@@ -83,35 +73,29 @@ async def submit_case(file: UploadFile = File(...)):
 
 
 @router.get("", response_model=list[CaseListItem])
-async def list_cases():
-    """List all cases."""
-    case_store = get_case_store()
-
-    items = []
-    for case_id, state in case_store.items():
-        items.append(CaseListItem(
-            case_id=state.case_id,
-            status=state.status,
-            risk_level=state.risk_level.value,
-            risk_score=state.risk_score,
-            final_premium=state.actuarial.final_premium,
-            reviewer_id=state.review.reviewer_id,
-            created_at=state.created_at,
-        ))
-
-    return items
+async def list_cases(db: Session = Depends(get_db)):
+    records = crud.list_case_records(db)
+    return [
+        CaseListItem(
+            case_id=r.case_id,
+            status=r.status,
+            risk_level=r.risk_level,
+            risk_score=r.risk_score,
+            final_premium=r.final_premium,
+            reviewer_id=r.human_reviewer_id,
+            created_at=r.created_at,
+        )
+        for r in records
+    ]
 
 
 @router.get("/{case_id}", response_model=CaseDetailResponse)
-async def get_case(case_id: str):
-    """Get full case details."""
-    case_store = get_case_store()
-
-    if case_id not in case_store:
+async def get_case(case_id: str, db: Session = Depends(get_db)):
+    record = crud.get_case(db, case_id)
+    if not record:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
 
-    state = case_store[case_id]
-
+    state = crud.record_to_state(record)
     return CaseDetailResponse(
         case_id=state.case_id,
         status=state.status,
@@ -130,28 +114,18 @@ async def get_case(case_id: str):
 
 
 @router.post("/{case_id}/review", response_model=ReviewResponse)
-async def submit_review(case_id: str, review: ReviewRequest):
-    """
-    Submit a human review decision for a case awaiting review.
-
-    Only valid when case.status == "review".
-    Resumes the workflow from the HITL checkpoint.
-    """
+async def submit_review(case_id: str, review: ReviewRequest, db: Session = Depends(get_db)):
     graph = get_graph()
-    case_store = get_case_store()
-
-    if case_id not in case_store:
+    record = crud.get_case(db, case_id)
+    if not record:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
 
-    state = case_store[case_id]
-
-    if state.status != "review":
+    if record.status != "review":
         raise HTTPException(
             status_code=409,
-            detail=f"Case {case_id} is not awaiting review (current status: {state.status})"
+            detail=f"Case {case_id} is not awaiting review (current status: {record.status})",
         )
 
-    # Resume the workflow with the reviewer decision
     try:
         from langgraph.types import Command
         result = graph.invoke(
@@ -160,14 +134,15 @@ async def submit_review(case_id: str, review: ReviewRequest):
                 "notes": review.notes,
                 "reviewer_id": review.reviewer_id,
             }),
-            config={"configurable": {"thread_id": case_id}}
+            config={"configurable": {"thread_id": case_id}},
         )
         updated_state = UnderwritingState(**result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Review submission failed: {str(e)}")
 
-    # Update case store
-    case_store[case_id] = updated_state
+    crud.apply_human_review(
+        db, case_id, review.approved, review.reviewer_id, review.notes, updated_state
+    )
 
     return ReviewResponse(
         case_id=updated_state.case_id,
@@ -179,57 +154,41 @@ async def submit_review(case_id: str, review: ReviewRequest):
 
 
 @router.get("/{case_id}/audit-report", response_class=PlainTextResponse)
-async def get_audit_report(case_id: str):
-    """Get plaintext audit report for a case."""
-    case_store = get_case_store()
-
-    if case_id not in case_store:
+async def get_audit_report(case_id: str, db: Session = Depends(get_db)):
+    record = crud.get_case(db, case_id)
+    if not record:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
-
-    state = case_store[case_id]
-    return state.to_audit_report()
+    return crud.record_to_state(record).to_audit_report()
 
 
 @router.get("/{case_id}/summary", response_model=dict)
-async def get_case_summary(case_id: str):
-    """Get JSON summary for a case."""
-    case_store = get_case_store()
-
-    if case_id not in case_store:
+async def get_case_summary(case_id: str, db: Session = Depends(get_db)):
+    record = crud.get_case(db, case_id)
+    if not record:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
-
-    state = case_store[case_id]
-    return state.to_summary()
+    return crud.record_to_state(record).to_summary()
 
 
 @router.post("/{case_id}/health-quote")
-async def get_health_quote(case_id: str, req: HealthQuoteRequest = None):
-    """
-    Bridge life insurance case → health insurance GLM quote.
-
-    Takes the medical data already extracted from the PDF (via the intake node)
-    and prices it through the health insurance engine.  Returns both the
-    original life insurance actuarial result and a new health insurance quote
-    side-by-side so an actuary can review both in a single response.
-
-    Fields absent from the medical PDF (occupation, diet, exercise, etc.) are
-    given conservative clinical defaults; all mapping decisions are reported in
-    `mapping_notes` for the audit trail.
-    """
+async def get_health_quote(
+    case_id: str,
+    req: HealthQuoteRequest = None,
+    db: Session = Depends(get_db),
+):
     if req is None:
         req = HealthQuoteRequest()
 
-    case_store = get_case_store()
-    if case_id not in case_store:
+    record = crud.get_case(db, case_id)
+    if not record:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
 
-    state = case_store[case_id]
+    state = crud.record_to_state(record)
 
     if not state.is_intake_complete:
         raise HTTPException(
             status_code=409,
             detail=f"Case {case_id} intake not complete (status: {state.status}). "
-                   "Submit and process the case first."
+                   "Submit and process the case first.",
         )
 
     try:
@@ -267,24 +226,17 @@ async def get_health_quote(case_id: str, req: HealthQuoteRequest = None):
 
 
 @router.get("/{case_id}/pricing-breakdown")
-async def get_pricing_breakdown(case_id: str):
-    """
-    Get full pricing breakdown for a case.
-
-    Returns complete premium calculation with transparent component breakdown,
-    risk factors applied, mortality ratio, and assumption version for compliance.
-    """
-    case_store = get_case_store()
-
-    if case_id not in case_store:
+async def get_pricing_breakdown(case_id: str, db: Session = Depends(get_db)):
+    record = crud.get_case(db, case_id)
+    if not record:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
 
-    state = case_store[case_id]
+    state = crud.record_to_state(record)
 
     if not state.is_pricing_complete:
         raise HTTPException(
             status_code=409,
-            detail=f"Case {case_id} pricing not yet complete (status: {state.status})"
+            detail=f"Case {case_id} pricing not yet complete (status: {state.status})",
         )
 
     return {
