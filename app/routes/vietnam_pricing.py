@@ -4,6 +4,7 @@ Returns both models side-by-side with SHAP top-3 drivers.
 No auth required (demo endpoint for Vietnamese insurer pitch).
 """
 import asyncio
+import csv
 import json
 import math
 import os
@@ -254,6 +255,26 @@ async def vietnam_reference():
 
 # ── Vietnam model version history ─────────────────────────────────────────────
 
+_VN_DATA_PATH = Path(__file__).parent.parent.parent / "case-study" / "vietnam_dataset.csv"
+_BASELINE_SMOKER_RATIO = 0.25  # smoker prevalence at original training run
+
+
+def _compute_smoker_ratio() -> tuple:
+    """Read the Vietnam dataset and return (smoker_ratio, total_records).
+    Falls back to baseline if file is missing or unreadable."""
+    try:
+        smoker_count = total = 0
+        with open(_VN_DATA_PATH, newline="") as f:
+            for row in csv.DictReader(f):
+                total += 1
+                if int(row.get("is_smoking", 0)) == 1:
+                    smoker_count += 1
+        ratio = smoker_count / total if total else _BASELINE_SMOKER_RATIO
+        return (ratio, total)
+    except Exception:
+        return (_BASELINE_SMOKER_RATIO, 2000)
+
+
 _VERSIONS_PATH = VIETNAM_MODEL_DIR / "version_history.json"
 
 _SEED_VERSIONS = [
@@ -316,6 +337,38 @@ async def vietnam_retrain(req: RetrainRequest):
 
     await asyncio.sleep(2)  # simulate training time
 
+    # Read the actual dataset to make metric shifts data-aware
+    smoker_ratio, record_count = _compute_smoker_ratio()
+    smoker_excess = smoker_ratio - _BASELINE_SMOKER_RATIO  # +ve = more smokers than baseline
+
+    # More smokers → higher RMSE (model faces a higher-risk, harder-to-fit cohort)
+    # Scale: +10% excess smokers adds ~0.15 to the RMSE multiplier (turning an improvement into a regression)
+    rmse_mult = random.uniform(0.97, 0.995) + (smoker_excess * 1.5)
+
+    # More smokers → R² gains slightly less (or regresses) due to elevated variance in targets
+    r2_adj = -smoker_excess * 0.02
+
+    training_size = int(record_count * 0.8) if record_count > 0 else 1600
+
+    if smoker_excess > 0.02:
+        cohort_note = (
+            f"smoker prevalence {smoker_ratio:.1%} "
+            f"(+{smoker_excess:.1%} vs baseline {_BASELINE_SMOKER_RATIO:.1%}). "
+            f"Elevated RMSE reflects increased model uncertainty in higher-risk cohort."
+        )
+    elif smoker_excess < -0.02:
+        cohort_note = (
+            f"smoker prevalence {smoker_ratio:.1%} "
+            f"({smoker_excess:.1%} vs baseline {_BASELINE_SMOKER_RATIO:.1%}). "
+            f"Tighter confidence intervals due to lower-risk cohort composition."
+        )
+    else:
+        cohort_note = (
+            f"smoker prevalence {smoker_ratio:.1%} "
+            f"(stable vs baseline {_BASELINE_SMOKER_RATIO:.1%}). "
+            f"Metrics within expected range."
+        )
+
     now = datetime.now(timezone.utc).isoformat()
     types_to_train = ["health", "life"] if req.model_type == "both" else [req.model_type]
     new_versions = []
@@ -335,11 +388,10 @@ async def vietnam_retrain(req: RetrainRequest):
 
         base_r2   = current_active["r2"]   if current_active else (0.985 if model_type == "health" else 0.994)
         base_rmse = current_active["rmse"] if current_active else (0.85  if model_type == "health" else 0.029)
-        base_records = current_active["training_records"] if current_active else 1600
-
-        new_r2   = round(min(0.999, base_r2 + random.uniform(0.001, 0.003)), 4)
-        new_rmse = round(base_rmse * random.uniform(0.97, 0.995), 4 if model_type == "life" else 3)
         rmse_unit = "health score points" if model_type == "health" else "mortality multiplier"
+
+        new_r2   = round(min(0.999, max(0.85, base_r2 + random.uniform(0.001, 0.002) + r2_adj)), 4)
+        new_rmse = round(base_rmse * max(0.5, rmse_mult), 4 if model_type == "life" else 3)
 
         new_ver = {
             "version_id": f"vn-{model_type}-xgb-v{version_num}.0",
@@ -348,9 +400,9 @@ async def vietnam_retrain(req: RetrainRequest):
             "r2": new_r2,
             "rmse": new_rmse,
             "rmse_unit": rmse_unit,
-            "training_records": base_records + random.randint(50, 200),
+            "training_records": training_size,
             "status": "active",
-            "notes": "Retrain triggered via Admin Console — incremental dataset update",
+            "notes": f"Retrain on {record_count:,} records — {cohort_note}",
         }
         _vietnam_versions.append(new_ver)
         new_versions.append(new_ver)
@@ -363,6 +415,11 @@ async def vietnam_retrain(req: RetrainRequest):
         "new_versions": new_versions,
         "message": f"Successfully retrained {req.model_type} model(s). New version(s) are now active.",
         "trained_at": now,
+        "data_summary": {
+            "records": record_count,
+            "smoker_ratio": round(smoker_ratio, 4),
+            "smoker_excess_vs_baseline": round(smoker_excess, 4),
+        },
     }
 
 
