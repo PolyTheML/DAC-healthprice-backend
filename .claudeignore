@@ -1,0 +1,37 @@
+# Data/binaries
+*.parquet
+*.pdf
+*.html
+data/
+graphify-out/
+
+# Archives & temp
+_archive/
+test_outputs/
+__pycache__/
+*.pyc
+*.pyo
+
+# Stale root-level report docs
+LINT_REPORT*.md
+CHANGES_SUMMARY.md
+AUTORESEARCH_OPTIMIZATION.md
+PHASE_4_ROADMAP.md
+DAC_PLATFORM_WALKTHROUGH.md
+PRODUCTION_STACK.md
+
+# Raw immutable sources (not for coding)
+sources/
+research_log/
+
+# Test data
+medical_reader/test_data/
+test_data/
+
+# Experiments moved to thesis project
+stress_testing/
+
+# Broken empty path directories (junk from Windows path bug)
+C:DAC-UW-Agent/
+C:DAC-UW-Agentcase-study/
+C:DAC-UW-Agentstress_testingauto_insurance/

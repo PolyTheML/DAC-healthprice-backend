@@ -4,6 +4,215 @@ Chronological record of all ingestions, queries, and maintenance operations on t
 
 ---
 
+## [2026-04-21 09:00] lint | Wiki cleanup — focus on Vietnam + DAC platform
+
+Token usage RCA triggered this pass. Archived off-topic content, moved thesis pages to separate project.
+
+- **Moved to `C:\DAC-UW-Thesis\wiki\`** (14 pages): auto-insurance-telematics-thesis, thesis-defense-stress-testing-framework, thesis-presentation-guide, all 11 thesis template/source pages
+- **Archived to `wiki/_archive/`** (67 pages): 25 topics (general AI/agentic research, Document AI course lessons, AutoResearch meta-tools), 24 sources (harness papers, Anthropic research articles, life insurance 50-resources, company case studies), 18 entities (OCR tools, company entities, infrastructure)
+- **Deleted**: 3 broken empty directories (`C:DAC-UW-Agent/`, `C:DAC-UW-Agentcase-study/`, `C:DAC-UW-Agentstress_testingauto_insurance/`) — junk from Windows path bug
+- **Created**: `.claudeignore` targeting data files, archives, test data, report docs
+- **Rewrote `wiki/index.md`**: 1,014 lines → ~160 lines (active pages only)
+
+Metrics: 51 active pages remain (was 124). 0 contradictions. Archive is reversible.
+
+---
+
+## [2026-04-20 01:00] lint-fixes | Applied all 6 lint recommendations (R1-R6)
+
+All recommended fixes from the 2026-04-20 lint pass applied.
+
+**R1 — Thesis pivot (C1 fixed)**:
+- Added "Auto Insurance Telematics Thesis" section to `index.md` (active thesis, ACTIVE 🚀)
+- Marked old life insurance thesis section as ARCHIVED ⚠️ with link to archive folder
+- `index.md` now accurately reflects thesis domain and experiment status
+
+**R2 — Phase 4 checklist + header (S1/S2 fixed)**:
+- Phase 4 checklist: Weeks 2-7 all marked ✅ Done with accurate descriptions
+- "Last Updated" header updated to 2026-04-20
+- EXP-003 status: "READY TO RUN" → "3/3 PASSED — COMPLETE (2026-04-17)"
+
+**R3 — Near-orphan fix**:
+- `wiki/topics/thesis-defense-stress-testing-framework.md`: Added cross-link to `thesis-presentation-guide.md` in header block
+
+**R4 — Auto insurance thesis master page**:
+- Created `wiki/topics/auto-insurance-telematics-thesis.md` — full master plan page
+- Covers thesis title, 6-chapter structure, 4 experiments (001-004), timeline, platform integration, key files
+
+**R5 — Experiment results source page**:
+- Created `wiki/sources/2026-04-20_exp001-exp003-results.md`
+- Full build records for EXP-001/002/003 including hypothesis, method, results, bugs fixed, chapter implications
+
+**R6 — Phase 4 Weeks 2-7 source page**:
+- Created `wiki/sources/2026-04-17_phase4-weeks2-7.md`
+- Week-by-week build records: Weeks 2, 2.5, 3, 4, 5, 6, 6.5, 7 + Week 8 pending spec
+
+**Page count**: 121 → 124 (1 new topic, 2 new sources)
+
+Metrics: 3 new pages added, 4 pages updated, 2 contradictions resolved, 3 staleness issues resolved.
+
+---
+
+## [2026-04-20 00:00] lint | Wiki health check — staleness + contradiction report
+
+Full lint pass: scanned `index.md`, `log.md`, all `topics/`, `entities/`, `sources/` pages. Python archive completed in same session.
+
+---
+
+### Python Archive (completed)
+
+Moved three inactive Python modules to `_archive/python/` — not related to DAC platform, Vietnam case study, or thesis:
+- `research_automation/` — standalone paper discovery daemon (built 2026-04-10)
+- `demo/` — Streamlit demo dashboard for Peter meeting (built 2026-04-11, superseded by React frontend)
+- `run_app.py` — old Streamlit launcher for `medical_reader/app.py`
+
+`_archive/README.md` created with context. Git history preserved (rename only).
+
+---
+
+### Health Metrics
+
+| Metric | Value | Target | Status |
+|--------|-------|--------|--------|
+| Contradictions | 2 | 0 | ⚠️ Flag |
+| Orphans (0 inbound links) | 0 | 0 | ✅ |
+| Near-orphans (1-2 inbound) | 2 pages | 0 | ⚠️ Low |
+| Link density (topic avg) | ~5-6 per page | 3-5 | ✅ |
+| Citation coverage | ~95% | >95% | ✅ |
+| Major stale sections | 3 | 0 | ❌ Critical |
+| Missing pages (unrecorded events) | 6+ | 0 | ❌ Critical |
+
+**Overall wiki health**: ⚠️ STALE — `index.md` is 3+ days behind on Phase 4 (Weeks 2-7) and thesis pivot. Contradictions and missing pages are the priority.
+
+---
+
+### Contradictions Found
+
+**C1 — CRITICAL: Thesis domain mismatch**
+- `wiki/index.md` line 502: "Thesis: Stress-Testing AI Underwriting in Emerging Markets" (life insurance framework, stress-testing harness)
+- **Reality** (per memory + commit `c4386d2` 2026-04-20): Thesis has fully pivoted to **"Validating Population Stability Metrics for Dynamic Auto Insurance Pricing with Telematics Data"** — auto insurance telematics, synthetic telematics generator, EXP-001/002/003 all running on auto/telematics data
+- **Fix**: Add new thesis section to `index.md`; mark old life insurance thesis section as archived
+
+**C2 — EXP-003 status wrong**
+- `wiki/index.md` line 544: "EXP-003 adversarial failure modes (3 scenarios + secondary metric detection) ✅ READY TO RUN"
+- **Reality** (log entry 2026-04-17, commit `dc16035`): EXP-003 **already ran and PASSED** (3/3 failure modes caught; FM1 idle AMBER, FM2 idle RED, FM3 cohort RED=42.3)
+- **Fix**: Update EXP-003 status to ✅ PASSED in any index references
+
+---
+
+### Staleness Issues
+
+**S1 — CRITICAL: Phase 4 checklist 6 weeks behind**
+- `index.md` line 47-58: Phase 4 checklist shows Weeks 2-9 all as "⬜" (pending), Week 1 as latest done
+- **Reality** (per memory 2026-04-17): Weeks 2-7 are all complete:
+  - Week 2: Backend `/api/v1/applications` + document upload ✅
+  - Week 2.5: GLM Actuarial Workbench ✅
+  - Week 3: Underwriter Dashboard ✅
+  - Week 4: Admin Console ✅
+  - Week 5: Nav rename + Public Portal scope ✅
+  - Week 6: Public Portal SPA ✅
+  - Week 6.5: AI advisor chatbot (Claude Haiku) ✅
+  - Week 7: JWT auth + role-based access ✅
+
+**S2 — CRITICAL: Index "Last Updated" header is stale**
+- `index.md` line 17-18: "Last Updated: 2026-04-17 (Phase 4 Week 1 — ApplicationWizard + StatusTracker — DEPLOYED)"
+- **Reality**: Multiple major builds have shipped since then (Weeks 2-7, Vietnam ML, thesis pivot, experiments)
+
+**S3 — Vietnam case study progress not reflected**
+- `index.md` has no entry for Vietnam case study progress past Day 5-6 (backend wired)
+- **Reality** (per memory 2026-04-17): Days 7-14 complete — Vietnam ML tab live, retraining trigger + version history UI, 12-slide HTML presentation created
+- No wiki source/topic pages exist for Vietnam Days 7-12 build records
+
+---
+
+### Near-Orphan Pages (< 3 inbound links)
+
+| Page | Inbound Refs | Notes |
+|------|-------------|-------|
+| `wiki/topics/thesis-presentation-guide.md` | 3 | Linked from index only; could add link from `thesis-defense-stress-testing-framework.md` |
+| `wiki/sources/2026-04-17_thesis-presentation-slides.md` | 2 | Only linked from index + log; near-orphan |
+
+---
+
+### Missing Pages (events with no wiki record)
+
+| Event | Date | Missing Content |
+|-------|------|-----------------|
+| Auto insurance telematics thesis plan | 2026-04-19/20 | No source or topic page — biggest gap |
+| EXP-001 baseline results | 2026-04-20 | Only in memory/commit, no wiki page |
+| EXP-002 monotonicity results | 2026-04-20 | Only in memory/commit, no wiki page |
+| EXP-003 adversarial results | 2026-04-17/20 | Log entry exists but no dedicated topic page |
+| Phase 4 Weeks 2-7 build records | 2026-04-17 | No source pages for any Week 2-7 builds |
+| Vietnam ML pricing Days 7-12 | 2026-04-17 | No wiki pages for ML tab, retraining UI, presentation |
+
+---
+
+### Recommendations (user to select)
+
+**R1 — Fix C1 (thesis pivot)**: Add auto insurance telematics thesis section to `index.md`. Mark old life insurance section as "Archived 2026-04-19 — see `thesis/archive-life-insurance-2026-04-19/`". This is the most confusing contradiction for future sessions.
+
+**R2 — Fix C2 + S1 (Phase 4 checklist + EXP-003)**: Update Phase 4 checklist in `index.md` to reflect Weeks 2-7 done. Update EXP-003 status. Update "Last Updated" header. ~30-min edit.
+
+**R3 — Fix near-orphans**: Add cross-link from `thesis-defense-stress-testing-framework.md` → `thesis-presentation-guide.md`. Low effort, high value for navigation.
+
+**R4 — Add missing pages (auto thesis)**: Create `wiki/topics/auto-insurance-telematics-thesis.md` as a master page for the new thesis direction. Link from index. Medium effort.
+
+**R5 — Add missing pages (experiments)**: Create `wiki/sources/2026-04-20_exp001-exp003-results.md` as a combined experiment build record. Link from thesis topic page. Medium effort.
+
+**R6 — Add missing pages (Phase 4 Weeks 2-7)**: Create a single combined source page `wiki/sources/2026-04-17_phase4-weeks2-7.md` capturing all Week 2-7 builds. This is optional — the functionality is documented in code; wiki value is cross-session continuity. Low-to-medium effort.
+
+---
+
+Metrics: 0 new pages added (report only), 2 contradictions flagged, 3 staleness issues flagged, 6+ missing pages identified.
+
+---
+
+## [2026-04-17] build | DAC HealthPrice Phase 4 — Week 5 (Internal Nav Cleanup + Public Portal Scope)
+
+Internal staff tool nav renamed to reflect staff workflows. Public Portal coming-soon page added.
+
+**Changes**:
+- `App.jsx`: PAGES array — "Apply" → "New Case", "Track" → "Case Pipeline", added "Portal"
+- All `setPage("Apply")` / `setPage("Track")` calls updated throughout routing, CTAs, footer, hero
+- New `PublicPortalPage` component added — architecture split diagram, 6 planned features, tech stack table, Week 6–8 build timeline
+- Mobile hamburger CTA fixed (was routing to "Life Insurance"; now routes to "New Case")
+
+**Architecture split committed**: Internal tool (staff) vs. Public Portal (customers, separate SPA, planned portal.dactuaries.com)
+
+Metrics: 1 file modified (App.jsx), 1 new component (PublicPortalPage), 0 new wiki pages
+
+## [2026-04-17 23:15] ingest | Harness Engineering & Agent Architecture — 4 sources, 5 interconnected topic pages
+
+Ingested two research papers (NLAHs, Meta-Harness) + two Anthropic engineering articles on effective agent harnesses. Synthesized as four interconnected topic pages on harness design, runtime orchestration, optimization, and context engineering.
+
+**Sources added** (4 total):
+- `wiki/sources/2026-04-17_natural-language-agent-harnesses.md` — NLAH + IHR formalism; design patterns identified
+- `wiki/sources/2026-04-17_meta-harness-optimization.md` — Agentic harness search; 6× performance gains; full diagnostic history
+- `wiki/sources/2026-04-17_anthropic-effective-harnesses-long-running-agents.md` — Multi-session coherence; progress tracking; testing discipline
+- `wiki/sources/2026-04-17_anthropic-building-effective-agents.md` — Five workflow patterns; tool design (ACI); context engineering
+
+**Topic pages added** (4 interconnected):
+- `wiki/topics/harness-architecture-and-design.md` — NLAH components; design patterns; thesis + DAC application
+- `wiki/topics/runtime-orchestration-and-tool-mediation.md` — IHR execution; workflow patterns; session startup; thesis + DAC application
+- `wiki/topics/harness-optimization.md` — Meta-Harness search loop; context optimization; thesis + DAC application
+- `wiki/topics/context-engineering.md` — Information architecture; artifact design; retrieval strategy; state semantics; thesis + DAC application
+
+**Index updated**:
+- New "Harness Engineering & Agent Architecture" section added before thesis section
+- Cross-links between all four topics established
+
+**Key insights**:
+- 6× performance gains possible from harness design independent of model
+- Full diagnostic history enables evidence-backed harness optimization (vs. compressed feedback)
+- Natural-language harnesses enable portable orchestration logic
+- Context engineering (what to store/retrieve/present) matters as much as prompt phrasing
+- Thesis experiments (EXP-001/002/003) can be expressed as orchestrator-workers harnesses
+- DAC multi-stage underwriting naturally decomposes to orchestrator-workers pattern; optimizable via Meta-Harness
+
+Metrics: 4 sources, 4 topics, 8 entities (referenced), 0 contradictions, 0 orphans
+
+---
+
 ## [2026-04-17 22:00] build | Phase 4 Day 1 + Week 1 — ApplicationWizard + StatusTracker
 
 Started Phase 4 (9-week full underwriting platform build). Completed Day 1 deletion and Week 1 frontend.
