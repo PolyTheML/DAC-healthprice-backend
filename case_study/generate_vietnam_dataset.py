@@ -72,7 +72,7 @@ def generate(n: int = N, seed: int = SEED) -> list[dict]:
         base_health += is_exercise * 2.0
         base_health -= has_family_history * 1.2
         base_health -= len(pre_conds) * 2.5
-        base_health -= income < 30 and 2.0 or 0    # poverty penalty
+        base_health -= 2.0 if income < 30 else 0.0    # poverty penalty
         base_health *= REGION_HEALTH[region]
         noise = rng.gauss(0, 1.5)
         health_score = round(max(48.0, min(95.0, base_health + noise)), 1)
@@ -109,7 +109,7 @@ def generate(n: int = N, seed: int = SEED) -> list[dict]:
 def main():
     rows = generate()
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT, "w", newline="") as f:
+    with open(OUT, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         writer.writeheader()
         writer.writerows(rows)
