@@ -13,10 +13,8 @@ from __future__ import annotations
 
 import csv
 import json
-import math
 import pickle
 from pathlib import Path
-from typing import NamedTuple
 
 import numpy as np
 from sklearn.linear_model import LinearRegression
