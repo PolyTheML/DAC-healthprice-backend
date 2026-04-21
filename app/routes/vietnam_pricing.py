@@ -11,6 +11,8 @@ import os
 import pickle
 import random
 import subprocess
+import sys
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
@@ -50,23 +52,25 @@ FEATURE_LABELS = {
 }
 
 _models: dict = {}
+_models_lock = threading.RLock()
 
 
 def _load_models():
-    if _models:
-        return
-    if not VIETNAM_MODEL_DIR.exists():
-        return
-    for name in ("health_xgb", "life_xgb"):
-        path = VIETNAM_MODEL_DIR / f"{name}.pkl"
-        if path.exists():
-            with open(path, "rb") as f:
-                _models[name] = pickle.load(f)
-    for fname in ("model_results.json", "glm_coefficients.json"):
-        path = VIETNAM_MODEL_DIR / fname
-        if path.exists():
-            with open(path) as f:
-                _models[fname.replace(".json", "")] = json.load(f)
+    with _models_lock:
+        if _models:
+            return
+        if not VIETNAM_MODEL_DIR.exists():
+            return
+        for name in ("health_xgb", "life_xgb"):
+            path = VIETNAM_MODEL_DIR / f"{name}.pkl"
+            if path.exists():
+                with open(path, "rb") as f:
+                    _models[name] = pickle.load(f)
+        for fname in ("model_results.json", "glm_coefficients.json"):
+            path = VIETNAM_MODEL_DIR / fname
+            if path.exists():
+                with open(path) as f:
+                    _models[fname.replace(".json", "")] = json.load(f)
 
 
 class VietnamPriceRequest(BaseModel):
@@ -240,7 +244,7 @@ async def vietnam_model_results():
     """Return training metrics for both GLM and XGBoost models."""
     _load_models()
     if "model_results" not in _models:
-        raise HTTPException(503, "Model results not available. Run case-study/train_models.py first.")
+        raise HTTPException(503, "Model results not available. Run case_study/train_models.py first.")
     return _models["model_results"]
 
 
@@ -256,7 +260,7 @@ async def vietnam_reference():
 
 # ── Vietnam model version history ─────────────────────────────────────────────
 
-_VN_DATA_PATH = Path(__file__).parent.parent.parent / "case-study" / "vietnam_dataset.csv"
+_VN_DATA_PATH = Path(__file__).parent.parent.parent / "case_study" / "vietnam_dataset.csv"
 _BASELINE_SMOKER_RATIO = 0.25  # smoker prevalence at original training run
 K_CREDIBILITY = 400.0          # credibility constant: Z = n / (n + K)
 
@@ -309,7 +313,7 @@ def _validate_training_data() -> dict:
 
         return {"ok": len(issues) == 0, "issues": issues, "records_checked": n}
     except FileNotFoundError:
-        return {"ok": False, "issues": ["Dataset file not found — run case-study/generate_vietnam_dataset.py first"], "records_checked": 0}
+        return {"ok": False, "issues": ["Dataset file not found — run case_study/generate_vietnam_dataset.py first"], "records_checked": 0}
     except Exception as exc:
         return {"ok": False, "issues": [f"Validation error: {exc}"], "records_checked": 0}
 
@@ -404,7 +408,8 @@ def _run_real_training() -> dict:
         return {"warning": "Training script not found — using simulated metrics"}
 
     result = subprocess.run(
-        ["python", str(script)],
+        [sys.executable, str(script)],
+        cwd=str(script.parent),
         capture_output=True, text=True, timeout=120,
     )
     if result.returncode != 0:
@@ -433,11 +438,14 @@ async def vietnam_retrain(req: RetrainRequest):
 
     # Run real training in a thread pool so we don't block the event loop
     loop = asyncio.get_event_loop()
-    training_results = await loop.run_in_executor(None, _run_real_training)
+    # training_results is intentionally unused — the real value is the side effect:
+    # the .pkl files on disk are updated, then reloaded below via _models.clear()/_load_models()
+    await loop.run_in_executor(None, _run_real_training)
 
     # Reload models from disk so predictions use the new weights
-    _models.clear()
-    _load_models()
+    with _models_lock:
+        _models.clear()
+        _load_models()
 
     # Read the actual dataset to make metric shifts data-aware
     smoker_ratio, record_count = _compute_smoker_ratio()
@@ -590,7 +598,7 @@ async def vietnam_ae_ratio(segment_by: str = "occupation"):
         with open(_VN_DATA_PATH, newline="") as f:
             rows = list(csv.DictReader(f))
     except FileNotFoundError:
-        raise HTTPException(503, "Vietnam dataset not found — run case-study/generate_vietnam_dataset.py")
+        raise HTTPException(503, "Vietnam dataset not found — run case_study/generate_vietnam_dataset.py")
 
     if not rows:
         raise HTTPException(503, "Vietnam dataset is empty")
