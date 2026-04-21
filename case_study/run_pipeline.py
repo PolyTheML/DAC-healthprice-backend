@@ -9,8 +9,6 @@ Steps:
   3. Smoke-test that models load and produce predictions
 """
 import argparse
-import json
-import pickle
 import sys
 from pathlib import Path
 
@@ -51,6 +49,7 @@ def step3_verify():
         print(f"  OK {fname} ({path.stat().st_size // 1024} KB)")
 
     import numpy as np
+    import pickle
     with open(model_dir / "health_xgb.pkl", "rb") as f:
         health_xgb = pickle.load(f)
     with open(model_dir / "life_xgb.pkl", "rb") as f:
