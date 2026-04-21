@@ -1,27 +1,27 @@
 {
   "health_ols": {
-    "intercept": 132.7459860551024,
+    "intercept": 108.79018802090037,
     "params": {
-      "age": -0.3784945805387134,
-      "bmi": -1.2534496272310678,
-      "is_smoking": -0.23253465546003493,
-      "is_exercise": -0.044958891749752095,
-      "has_family_history": 0.026108608344559414,
-      "condition_count": -0.42108202894881863,
-      "monthly_income_millions_vnd": 0.02357613431112009
+      "age": -0.42098016471171146,
+      "bmi": -0.48913787008696824,
+      "is_smoking": -3.832087153298461,
+      "is_exercise": 1.7161260629049657,
+      "has_family_history": -1.0600609990439005,
+      "condition_count": -2.545356897486773,
+      "monthly_income_millions_vnd": 0.006288452615210244
     },
     "method": "OLS (Gaussian, identity link)"
   },
   "mortality_gamma": {
-    "intercept": -0.07031387015436737,
+    "intercept": -0.5959431653456186,
     "params": {
-      "age": 0.013155507195010845,
-      "bmi": 0.004212761174094138,
-      "is_smoking": 0.1496017481865741,
-      "is_exercise": -0.08808721786548378,
-      "has_family_history": 0.010045089859581215,
-      "condition_count": 0.2171381550151138,
-      "monthly_income_millions_vnd": -0.002173673397442673
+      "age": 0.01386742885481201,
+      "bmi": 0.0042824654562648515,
+      "is_smoking": 0.19544023648139455,
+      "is_exercise": -0.09301818207991118,
+      "has_family_history": 0.08141955715901461,
+      "condition_count": 0.21793258967783943,
+      "monthly_income_millions_vnd": -5.1593987991878365e-05
     },
     "method": "GLM (Gamma, log link) \u2014 predict = exp(X @ params)"
   },
