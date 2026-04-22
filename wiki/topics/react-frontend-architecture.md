@@ -1,8 +1,8 @@
 # React Frontend Architecture
 
 **Created**: 2026-04-14  
-**Last updated**: 2026-04-14  
-**Source**: [Peter Feedback & Frontend Deployment](../sources/2026-04-14_peter-feedback-frontend-deployment.md)
+**Last updated**: 2026-04-15  
+**Sources**: [Peter Feedback & Frontend Deployment](../sources/2026-04-14_peter-feedback-frontend-deployment.md) · [Dashboard Deployment](../sources/2026-04-15_dashboard-drift-monitor-deployment.md)
 
 ---
 
@@ -60,7 +60,20 @@ Hard-coded GLM coefficients (v2.2) stored in `COEFF` object — actuaries can se
 
 Shows how model metrics improve as claims data accumulates. Currently uses mock data (v2.3 → v2.4 transition). Intended for stakeholder education.
 
-### `LifeInsurancePricer.jsx` — Life Insurance Workbench ⭐ NEW (2026-04-14)
+### `DriftMonitor.jsx` — PSI Drift Chart ⭐ NEW (2026-04-15)
+
+Shows 30-day PSI trend fetched from `GET /dashboard/stats`. Recharts `LineChart` with reference lines at 0.10 (warning) and 0.25 (drift). Graceful fallback message when backend is unavailable.
+
+**Reads**: `json.psi.current`, `json.psi.status`, `json.psi_time_series`
+
+### `UnderwriterQueue.jsx` — HITL Review Queue ⭐ NEW (2026-04-15)
+
+Lists pending `manual_review` quotes from `hitl_queue.pending_cases`. Each row expands to show the AI `reasoning_trace`. Approve / Decline buttons `POST /cases/{id}/review`.
+
+**Reads**: `json.hitl_queue.pending_cases`  
+**Writes**: `POST /cases/{case_id}/review`
+
+### `LifeInsurancePricer.jsx` — Life Insurance Workbench + Dashboard (updated 2026-04-15)
 
 Internal actuarial tool implementing the **Mortality Ratio Method** — an exact JS port of the Python backend calculator. See [Pricing Engine Phases](./pricing-engine-phases.md) for the full methodology.
 
@@ -76,11 +89,14 @@ Internal actuarial tool implementing the **Mortality Ratio Method** — an exact
 
 **Assumption version**: `v3.0-cambodia-2026-04-14` (matches `medical_reader/pricing/assumptions.py`)
 
+Now hosts a two-tab layout: **Pricing Calculator** | **Underwriter Dashboard**. The dashboard tab renders `DriftMonitor` and `UnderwriterQueue`.
+
 ---
 
 ## Backend API
 
-`https://dac-healthprice-api.onrender.com` — runs `app/main.py` (health pricing platform)
+`https://dac-healthprice-api.onrender.com` — runs `C:\DAC\dac-health\backend\app\main.py`  
+Repo: `PolyTheML/DAC-healthprice-backend` (submodule of `C:\DAC\dac-health`)
 
 Key endpoints used by frontend:
 
@@ -89,10 +105,11 @@ Key endpoints used by frontend:
 | `/api/v2/price` | PricingWizard |
 | `/api/v2/session` | PricingWizard, InsuranceDashboard |
 | `/api/v2/chat` | PricingWizard (chat tab) |
-| `/api/v2/admin/upload-dataset` | PricingWizard admin panel |
 | `/api/v1/health/price` | InsuranceDashboard |
+| `/dashboard/stats` | DriftMonitor, UnderwriterQueue ⭐ NEW |
+| `/cases/{id}/review` | UnderwriterQueue (approve/decline) ⭐ NEW |
 
-**Note**: The underwriting API (`api/main.py`) with life insurance endpoints (`/cases`, `/pricing/what-if`) is **not deployed** on this Render instance. The `LifeInsurancePricer` runs the actuarial calculation entirely client-side.
+**Note**: The underwriting agent (`C:\DAC-UW-Agent`) with `/cases`, `/pricing/what-if` endpoints is **not deployed**. `LifeInsurancePricer` pricing runs entirely client-side. Dashboard endpoints are on the health backend, adapted to `hp_quote_log` schema.
 
 ---
 
@@ -116,8 +133,10 @@ The Render backend is a separate deployment triggered from `PolyTheML/DAC-health
 |-------|----------|-------|
 | Credentials hardcoded in `App.jsx` | Medium | Acceptable for pilot; move to backend auth before production |
 | `ModelRetrainingDashboard` uses mock data | Low | Replace with live `/api/v2/model-info` data when ready |
-| Life insurance pricer: local only | Low | Wire to `api/main.py` when deployed |
+| Life insurance pricer: local only | Low | Wire to `api/main.py` when deployed on Render |
 | Render free tier cold starts (~30s) | Low | Acceptable for demo; upgrade for production |
+| `human_override_rate` always zero | Low | Health backend has no UW override tracking yet; implement if needed |
+| PSI reference distribution is synthetic | Low | Replace `_HEALTH_PSI_REF` with production-fitted distribution after 6+ months of quote data |
 
 ---
 

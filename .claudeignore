@@ -1,7 +1,29 @@
+# === NEW: Knowledge Base Management ===
+# Keep index.md and log.md visible, but hide the heavy summaries
+# Only load these when performing a specific search/query
+wiki/sources/
+wiki/queries/
+
+# === Streamlit & Frontend Junk ===
+.streamlit/
+static/
+assets/
+*.log
+
+# === Enhanced Path Bug Protection ===
+# Catches any directory starting with C: that leaked into the project root
+C\:* # === Large Model Artifacts ===
+# If you are using local vision models or LLMs for your extraction agents
+models/
+*.bin
+*.onnx
+*.weights
+
 # Data/binaries
 *.parquet
 *.pdf
 *.html
+*.csv
 data/
 graphify-out/
 

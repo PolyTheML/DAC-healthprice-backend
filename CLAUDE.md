@@ -48,6 +48,15 @@ This document defines the structure, conventions, and workflows for maintaining 
 **Files modified**: `wiki/sources/*`, `wiki/entities/*`, `wiki/topics/*`, `wiki/index.md`, `wiki/log.md`  
 **Files untouched**: Everything in `sources/`, `CLAUDE.md`, `README.md`
 
+## Operational Conventions
+**Buffer Threshold** : When the "autocompact buffer" exceeds 15%, Claude must suggest a Lint pass to move synthesized data into permanent /wiki files.
+
+**Selective Context**: During Phase 1 of Ingestion, Claude should only read the first 20% and last 10% of extremely large datasets (CSVs/Logs) to identify structure before committing to a full read.
+
+**State Archiving**: Every 10 turns, Claude should summarize the active "Messages" context and append a "Context Snapshot" to wiki/log.md, then suggest a chat reset to clear the active buffer.
+
+**File Exclusion**: Explicitly ignore /node_modules, .git, and __pycache__ to prevent the system from indexing irrelevant binaries into the buffer.
+
 ### Phases
 
 **Phase 1: Extract** (Claude, ~3 min)

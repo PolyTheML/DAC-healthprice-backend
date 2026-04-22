@@ -166,6 +166,72 @@ async def run_recalibration(payload: RecalibrateRequest | None = None) -> dict[s
 
 
 # ---------------------------------------------------------------------------
+# A/E ratio endpoint
+# ---------------------------------------------------------------------------
+
+@router.get("/ae-ratio")
+async def ae_ratio(days_back: int = 90) -> dict[str, Any]:
+    """
+    Actual vs Expected mortality ratio by occupation and healthcare tier.
+    Actual = mean mortality_ratio observed in quotes.
+    Expected = current model multiplier for that cohort.
+    A/E > 1.0 = under-pricing (model under-estimates risk).
+    A/E < 1.0 = over-pricing (model over-estimates risk).
+    """
+    engine = CalibrationEngine()
+    report = engine.run_analysis(trigger="ae_check", days_back=days_back)
+
+    if report.status == "insufficient_data":
+        return {
+            "status": "insufficient_data",
+            "quotes_available": report.total_valid_quotes,
+            "message": report.reasoning[0] if report.reasoning else "Not enough quotes",
+        }
+
+    # Find baseline mean MR for each cohort type to normalize empirical multipliers
+    baselines: dict[str, float] = {}
+    for c in report.cohort_stats:
+        if c.cohort == "office_desk" and c.cohort_type == "occupation":
+            baselines["occupation"] = c.mean_mortality_ratio
+        if c.cohort == "tier_b" and c.cohort_type == "healthcare_tier":
+            baselines["healthcare_tier"] = c.mean_mortality_ratio
+
+    rows = []
+    for c in report.cohort_stats:
+        if c.current_multiplier is None or c.n < 5:
+            continue
+        baseline_mr = baselines.get(c.cohort_type)
+        if baseline_mr and baseline_mr > 0:
+            empirical_multiplier = c.mean_mortality_ratio / baseline_mr
+            ratio = round(empirical_multiplier / c.current_multiplier, 3)
+        else:
+            ratio = None
+
+        rows.append({
+            "cohort": c.cohort,
+            "cohort_type": c.cohort_type,
+            "n": c.n,
+            "actual_mean_mr": c.mean_mortality_ratio,
+            "current_multiplier": c.current_multiplier,
+            "ae_ratio": ratio,
+            "status": (
+                "under-pricing" if ratio and ratio > 1.02
+                else "over-pricing" if ratio and ratio < 0.98
+                else "on-target"
+            ) if ratio is not None else "insufficient_data",
+        })
+
+    rows.sort(key=lambda x: abs((x["ae_ratio"] or 1.0) - 1.0), reverse=True)
+    return {
+        "active_version": report.parent_version,
+        "quotes_analyzed": report.total_valid_quotes,
+        "days_back": days_back,
+        "psi": report.psi,
+        "cohorts": rows,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Version endpoints
 # ---------------------------------------------------------------------------
 
@@ -177,6 +243,64 @@ async def list_versions() -> VersionListResponse:
         versions=[VersionSummary(**v) for v in manifest.get("versions", [])],
         recalibration_log=manifest.get("recalibration_log", []),
     )
+
+
+@router.get("/versions/diff")
+async def versions_diff(from_version: str, to_version: str) -> dict[str, Any]:
+    """
+    Compare multiplier parameters between two versions (butterfly chart data).
+    Returns per-group parameter deltas sorted by absolute change.
+    """
+    try:
+        from_payload = versioning.load_version_raw(from_version)
+    except versioning.VersionNotFoundError:
+        raise HTTPException(404, f"Version {from_version!r} not found")
+    try:
+        to_payload = versioning.load_version_raw(to_version)
+    except versioning.VersionNotFoundError:
+        raise HTTPException(404, f"Version {to_version!r} not found")
+
+    from_params = from_payload.get("parameters", {})
+    to_params   = to_payload.get("parameters", {})
+
+    groups = sorted(set(list(from_params) + list(to_params)))
+    diffs: dict[str, list] = {}
+    for group in groups:
+        fp = from_params.get(group, {})
+        tp = to_params.get(group, {})
+        if not isinstance(fp, dict) or not isinstance(tp, dict):
+            continue
+        keys = sorted(set(list(fp) + list(tp)))
+        group_diffs = []
+        for key in keys:
+            old_val = fp.get(key)
+            new_val = tp.get(key)
+            if old_val is None or new_val is None:
+                continue
+            try:
+                delta_pct = round((float(new_val) - float(old_val)) / float(old_val) * 100, 2)
+            except (ZeroDivisionError, TypeError):
+                delta_pct = None
+            if delta_pct is not None and abs(delta_pct) >= 0.01:
+                group_diffs.append({
+                    "parameter": key,
+                    "from_value": old_val,
+                    "to_value": new_val,
+                    "delta_pct": delta_pct,
+                    "direction": "increased" if delta_pct > 0 else "decreased",
+                })
+        if group_diffs:
+            group_diffs.sort(key=lambda x: abs(x["delta_pct"]), reverse=True)
+            diffs[group] = group_diffs
+
+    return {
+        "from_version": from_version,
+        "to_version": to_version,
+        "from_created_at": from_payload.get("created_at"),
+        "to_created_at": to_payload.get("created_at"),
+        "changed_parameters": sum(len(v) for v in diffs.values()),
+        "groups": diffs,
+    }
 
 
 @router.get("/versions/active", response_model=VersionDetail)

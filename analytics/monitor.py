@@ -26,8 +26,8 @@ import numpy as np
 REFERENCE_DISTRIBUTION: dict[str, Any] = {
     "mortality_ratio": {
         "bins": [0.0, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, float("inf")],
-        # 35% of applicants have 1.0–1.5× ratio (low-risk standard)
-        "proportions": [0.05, 0.35, 0.25, 0.15, 0.10, 0.05, 0.03, 0.02],
+        # Derived from 10K synthetic baseline (seed=42, Cambodia demographics)
+        "proportions": [0.00, 0.53, 0.25, 0.15, 0.06, 0.01, 0.00, 0.00],
     }
 }
 

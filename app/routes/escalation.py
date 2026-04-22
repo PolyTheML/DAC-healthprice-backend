@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from app.pricing_engine.escalation_calculator import (
+from medical_reader.pricing.escalation_calculator import (
     EscalationParameters,
     ESCALATION_PARAMS,
     calculate_escalation_schedule,
