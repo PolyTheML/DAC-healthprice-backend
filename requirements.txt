@@ -17,3 +17,7 @@ shap
 PyJWT>=2.8.0
 
 river==0.21.2
+matplotlib
+seaborn
+statsmodels
+openpyxl

@@ -5,7 +5,7 @@ model versioning + meta persistence, hot-swap retraining loop,
 full audit trail, 6-layer anti-scraping protection,
 client-specific partner API keys.
 """
-import os, re, time, uuid, logging, json, hashlib, secrets
+import os, re, time, uuid, logging, json, hashlib, secrets, subprocess, tempfile, base64
 from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from typing import Optional, List
@@ -1556,6 +1556,181 @@ async def advisor_chat(body: AdvisorChatRequest, request: Request):
     data = r.json()
     reply = data["content"][0]["text"] if data.get("content") else "I'm sorry, I couldn't respond right now. Please try again or email radet@dactuaries.com."
     return {"reply": reply}
+
+
+# ── Actuarial AI Lab ──────────────────────────────────────────────────────────
+AILAB_SYSTEM_PROMPT = """You are DAC Actuarial AI Assistant — a specialized AI for actuarial data science.
+You help actuaries clean data, run EDA, build frequency-severity models, calculate premiums, and do experience studies.
+
+RULES:
+1. Always load data with: df = pd.read_csv("/tmp/ailab_data/{filename}")
+2. For charts, ALWAYS use UNIQUE filenames: plt.savefig("/tmp/ailab_output/chart_01_description.png", dpi=150, bbox_inches="tight") then plt.close()
+3. NEVER use plt.show() — always savefig + close
+4. Print results clearly with labels
+5. Return ONLY ONE python code block — never split into multiple blocks
+6. For frequency models: use Poisson GLM (sklearn PoissonRegressor)
+7. For severity models: use Gamma GLM or GradientBoostingRegressor
+8. Pure premium = E[frequency] × E[severity]
+9. Always show model diagnostics: coefficients, feature importance, R², deviance
+10. For experience studies: calculate A/E ratios (actual vs expected)
+11. Use professional formatting — add titles, axis labels, legends to all charts
+12. When cleaning data: show before/after counts, handle missing values, detect outliers
+
+Available data columns will be provided in the user message.
+The code will be executed automatically in a Python environment with pandas, numpy, sklearn, statsmodels, matplotlib, seaborn available."""
+
+AILAB_UPLOAD_DIR = "/tmp/ailab_data"
+AILAB_OUTPUT_DIR = "/tmp/ailab_output"
+_ailab_files: dict = {}
+
+@app.post("/api/v2/ailab/upload")
+async def ailab_upload(file: UploadFile = File(...)):
+    import pandas as pd
+    os.makedirs(AILAB_UPLOAD_DIR, exist_ok=True)
+    os.makedirs(AILAB_OUTPUT_DIR, exist_ok=True)
+    fname = file.filename
+    content = await file.read()
+    if len(content) > 52428800:
+        raise HTTPException(413, "File too large (max 50MB)")
+    fpath = os.path.join(AILAB_UPLOAD_DIR, fname)
+    with open(fpath, "wb") as f:
+        f.write(content)
+    meta = {"filename": fname, "size": len(content), "rows": None, "columns": [], "dtypes": {}, "missing": {}, "numeric_summary": {}}
+    try:
+        if fname.endswith(".csv"):
+            df = pd.read_csv(fpath)
+        elif fname.endswith((".xlsx", ".xls")):
+            df = pd.read_excel(fpath)
+        else:
+            _ailab_files[fname] = meta
+            return {"status": "uploaded", "meta": meta}
+        meta["rows"] = len(df)
+        meta["columns"] = list(df.columns)
+        meta["dtypes"] = {c: str(df[c].dtype) for c in df.columns}
+        meta["missing"] = {c: int(df[c].isnull().sum()) for c in df.columns if df[c].isnull().sum() > 0}
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        if len(numeric_cols) > 0:
+            meta["numeric_summary"] = df[numeric_cols].describe().round(2).to_dict()
+        _ailab_files[fname] = meta
+        preview = df.head(10).fillna("").to_dict(orient="records")
+        return {"status": "uploaded", "meta": meta, "preview": preview}
+    except Exception as e:
+        return {"status": "uploaded_parse_error", "meta": meta, "error": str(e)}
+
+@app.post("/api/v2/ailab/analyze")
+async def ailab_analyze(request: Request):
+    api_key = os.getenv("ANTHROPIC_API_KEY") or os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise HTTPException(503, "AI not configured — set ANTHROPIC_API_KEY or GROQ_API_KEY env var")
+    body = await request.json()
+    user_message = body.get("message", "")
+    history = body.get("history", [])
+    filename = body.get("filename", "")
+    data_context = ""
+    if filename and filename in _ailab_files:
+        m = _ailab_files[filename]
+        data_context = f"\n\nUploaded file: {filename}\nRows: {m.get('rows', '?')}\nColumns: {m.get('columns', [])}\nData types: {m.get('dtypes', {})}\nMissing values: {m.get('missing', {})}\nNumeric summary: {json.dumps(m.get('numeric_summary', {}), indent=2)}"
+    system_prompt = AILAB_SYSTEM_PROMPT + data_context
+
+    if os.getenv("ANTHROPIC_API_KEY"):
+        messages = []
+        for msg in history[-20:]:
+            messages.append({"role": msg["role"], "content": msg["content"]})
+        messages.append({"role": "user", "content": user_message})
+        try:
+            async with httpx.AsyncClient(timeout=60) as client:
+                r = await client.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers={"x-api-key": api_key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": "claude-sonnet-4-20250514", "max_tokens": 4096, "system": system_prompt, "messages": messages},
+                )
+            data = r.json()
+            if "error" in data:
+                raise HTTPException(502, f"AI error: {data['error'].get('message', 'Unknown')}")
+            ai_response = data["content"][0]["text"]
+            return {"response": ai_response, "has_code": "```python" in ai_response}
+        except httpx.TimeoutException:
+            raise HTTPException(504, "AI response timed out")
+        except HTTPException: raise
+        except Exception as e:
+            log.error(f"AI Lab error: {e}"); raise HTTPException(500, "AI analysis failed")
+    else:
+        openai_msgs = [{"role": "system", "content": system_prompt}]
+        for msg in history[-20:]:
+            openai_msgs.append({"role": msg["role"], "content": msg["content"]})
+        openai_msgs.append({"role": "user", "content": user_message})
+        try:
+            async with httpx.AsyncClient(timeout=45) as client:
+                r = await client.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                    json={"model": "llama-3.3-70b-versatile", "messages": openai_msgs, "max_tokens": 2000, "temperature": 0.1},
+                )
+            data = r.json()
+            if "error" in data:
+                raise HTTPException(502, f"AI error: {data['error'].get('message', 'Unknown')}")
+            ai_response = data["choices"][0]["message"]["content"]
+            return {"response": ai_response, "has_code": "```python" in ai_response}
+        except httpx.TimeoutException:
+            raise HTTPException(504, "AI response timed out")
+        except HTTPException: raise
+        except Exception as e:
+            log.error(f"AI Lab error: {e}"); raise HTTPException(500, "AI analysis failed")
+
+@app.post("/api/v2/ailab/execute")
+async def ailab_execute(request: Request):
+    body = await request.json()
+    code = body.get("code", "")
+    if not code: raise HTTPException(400, "No code provided")
+    os.makedirs(AILAB_OUTPUT_DIR, exist_ok=True)
+    for f in os.listdir(AILAB_OUTPUT_DIR):
+        try: os.remove(os.path.join(AILAB_OUTPUT_DIR, f))
+        except: pass
+    wrapped = f"""
+import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+os.makedirs('/tmp/ailab_output', exist_ok=True)
+
+try:
+{chr(10).join('    ' + line for line in code.split(chr(10)))}
+except Exception as e:
+    print(f"ERROR: {{e}}")
+"""
+    script_path = os.path.join(tempfile.gettempdir(), "ailab_script.py")
+    with open(script_path, "w") as f:
+        f.write(wrapped)
+    try:
+        result = subprocess.run(
+            ["python3", script_path],
+            capture_output=True, text=True, timeout=120,
+            env={**os.environ, "MPLBACKEND": "Agg"}
+        )
+        stdout = result.stdout[:50000]
+        stderr = result.stderr[:10000] if result.returncode != 0 else ""
+        charts = []
+        if os.path.exists(AILAB_OUTPUT_DIR):
+            for fname in sorted(os.listdir(AILAB_OUTPUT_DIR)):
+                fpath = os.path.join(AILAB_OUTPUT_DIR, fname)
+                if fname.endswith((".png", ".jpg", ".svg")):
+                    with open(fpath, "rb") as img:
+                        b64 = base64.b64encode(img.read()).decode()
+                        charts.append({"filename": fname, "data": f"data:image/png;base64,{b64}"})
+        return {"stdout": stdout, "stderr": stderr, "returncode": result.returncode, "charts": charts, "success": result.returncode == 0}
+    except subprocess.TimeoutExpired:
+        return {"stdout": "", "stderr": "Execution timed out (120s limit)", "returncode": 1, "charts": [], "success": False}
+    except Exception as e:
+        return {"stdout": "", "stderr": str(e), "returncode": 1, "charts": [], "success": False}
+
+@app.get("/api/v2/ailab/files")
+async def ailab_list_files():
+    return {"files": list(_ailab_files.values())}
 
 
 @app.exception_handler(Exception)
