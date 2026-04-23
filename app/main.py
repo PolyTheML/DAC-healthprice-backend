@@ -323,6 +323,7 @@ async def lifespan(app):
         try:
             db_pool=await asyncpg.create_pool(host=_db_p["host"],port=_db_p["port"],user=_db_p["user"],password=_db_p["password"],database=_db_p["database"],min_size=1,max_size=5,command_timeout=10,timeout=10,ssl="require")
             log.info("DB connected")
+            app.state.db_pool = db_pool
         except Exception as e: log.warning(f"DB failed: {e}")
         if db_pool:
             try:
@@ -413,6 +414,41 @@ async def lifespan(app):
                 """)
                 log.info("Application columns OK")
             except Exception as e: log.warning(f"Application columns: {e}")
+            try:
+                await db_pool.execute("""
+                    CREATE TABLE IF NOT EXISTS auto_policies (
+                        policy_id TEXT PRIMARY KEY,
+                        vehicle_type TEXT NOT NULL,
+                        year_of_manufacture INT NOT NULL,
+                        region TEXT NOT NULL,
+                        driver_age INT NOT NULL,
+                        accident_history BOOLEAN NOT NULL,
+                        coverage TEXT NOT NULL,
+                        tier TEXT NOT NULL,
+                        family_size INT DEFAULT 1,
+                        glm_anchor NUMERIC NOT NULL,
+                        current_premium NUMERIC NOT NULL,
+                        deviation_multiplier NUMERIC DEFAULT 1.0,
+                        created_at TIMESTAMPTZ DEFAULT NOW(),
+                        updated_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                    CREATE TABLE IF NOT EXISTS auto_telemetry_log (
+                        id SERIAL PRIMARY KEY,
+                        policy_id TEXT NOT NULL,
+                        gps_hash TEXT,
+                        speed_kmh NUMERIC,
+                        harsh_braking BOOLEAN DEFAULT FALSE,
+                        lane_shifts INT DEFAULT 0,
+                        hour_bucket INT,
+                        weather_zone TEXT,
+                        deviation NUMERIC,
+                        new_premium NUMERIC,
+                        ts TIMESTAMPTZ DEFAULT NOW()
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_auto_telemetry_policy ON auto_telemetry_log(policy_id, ts DESC);
+                """)
+                log.info("Auto schema OK")
+            except Exception as e: log.warning(f"Auto schema: {e}")
             # Load active partner keys into memory cache
             try:
                 rows=await db_pool.fetch("SELECT key_hash,partner_name,daily_limit FROM hp_partner_keys WHERE is_active=TRUE")
@@ -453,6 +489,13 @@ try:
     app.include_router(life_router)
 except Exception as _life_err:
     log.warning(f"Life pricing routes not loaded: {_life_err}")
+
+# Auto insurance continuous underwriting routes
+try:
+    from app.routes.auto_pricing import router as auto_router
+    app.include_router(auto_router)
+except Exception as _auto_err:
+    log.warning(f"Auto pricing routes not loaded: {_auto_err}")
 
 @app.middleware("http")
 async def mw(request:Request,call_next):
