@@ -32,6 +32,7 @@ from app.auto.models import (
     MaskedTelemetry,
 )
 from app.auto.streaming_model import _global_streaming_model
+from app.auto.fairness import compute_fairness_audit, FairnessAuditResponse
 
 router = APIRouter(prefix="/api/v1/auto", tags=["auto-pricing"])
 log = logging.getLogger(__name__)
@@ -266,3 +267,14 @@ async def stream_premium(request: Request, policy_id: str):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
     )
+
+
+@router.get("/fairness-audit", response_model=FairnessAuditResponse)
+async def fairness_audit(request: Request):
+    """Return real-time fairness scores for auto policies."""
+    pool = _get_db_pool(request)
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            "SELECT driver_age, region, deviation_multiplier FROM auto_policies"
+        )
+    return compute_fairness_audit([dict(r) for r in rows])
