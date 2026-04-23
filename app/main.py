@@ -1581,7 +1581,49 @@ The code will be executed automatically in a Python environment with pandas, num
 
 AILAB_UPLOAD_DIR = "/tmp/ailab_data"
 AILAB_OUTPUT_DIR = "/tmp/ailab_output"
+AILAB_META_FILE = "/tmp/ailab_data/_meta.json"
 _ailab_files: dict = {}
+
+def _save_ailab_meta():
+    os.makedirs(AILAB_UPLOAD_DIR, exist_ok=True)
+    with open(AILAB_META_FILE, "w") as f:
+        json.dump(_ailab_files, f)
+
+def _load_ailab_meta():
+    global _ailab_files
+    if os.path.exists(AILAB_META_FILE):
+        try:
+            with open(AILAB_META_FILE) as f:
+                _ailab_files = json.load(f)
+            log.info(f"AI Lab: loaded {len(_ailab_files)} file(s) from cache")
+        except: pass
+    # Also check for files on disk that might not be in meta
+    if os.path.exists(AILAB_UPLOAD_DIR):
+        import pandas as pd
+        for fname in os.listdir(AILAB_UPLOAD_DIR):
+            if fname.startswith("_") or fname in _ailab_files:
+                continue
+            fpath = os.path.join(AILAB_UPLOAD_DIR, fname)
+            if not os.path.isfile(fpath):
+                continue
+            try:
+                if fname.endswith(".csv"):
+                    df = pd.read_csv(fpath)
+                elif fname.endswith((".xlsx", ".xls")):
+                    df = pd.read_excel(fpath)
+                else:
+                    continue
+                _ailab_files[fname] = {
+                    "filename": fname, "size": os.path.getsize(fpath),
+                    "rows": len(df), "columns": list(df.columns),
+                    "dtypes": {c: str(df[c].dtype) for c in df.columns},
+                    "missing": {c: int(df[c].isnull().sum()) for c in df.columns if df[c].isnull().sum() > 0},
+                    "numeric_summary": df.select_dtypes(include=[np.number]).describe().round(2).to_dict() if len(df.select_dtypes(include=[np.number]).columns) > 0 else {}
+                }
+            except: pass
+        _save_ailab_meta()
+
+_load_ailab_meta()
 
 @app.post("/api/v2/ailab/upload")
 async def ailab_upload(file: UploadFile = File(...)):
@@ -1603,6 +1645,7 @@ async def ailab_upload(file: UploadFile = File(...)):
             df = pd.read_excel(fpath)
         else:
             _ailab_files[fname] = meta
+            _save_ailab_meta()
             return {"status": "uploaded", "meta": meta}
         meta["rows"] = len(df)
         meta["columns"] = list(df.columns)
@@ -1612,6 +1655,7 @@ async def ailab_upload(file: UploadFile = File(...)):
         if len(numeric_cols) > 0:
             meta["numeric_summary"] = df[numeric_cols].describe().round(2).to_dict()
         _ailab_files[fname] = meta
+        _save_ailab_meta()
         preview = df.head(10).fillna("").to_dict(orient="records")
         return {"status": "uploaded", "meta": meta, "preview": preview}
     except Exception as e:
