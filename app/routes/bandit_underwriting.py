@@ -15,31 +15,41 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from app.rl.underwriting_bandit import (
-    ACTION_NAMES,
-    ACTION_STANDARD,
-    ACTION_RATED,
-    EpsilonGreedy,
-    LinTS,
-    LinUCB,
-    StaticXGBBaseline,
-    expected_rewards,
-    preprocess_cambodia_data,
-    run_bandit,
-)
-
 router = APIRouter(prefix="/api/v1/rl", tags=["rl-underwriting"])
 
-# Load dataset once at module import for fast repeated access
-_X, _DF_RAW, _FEATURES = preprocess_cambodia_data()
-_N_FEATURES = _X.shape[1]
+# ── Lazy-loaded globals ────────────────────────────────────────────────────
+# Render free tier has slow CPU; loading pandas + xgboost + dataset at import
+# time can exceed the 30s startup health-check window. We load on first use.
 
-_ALGORITHMS = {
-    "LinUCB": lambda seed=42: LinUCB(n_actions=4, n_features=_N_FEATURES, alpha=1.0),
-    "LinTS": lambda seed=42: LinTS(n_actions=4, n_features=_N_FEATURES, v2=1.0, seed=seed),
-    "EpsilonGreedy": lambda seed=42: EpsilonGreedy(n_actions=4, n_features=_N_FEATURES, epsilon=0.15, seed=seed),
-    "StaticXGB": lambda seed=42: StaticXGBBaseline(),
-}
+_X = None
+_DF_RAW = None
+_FEATURES = None
+_N_FEATURES = None
+_ALGORITHMS = None
+
+
+def _ensure_loaded():
+    """Lazy-load dataset and algorithm factories (thread-safe on CPython GIL)."""
+    global _X, _DF_RAW, _FEATURES, _N_FEATURES, _ALGORITHMS
+    if _X is not None:
+        return
+    from app.rl.underwriting_bandit import (
+        ACTION_STANDARD,
+        ACTION_RATED,
+        EpsilonGreedy,
+        LinTS,
+        LinUCB,
+        StaticXGBBaseline,
+        preprocess_cambodia_data,
+    )
+    _X, _DF_RAW, _FEATURES = preprocess_cambodia_data()
+    _N_FEATURES = _X.shape[1]
+    _ALGORITHMS = {
+        "LinUCB": lambda seed=42: LinUCB(n_actions=4, n_features=_N_FEATURES, alpha=1.0),
+        "LinTS": lambda seed=42: LinTS(n_actions=4, n_features=_N_FEATURES, v2=1.0, seed=seed),
+        "EpsilonGreedy": lambda seed=42: EpsilonGreedy(n_actions=4, n_features=_N_FEATURES, epsilon=0.15, seed=seed),
+        "StaticXGB": lambda seed=42: StaticXGBBaseline(),
+    }
 
 
 # ── Request / Response Models ──────────────────────────────────────────────
@@ -67,7 +77,6 @@ class SimulateResponse(BaseModel):
 
 
 class DecideRequest(BaseModel):
-    applicant_index: int = Field(..., ge=0, lt=len(_DF_RAW))
     algorithm: Literal["LinUCB", "LinTS", "EpsilonGreedy", "StaticXGB"] = Field("LinUCB")
     seed: int = Field(42, ge=0, le=99999)
 
@@ -138,6 +147,7 @@ async def list_algorithms():
 @router.get("/applicants")
 async def get_applicants(page: int = 1, limit: int = 50):
     """Paginated view of the synthetic Cambodia dataset."""
+    _ensure_loaded()
     total = len(_DF_RAW)
     start = (page - 1) * limit
     end = min(start + limit, total)
@@ -157,8 +167,11 @@ async def get_applicants(page: int = 1, limit: int = 50):
 @router.post("/simulate", response_model=SimulateResponse)
 async def simulate(body: SimulateRequest):
     """Run a bandit simulation and return time-series metrics."""
+    _ensure_loaded()
     if body.algorithm not in _ALGORITHMS:
         raise HTTPException(status_code=400, detail=f"Unknown algorithm: {body.algorithm}")
+
+    from app.rl.underwriting_bandit import ACTION_NAMES, run_bandit
 
     t0 = time.perf_counter()
     bandit = _ALGORITHMS[body.algorithm](seed=body.seed)
@@ -194,8 +207,16 @@ async def simulate(body: SimulateRequest):
 @router.post("/decide", response_model=DecideResponse)
 async def decide(body: DecideRequest):
     """Run a single decision for one applicant (step-through mode)."""
+    _ensure_loaded()
     if body.algorithm not in _ALGORITHMS:
         raise HTTPException(status_code=400, detail=f"Unknown algorithm: {body.algorithm}")
+
+    from app.rl.underwriting_bandit import ACTION_NAMES, expected_rewards
+
+    # For decide endpoint, applicant_index comes from frontend (0-1999)
+    # Validate bounds manually since we can't use len(_DF_RAW) in Field at import time
+    if not (0 <= body.applicant_index < len(_DF_RAW)):
+        raise HTTPException(status_code=400, detail=f"applicant_index must be between 0 and {len(_DF_RAW)-1}")
 
     context = _X[body.applicant_index]
     row = _DF_RAW.iloc[body.applicant_index]
@@ -209,7 +230,6 @@ async def decide(body: DecideRequest):
     exp_rewards = expected_rewards(row)
 
     applicant = row.to_dict()
-    # JSON serialisation safety
     for k, v in applicant.items():
         if isinstance(v, (np.integer, np.floating)):
             applicant[k] = float(v)
@@ -234,8 +254,11 @@ async def fairness(
     seed: int = 42,
 ):
     """Run a bandit simulation and compute fairness metrics (PSI + parity)."""
+    _ensure_loaded()
     if algorithm not in _ALGORITHMS:
         raise HTTPException(status_code=400, detail=f"Unknown algorithm: {algorithm}")
+
+    from app.rl.underwriting_bandit import ACTION_STANDARD, ACTION_RATED, run_bandit
 
     bandit = _ALGORITHMS[algorithm](seed=seed)
     result = run_bandit(algorithm, bandit, _X.copy(), _DF_RAW, n_rounds, seed=seed)
