@@ -231,6 +231,11 @@ class StaticXGBBaseline:
     """Pre-trained XGBoost model + deterministic rule baseline."""
 
     def __init__(self):
+        # Delay heavy xgboost import until actually needed
+        try:
+            import xgboost as _  # noqa: F401
+        except ImportError:
+            pass
         with open(_MODELS_DIR / "cambodia_life_xgb.pkl", "rb") as f:
             self.model = pickle.load(f)
         df = pd.read_csv(_DATA_PATH)

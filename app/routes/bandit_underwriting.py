@@ -33,17 +33,25 @@ def _ensure_loaded():
     global _X, _DF_RAW, _FEATURES, _N_FEATURES, _ALGORITHMS
     if _X is not None:
         return
+    import pickle
+    from pathlib import Path
+    cache_path = Path(__file__).parent.parent / "rl" / "data" / "cambodia_cache.pkl"
+    if cache_path.exists():
+        with open(cache_path, "rb") as f:
+            cache = pickle.load(f)
+        _X = cache["X"]
+        _DF_RAW = cache["df_raw"]
+        _FEATURES = cache["features"]
+    else:
+        from app.rl.underwriting_bandit import preprocess_cambodia_data
+        _X, _DF_RAW, _FEATURES = preprocess_cambodia_data()
+    _N_FEATURES = _X.shape[1]
     from app.rl.underwriting_bandit import (
-        ACTION_STANDARD,
-        ACTION_RATED,
         EpsilonGreedy,
         LinTS,
         LinUCB,
         StaticXGBBaseline,
-        preprocess_cambodia_data,
     )
-    _X, _DF_RAW, _FEATURES = preprocess_cambodia_data()
-    _N_FEATURES = _X.shape[1]
     _ALGORITHMS = {
         "LinUCB": lambda seed=42: LinUCB(n_actions=4, n_features=_N_FEATURES, alpha=1.0),
         "LinTS": lambda seed=42: LinTS(n_actions=4, n_features=_N_FEATURES, v2=1.0, seed=seed),
