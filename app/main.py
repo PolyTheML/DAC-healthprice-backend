@@ -497,6 +497,14 @@ try:
 except Exception as _auto_err:
     log.warning(f"Auto pricing routes not loaded: {_auto_err}")
 
+# Thesis contextual bandit underwriting routes
+try:
+    from app.routes.bandit_underwriting import router as bandit_router
+    app.include_router(bandit_router)
+    log.info("Bandit underwriting routes loaded")
+except Exception as _bandit_err:
+    log.warning(f"Bandit underwriting routes not loaded: {_bandit_err}")
+
 @app.middleware("http")
 async def mw(request:Request,call_next):
     ip=request.client.host if request.client else "x"

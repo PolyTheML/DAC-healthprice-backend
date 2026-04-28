@@ -1,0 +1,2001 @@
+applicant_id,age,region,occupation,is_smoking,is_exercise,bmi,pre_existing_conditions,monthly_income_usd,health_score,has_family_history,mortality_multiplier,application_date
+KH-00001,47,Kampong Cham,Rice Farmer,1,0,22.6,Heart Disease,88.0,84.2,0,2.23,2024-08-23
+KH-00002,32,Kampong Cham,Garment Factory Worker,0,1,22.7,Hepatitis B,134.0,91.8,0,1.6,2024-01-14
+KH-00003,35,Other Rural,Garment Factory Worker,0,1,24.4,None,171.0,88.9,1,1.33,2024-08-02
+KH-00004,43,Other Rural,Construction Worker,0,0,23.4,COPD/Asthma,197.0,80.8,1,2.17,2024-03-21
+KH-00005,52,Other Rural,Market Vendor,0,0,24.4,None,144.0,79.8,0,1.67,2024-01-05
+KH-00006,40,Other Rural,Garment Factory Worker,0,1,19.4,None,179.0,95.0,0,1.42,2024-03-26
+KH-00007,44,Phnom Penh,Garment Factory Worker,0,0,25.9,Hepatitis B,200.0,77.0,0,1.93,2024-05-16
+KH-00008,31,Other Rural,Rice Farmer,1,1,17.7,None,134.0,95.0,0,1.6,2024-01-02
+KH-00009,34,Other Rural,Rice Farmer,0,0,22.4,None,117.0,92.7,1,1.52,2024-04-06
+KH-00010,73,Kampong Cham,Market Vendor,0,1,25.7,None,151.0,63.7,0,1.92,2024-05-30
+KH-00011,67,Phnom Penh,Monk/Retired,1,0,25.9,None,123.0,62.7,0,2.91,2024-04-25
+KH-00012,54,Phnom Penh,Civil Servant,1,1,24.4,None,425.0,79.9,0,1.78,2024-05-14
+KH-00013,32,Kampong Cham,Market Vendor,0,0,24.5,None,136.0,92.0,0,1.31,2024-07-10
+KH-00014,28,Phnom Penh,Monk/Retired,0,1,24.5,None,128.0,90.2,0,1.83,2024-08-10
+KH-00015,31,Battambang,Garment Factory Worker,1,0,25.2,Hepatitis B,123.0,86.6,1,1.95,2024-05-21
+KH-00016,47,Battambang,Garment Factory Worker,0,1,27.9,Heart Disease; COPD/Asthma,106.0,73.4,0,1.99,2024-02-22
+KH-00017,57,Preah Sihanouk,Market Vendor,1,0,22.7,Diabetes,173.0,80.4,0,2.23,2024-05-08
+KH-00018,33,Phnom Penh,Rice Farmer,0,0,24.4,TB,197.0,83.8,1,1.87,2024-04-03
+KH-00019,46,Phnom Penh,Garment Factory Worker,1,0,25.7,COPD/Asthma,244.0,79.2,0,2.12,2024-10-06
+KH-00020,52,Other Rural,Civil Servant,0,0,20.5,None,303.0,90.2,0,1.61,2024-10-28
+KH-00021,36,Other Rural,Rice Farmer,1,1,22.9,None,121.0,90.3,0,1.69,2024-02-05
+KH-00022,48,Other Rural,Garment Factory Worker,0,0,24.7,None,173.0,80.2,1,1.68,2024-08-20
+KH-00023,37,Other Rural,Garment Factory Worker,1,1,24.6,None,198.0,87.3,0,1.62,2024-01-09
+KH-00024,45,Kampong Cham,Rice Farmer,0,1,24.1,None,124.0,82.1,0,1.6,2024-05-11
+KH-00025,58,Battambang,Market Vendor,0,0,21.0,None,108.0,83.8,0,1.77,2024-11-07
+KH-00026,50,Preah Sihanouk,Construction Worker,0,0,23.1,Diabetes,249.0,77.1,0,2.3,2024-01-12
+KH-00027,33,Phnom Penh,Market Vendor,0,1,22.8,None,192.0,95.0,1,1.2,2024-03-22
+KH-00028,37,Kampong Cham,Civil Servant,0,0,21.5,None,268.0,95.0,0,1.34,2024-04-07
+KH-00029,45,Other Rural,Moto/Tuk-tuk Driver,0,0,27.3,None,170.0,71.8,0,2.08,2024-09-15
+KH-00030,37,Other Rural,Moto/Tuk-tuk Driver,0,0,24.2,COPD/Asthma,204.0,84.0,0,2.16,2024-11-03
+KH-00031,25,Battambang,Moto/Tuk-tuk Driver,0,0,26.6,COPD/Asthma,125.0,85.9,0,1.94,2024-05-30
+KH-00032,52,Phnom Penh,Rice Farmer,1,1,24.2,COPD/Asthma,180.0,77.4,1,2.2,2024-01-01
+KH-00033,24,Phnom Penh,Garment Factory Worker,1,1,24.2,Arthritis,238.0,95.0,0,1.6,2024-02-25
+KH-00034,41,Kampong Cham,Garment Factory Worker,0,1,24.4,None,128.0,85.1,0,1.44,2024-01-28
+KH-00035,35,Other Rural,Moto/Tuk-tuk Driver,0,0,20.3,None,205.0,94.2,0,1.9,2024-11-10
+KH-00036,29,Kampong Cham,Rice Farmer,1,1,21.4,None,92.0,95.0,1,1.56,2024-11-17
+KH-00037,51,Other Rural,Garment Factory Worker,0,0,23.3,None,158.0,81.5,0,1.74,2024-05-21
+KH-00038,65,Kampong Cham,Rice Farmer,0,1,21.8,Hypertension,92.0,74.9,0,2.18,2024-02-07
+KH-00039,26,Other Rural,Monk/Retired,0,0,19.9,None,73.0,95.0,1,1.92,2024-01-05
+KH-00040,36,Other Rural,Civil Servant,0,0,26.0,None,288.0,87.4,0,1.32,2024-11-04
+KH-00041,43,Other Rural,Market Vendor,1,0,24.2,None,174.0,85.8,0,1.75,2024-12-18
+KH-00042,45,Kampong Cham,Garment Factory Worker,0,0,20.5,Heart Disease,227.0,91.7,0,1.85,2024-09-10
+KH-00043,43,Preah Sihanouk,Monk/Retired,0,0,24.7,Diabetes,90.0,80.4,0,2.44,2024-02-20
+KH-00044,46,Other Rural,Civil Servant,1,0,28.1,Arthritis,311.0,76.4,0,1.97,2024-03-15
+KH-00045,40,Other Rural,Moto/Tuk-tuk Driver,0,1,24.7,Heart Disease,172.0,81.0,0,2.09,2024-12-26
+KH-00046,28,Preah Sihanouk,Rice Farmer,0,0,22.2,None,131.0,95.0,1,1.41,2024-03-18
+KH-00047,43,Kampong Cham,Garment Factory Worker,1,1,26.6,None,184.0,78.8,0,1.72,2024-09-11
+KH-00048,24,Phnom Penh,Construction Worker,0,1,23.1,None,277.0,93.3,0,1.49,2024-01-07
+KH-00049,59,Phnom Penh,Civil Servant,0,0,25.9,None,439.0,73.3,0,1.74,2024-12-20
+KH-00050,57,Other Rural,Rice Farmer,0,0,22.6,Hypertension,136.0,78.0,0,2.16,2024-01-29
+KH-00051,35,Other Rural,Rice Farmer,0,0,20.7,COPD/Asthma,143.0,95.0,0,1.76,2024-06-21
+KH-00052,62,Preah Sihanouk,Construction Worker,0,0,23.4,None,272.0,68.8,0,2.3,2024-09-06
+KH-00053,35,Kampong Cham,Garment Factory Worker,1,1,22.6,None,126.0,93.1,0,1.58,2024-10-01
+KH-00054,52,Other Rural,Monk/Retired,0,0,24.8,None,117.0,74.7,1,2.39,2024-01-26
+KH-00055,51,Other Rural,Rice Farmer,0,0,23.4,TB,91.0,74.9,1,2.2,2024-10-19
+KH-00056,38,Preah Sihanouk,Garment Factory Worker,0,0,25.2,Hepatitis B,219.0,82.4,0,1.82,2024-09-30
+KH-00057,36,Other Rural,Civil Servant,0,1,25.2,None,249.0,89.3,0,1.2,2024-05-19
+KH-00058,30,Other Rural,Rice Farmer,0,0,24.1,None,107.0,91.4,1,1.45,2024-04-16
+KH-00059,36,Other Rural,Garment Factory Worker,0,0,21.0,None,139.0,95.0,0,1.47,2024-03-29
+KH-00060,48,Kampong Cham,Rice Farmer,1,1,23.6,None,110.0,81.3,0,1.9,2024-02-06
+KH-00061,49,Other Rural,Garment Factory Worker,0,0,20.6,None,174.0,89.1,0,1.7,2024-06-18
+KH-00062,47,Other Rural,Rice Farmer,0,0,21.7,Diabetes,118.0,86.2,0,1.98,2024-08-20
+KH-00063,29,Kampong Cham,Construction Worker,0,0,24.2,None,182.0,87.5,0,1.7,2024-07-11
+KH-00064,37,Phnom Penh,Civil Servant,0,1,25.8,Hepatitis B,498.0,84.3,0,1.54,2024-08-13
+KH-00065,30,Other Rural,Rice Farmer,0,0,21.9,None,64.0,95.0,0,1.45,2024-09-13
+KH-00066,34,Other Rural,Market Vendor,0,0,19.6,None,200.0,95.0,1,1.34,2024-12-14
+KH-00067,43,Kampong Cham,Rice Farmer,0,0,24.3,None,95.0,82.7,1,1.68,2024-11-15
+KH-00068,41,Other Rural,Market Vendor,0,0,23.0,None,148.0,89.8,0,1.47,2024-08-29
+KH-00069,43,Battambang,Rice Farmer,0,1,18.3,None,147.0,95.0,0,1.56,2024-06-26
+KH-00070,45,Other Rural,Moto/Tuk-tuk Driver,0,0,26.1,Diabetes,182.0,74.7,0,2.3,2024-08-30
+KH-00071,31,Other Rural,Garment Factory Worker,0,1,21.0,Hepatitis B,147.0,95.0,0,1.58,2024-06-07
+KH-00072,27,Other Rural,Market Vendor,0,0,24.0,None,210.0,95.0,0,1.22,2024-07-04
+KH-00073,61,Phnom Penh,Market Vendor,1,1,27.5,None,152.0,67.0,0,1.96,2024-11-21
+KH-00074,43,Battambang,Garment Factory Worker,1,0,19.1,None,192.0,95.0,0,1.84,2024-05-12
+KH-00075,49,Phnom Penh,Rice Farmer,0,0,21.1,None,154.0,86.3,0,1.79,2024-01-20
+KH-00076,40,Other Rural,Rice Farmer,1,1,26.4,COPD/Asthma,121.0,79.8,0,1.98,2024-06-26
+KH-00077,46,Phnom Penh,Rice Farmer,0,1,19.5,None,155.0,92.0,1,1.62,2024-05-24
+KH-00078,43,Other Rural,Market Vendor,0,0,23.9,None,140.0,86.6,0,1.5,2024-03-29
+KH-00079,44,Other Rural,Civil Servant,0,0,23.4,None,266.0,88.5,0,1.47,2024-11-11
+KH-00080,27,Kampong Cham,Moto/Tuk-tuk Driver,1,0,23.4,None,144.0,92.1,1,2.01,2024-05-12
+KH-00081,60,Kampong Cham,Market Vendor,0,0,19.2,Hypertension; Heart Disease,117.0,86.8,0,2.25,2024-02-21
+KH-00082,38,Other Rural,Moto/Tuk-tuk Driver,1,0,23.5,None,168.0,84.9,0,2.2,2024-10-24
+KH-00083,39,Other Rural,Garment Factory Worker,1,1,24.2,None,157.0,86.8,0,1.65,2024-12-12
+KH-00084,44,Siem Reap,Construction Worker,0,1,21.3,Hepatitis B,241.0,81.8,0,2.17,2024-06-08
+KH-00085,29,Phnom Penh,Rice Farmer,0,0,25.1,COPD/Asthma,173.0,89.8,0,1.65,2024-02-05
+KH-00086,38,Other Rural,Rice Farmer,1,1,22.6,None,83.0,89.7,0,1.72,2024-09-15
+KH-00087,29,Battambang,Moto/Tuk-tuk Driver,0,0,21.0,COPD/Asthma,183.0,95.0,0,2.01,2024-10-05
+KH-00088,31,Other Rural,Moto/Tuk-tuk Driver,0,0,21.8,Hepatitis B,143.0,90.1,0,2.15,2024-12-06
+KH-00089,32,Siem Reap,Moto/Tuk-tuk Driver,1,0,23.4,None,205.0,89.0,0,2.1,2024-05-13
+KH-00090,37,Battambang,Rice Farmer,0,0,21.5,None,109.0,92.9,0,1.58,2024-05-20
+KH-00091,40,Phnom Penh,Rice Farmer,0,0,23.7,None,168.0,86.1,0,1.63,2024-10-13
+KH-00092,34,Phnom Penh,Market Vendor,1,1,23.2,None,219.0,93.7,0,1.47,2024-11-03
+KH-00093,56,Other Rural,Market Vendor,0,0,23.9,None,82.0,78.5,0,1.74,2024-05-28
+KH-00094,35,Siem Reap,Rice Farmer,0,0,23.3,None,72.0,90.1,0,1.54,2024-09-08
+KH-00095,40,Other Rural,Moto/Tuk-tuk Driver,0,0,23.9,None,174.0,82.7,0,1.99,2024-09-20
+KH-00096,44,Phnom Penh,Moto/Tuk-tuk Driver,0,0,26.0,Diabetes; TB; Hepatitis B,226.0,67.4,0,2.97,2024-07-29
+KH-00097,32,Siem Reap,Rice Farmer,0,0,24.5,None,83.0,89.2,0,1.49,2024-07-08
+KH-00098,38,Preah Sihanouk,Rice Farmer,0,0,24.1,None,78.0,86.4,0,1.59,2024-07-31
+KH-00099,53,Kampong Cham,Rice Farmer,0,1,22.4,None,116.0,80.9,1,1.74,2024-09-12
+KH-00100,45,Phnom Penh,Rice Farmer,0,0,24.1,None,170.0,82.0,0,1.72,2024-10-21
+KH-00101,27,Other Rural,Garment Factory Worker,0,0,23.2,None,162.0,95.0,0,1.31,2024-03-06
+KH-00102,56,Phnom Penh,Market Vendor,0,1,22.9,None,188.0,80.7,0,1.62,2024-01-24
+KH-00103,25,Phnom Penh,Market Vendor,0,1,22.1,None,198.0,95.0,0,1.06,2024-09-10
+KH-00104,80,Phnom Penh,Garment Factory Worker,1,0,24.6,None,212.0,60.5,0,2.51,2024-04-22
+KH-00105,50,Other Rural,Monk/Retired,0,0,25.9,None,100.0,73.4,0,2.35,2024-02-19
+KH-00106,47,Kampong Cham,Market Vendor,0,1,20.8,None,159.0,91.2,1,1.46,2024-10-21
+KH-00107,60,Preah Sihanouk,Market Vendor,1,0,24.1,None,162.0,75.5,0,2.06,2024-04-29
+KH-00108,40,Other Rural,Rice Farmer,0,1,23.2,None,111.0,87.2,1,1.51,2024-07-17
+KH-00109,64,Other Rural,Construction Worker,0,0,25.0,Hepatitis B,169.0,61.0,0,2.65,2024-11-22
+KH-00110,46,Siem Reap,Garment Factory Worker,0,0,27.0,None,194.0,76.2,0,1.65,2024-10-20
+KH-00111,38,Preah Sihanouk,Rice Farmer,1,1,21.5,None,108.0,92.3,0,1.72,2024-02-27
+KH-00112,45,Phnom Penh,Garment Factory Worker,0,0,27.4,None,228.0,75.8,0,1.63,2024-03-25
+KH-00113,34,Other Rural,Rice Farmer,0,0,19.7,Hepatitis B,107.0,95.0,0,1.84,2024-06-24
+KH-00114,39,Phnom Penh,Civil Servant,0,0,20.9,None,485.0,95.0,0,1.38,2024-06-02
+KH-00115,81,Other Rural,Rice Farmer,0,0,22.1,None,130.0,64.2,0,2.37,2024-10-03
+KH-00116,35,Other Rural,Rice Farmer,0,0,26.1,None,79.0,83.7,0,1.54,2024-01-01
+KH-00117,47,Siem Reap,Market Vendor,0,1,24.9,None,103.0,81.6,0,1.46,2024-03-31
+KH-00118,28,Battambang,Rice Farmer,0,0,19.0,Hypertension,116.0,95.0,0,1.63,2024-06-21
+KH-00119,52,Other Rural,Garment Factory Worker,0,0,23.8,COPD/Asthma,137.0,79.8,0,1.98,2024-11-29
+KH-00120,53,Siem Reap,Rice Farmer,0,1,26.9,None,109.0,70.5,0,1.74,2024-08-03
+KH-00121,48,Phnom Penh,Market Vendor,0,0,23.1,None,186.0,85.3,0,1.59,2024-09-16
+KH-00122,38,Other Rural,Moto/Tuk-tuk Driver,0,0,17.5,None,135.0,95.0,0,1.95,2024-08-24
+KH-00123,40,Kampong Cham,Moto/Tuk-tuk Driver,1,0,21.8,None,189.0,87.6,0,2.24,2024-01-17
+KH-00124,38,Other Rural,Garment Factory Worker,0,1,20.7,None,176.0,95.0,0,1.38,2024-09-06
+KH-00125,35,Other Rural,Rice Farmer,0,1,21.6,None,116.0,94.0,0,1.42,2024-08-30
+KH-00126,47,Other Rural,Garment Factory Worker,1,0,22.4,Hepatitis B,124.0,83.0,1,2.24,2024-09-24
+KH-00127,42,Kampong Cham,Moto/Tuk-tuk Driver,1,0,25.8,None,148.0,77.2,0,2.28,2024-07-06
+KH-00128,35,Kampong Cham,Market Vendor,0,1,19.3,None,132.0,95.0,0,1.24,2024-05-05
+KH-00129,46,Phnom Penh,Construction Worker,0,0,22.4,None,290.0,81.1,0,2.01,2024-12-28
+KH-00130,31,Other Rural,Garment Factory Worker,0,1,21.4,None,150.0,95.0,0,1.26,2024-10-04
+KH-00131,46,Phnom Penh,Moto/Tuk-tuk Driver,0,0,20.4,None,246.0,87.2,0,2.1,2024-04-01
+KH-00132,45,Other Rural,Market Vendor,0,0,21.8,None,178.0,90.1,0,1.54,2024-02-16
+KH-00133,62,Phnom Penh,Construction Worker,0,0,24.8,None,257.0,65.5,0,2.3,2024-07-21
+KH-00134,39,Other Rural,Garment Factory Worker,0,0,24.0,Arthritis,133.0,87.5,0,1.74,2024-11-20
+KH-00135,31,Other Rural,Civil Servant,0,0,24.0,None,325.0,95.0,1,1.23,2024-01-19
+KH-00136,40,Phnom Penh,Rice Farmer,0,0,23.1,None,209.0,87.5,0,1.63,2024-10-16
+KH-00137,50,Phnom Penh,Civil Servant,1,0,23.6,None,415.0,84.3,0,1.83,2024-02-24
+KH-00138,38,Siem Reap,Market Vendor,0,1,23.7,None,141.0,90.1,0,1.29,2024-02-22
+KH-00139,36,Kampong Cham,Moto/Tuk-tuk Driver,0,1,18.7,TB,169.0,92.3,1,2.17,2024-04-05
+KH-00140,52,Preah Sihanouk,Garment Factory Worker,1,0,23.5,None,151.0,80.5,0,2.01,2024-06-27
+KH-00141,30,Other Rural,Garment Factory Worker,0,0,24.2,None,184.0,92.4,0,1.36,2024-10-24
+KH-00142,41,Other Rural,Garment Factory Worker,0,0,20.4,Hypertension,163.0,94.4,0,1.78,2024-04-09
+KH-00143,48,Kampong Cham,Rice Farmer,0,0,25.3,Hepatitis B,68.0,74.3,1,2.09,2024-05-17
+KH-00144,32,Siem Reap,Civil Servant,0,0,22.2,None,295.0,95.0,0,1.25,2024-04-28
+KH-00145,36,Other Rural,Moto/Tuk-tuk Driver,1,1,24.2,Heart Disease,185.0,84.5,0,2.27,2024-01-16
+KH-00146,68,Other Rural,Market Vendor,0,0,25.2,None,118.0,67.8,0,1.95,2024-01-04
+KH-00147,40,Other Rural,Construction Worker,0,0,22.6,None,171.0,84.4,0,1.9,2024-12-25
+KH-00148,55,Battambang,Market Vendor,1,0,24.1,None,119.0,78.5,0,1.97,2024-02-15
+KH-00149,57,Siem Reap,Construction Worker,0,0,20.6,Hypertension,180.0,78.4,0,2.43,2024-12-20
+KH-00150,40,Siem Reap,Garment Factory Worker,1,1,23.7,None,172.0,87.4,0,1.67,2024-04-03
+KH-00151,59,Kampong Cham,Construction Worker,1,1,26.4,None,175.0,63.8,0,2.37,2024-12-14
+KH-00152,44,Other Rural,Rice Farmer,0,0,21.4,None,135.0,88.9,0,1.7,2024-06-29
+KH-00153,59,Siem Reap,Civil Servant,0,1,20.3,Hypertension; Diabetes,347.0,86.2,0,2.06,2024-10-08
+KH-00154,28,Phnom Penh,Garment Factory Worker,0,1,24.7,Hepatitis B,247.0,89.6,0,1.52,2024-11-19
+KH-00155,49,Phnom Penh,Construction Worker,0,0,23.8,None,310.0,76.0,0,2.06,2024-09-05
+KH-00156,24,Battambang,Market Vendor,0,1,23.9,None,132.0,95.0,0,1.04,2024-01-30
+KH-00157,56,Siem Reap,Garment Factory Worker,0,0,21.0,None,165.0,83.7,0,1.83,2024-05-18
+KH-00158,35,Kampong Cham,Garment Factory Worker,0,1,25.5,None,161.0,86.4,0,1.33,2024-06-15
+KH-00159,37,Phnom Penh,Rice Farmer,0,1,25.8,None,95.0,83.1,0,1.46,2024-12-04
+KH-00160,42,Phnom Penh,Construction Worker,0,1,24.4,None,359.0,78.9,0,1.82,2024-05-26
+KH-00161,32,Phnom Penh,Garment Factory Worker,0,0,22.8,Hepatitis B,225.0,91.5,0,1.72,2024-05-05
+KH-00162,42,Siem Reap,Garment Factory Worker,0,0,19.5,None,168.0,95.0,0,1.58,2024-03-24
+KH-00163,55,Preah Sihanouk,Market Vendor,0,1,26.2,None,214.0,73.8,0,1.6,2024-08-06
+KH-00164,35,Phnom Penh,Moto/Tuk-tuk Driver,0,0,28.0,None,272.0,76.4,0,1.9,2024-11-17
+KH-00165,56,Battambang,Rice Farmer,0,0,25.5,None,128.0,71.9,0,1.92,2024-10-27
+KH-00166,56,Siem Reap,Garment Factory Worker,0,0,24.4,Heart Disease,128.0,75.8,0,2.05,2024-09-27
+KH-00167,41,Other Rural,Rice Farmer,0,0,25.7,COPD/Asthma; TB,96.0,75.9,0,2.24,2024-11-13
+KH-00168,49,Other Rural,Rice Farmer,0,0,19.9,None,107.0,89.1,0,1.79,2024-12-10
+KH-00169,51,Other Rural,Rice Farmer,0,0,22.2,None,139.0,82.6,0,1.83,2024-07-23
+KH-00170,41,Kampong Cham,Rice Farmer,0,1,21.6,None,138.0,90.3,0,1.53,2024-04-18
+KH-00171,39,Phnom Penh,Civil Servant,0,1,26.2,None,420.0,85.1,0,1.26,2024-12-01
+KH-00172,60,Phnom Penh,Garment Factory Worker,0,1,25.4,None,255.0,71.0,0,1.78,2024-02-15
+KH-00173,39,Other Rural,Civil Servant,0,1,16.9,None,273.0,95.0,0,1.26,2024-01-11
+KH-00174,43,Phnom Penh,Garment Factory Worker,0,0,26.1,None,286.0,80.1,0,1.59,2024-09-02
+KH-00175,37,Other Rural,Garment Factory Worker,0,0,22.5,None,179.0,92.0,0,1.49,2024-07-25
+KH-00176,44,Siem Reap,Market Vendor,0,0,22.1,None,177.0,90.1,0,1.52,2024-09-27
+KH-00177,33,Other Rural,Civil Servant,1,0,21.9,None,290.0,95.0,0,1.52,2024-05-02
+KH-00178,59,Preah Sihanouk,Rice Farmer,0,0,20.2,Hypertension,97.0,82.2,0,2.19,2024-11-12
+KH-00179,27,Kampong Cham,Garment Factory Worker,0,1,26.0,None,169.0,90.2,0,1.19,2024-12-11
+KH-00180,28,Kampong Cham,Market Vendor,0,0,20.1,None,120.0,95.0,1,1.23,2024-01-02
+KH-00181,39,Other Rural,Garment Factory Worker,0,0,20.1,None,168.0,95.0,0,1.52,2024-11-21
+KH-00182,47,Other Rural,Market Vendor,0,0,21.4,None,97.0,89.7,0,1.58,2024-09-11
+KH-00183,45,Kampong Cham,Rice Farmer,0,1,23.5,TB,132.0,78.3,0,1.97,2024-10-30
+KH-00184,35,Phnom Penh,Rice Farmer,0,1,23.7,Hypertension,128.0,89.1,0,1.64,2024-03-14
+KH-00185,43,Other Rural,Garment Factory Worker,0,0,20.3,None,176.0,93.4,1,1.59,2024-03-15
+KH-00186,37,Kampong Cham,Market Vendor,0,1,23.2,None,110.0,91.9,1,1.28,2024-04-21
+KH-00187,25,Other Rural,Market Vendor,0,0,17.3,None,141.0,95.0,0,1.18,2024-11-13
+KH-00188,50,Kampong Cham,Monk/Retired,0,0,21.8,None,69.0,82.7,0,2.35,2024-09-24
+KH-00189,45,Phnom Penh,Garment Factory Worker,0,1,24.6,None,232.0,82.2,0,1.51,2024-12-25
+KH-00190,46,Other Rural,Rice Farmer,0,1,19.9,None,77.0,91.0,1,1.62,2024-01-31
+KH-00191,48,Phnom Penh,Moto/Tuk-tuk Driver,1,0,20.5,Hepatitis B,230.0,82.7,0,2.7,2024-06-24
+KH-00192,24,Other Rural,Market Vendor,1,1,25.1,Diabetes,145.0,95.0,0,1.51,2024-09-05
+KH-00193,38,Preah Sihanouk,Market Vendor,0,0,24.6,None,213.0,87.9,0,1.41,2024-04-29
+KH-00194,30,Siem Reap,Rice Farmer,0,1,19.8,None,108.0,95.0,0,1.33,2024-12-10
+KH-00195,79,Other Rural,Market Vendor,1,0,28.9,None,140.0,52.4,0,2.4,2024-04-20
+KH-00196,48,Preah Sihanouk,Garment Factory Worker,1,0,27.1,TB,163.0,69.6,0,2.3,2024-04-25
+KH-00197,37,Phnom Penh,Market Vendor,0,0,27.9,None,214.0,81.0,0,1.4,2024-02-11
+KH-00198,46,Other Rural,Rice Farmer,1,0,24.5,Heart Disease,105.0,80.4,0,2.21,2024-10-31
+KH-00199,30,Other Rural,Moto/Tuk-tuk Driver,1,1,20.3,None,182.0,95.0,0,1.94,2024-07-06
+KH-00200,31,Preah Sihanouk,Rice Farmer,0,0,19.5,None,134.0,95.0,0,1.47,2024-04-27
+KH-00201,21,Other Rural,Market Vendor,0,0,19.6,None,180.0,95.0,0,1.11,2024-06-06
+KH-00202,42,Other Rural,Rice Farmer,1,0,24.1,None,103.0,83.9,1,1.92,2024-08-14
+KH-00203,38,Other Rural,Civil Servant,0,1,23.2,Hepatitis B,310.0,89.6,0,1.56,2024-12-25
+KH-00204,42,Phnom Penh,Rice Farmer,0,0,23.5,Hepatitis B,159.0,82.3,0,1.99,2024-02-09
+KH-00205,38,Kampong Cham,Rice Farmer,0,0,21.5,Hypertension,113.0,92.4,0,1.81,2024-03-12
+KH-00206,46,Preah Sihanouk,Garment Factory Worker,1,0,23.8,Heart Disease,199.0,83.5,0,2.12,2024-01-13
+KH-00207,46,Siem Reap,Moto/Tuk-tuk Driver,1,0,20.4,None,187.0,87.0,0,2.35,2024-06-12
+KH-00208,65,Phnom Penh,Garment Factory Worker,1,0,22.8,Hypertension,243.0,73.8,0,2.46,2024-04-12
+KH-00209,38,Other Rural,Garment Factory Worker,0,0,26.0,None,140.0,83.3,0,1.5,2024-10-14
+KH-00210,28,Siem Reap,Civil Servant,0,0,20.9,None,292.0,95.0,0,1.18,2024-05-29
+KH-00211,58,Siem Reap,Monk/Retired,0,0,21.9,None,94.0,77.6,1,2.49,2024-08-24
+KH-00212,27,Other Rural,Market Vendor,0,1,26.2,None,113.0,91.1,0,1.1,2024-04-30
+KH-00213,32,Phnom Penh,Rice Farmer,0,1,23.1,None,157.0,92.4,0,1.37,2024-10-09
+KH-00214,62,Kampong Cham,Rice Farmer,0,1,24.4,Hepatitis B,66.0,67.6,0,2.23,2024-09-26
+KH-00215,51,Phnom Penh,Garment Factory Worker,0,0,21.4,None,237.0,85.8,0,1.74,2024-09-28
+KH-00216,45,Battambang,Construction Worker,0,0,22.4,None,191.0,81.8,1,1.99,2024-01-05
+KH-00217,31,Other Rural,Garment Factory Worker,0,1,23.5,None,181.0,93.5,0,1.26,2024-09-29
+KH-00218,74,Preah Sihanouk,Rice Farmer,1,0,24.0,None,144.0,64.1,0,2.49,2024-01-19
+KH-00219,58,Other Rural,Market Vendor,0,0,26.8,None,174.0,70.5,0,1.77,2024-11-28
+KH-00220,57,Other Rural,Rice Farmer,0,1,26.2,TB,113.0,64.6,0,2.19,2024-03-06
+KH-00221,45,Kampong Cham,Rice Farmer,0,0,26.4,None,151.0,76.7,1,1.72,2024-02-05
+KH-00222,28,Kampong Cham,Moto/Tuk-tuk Driver,0,1,24.3,None,175.0,89.3,0,1.65,2024-11-05
+KH-00223,38,Other Rural,Rice Farmer,0,0,20.6,Diabetes,136.0,94.5,1,1.81,2024-04-04
+KH-00224,60,Siem Reap,Rice Farmer,1,1,20.0,None,72.0,82.2,0,2.12,2024-12-05
+KH-00225,31,Battambang,Rice Farmer,1,0,24.7,Hepatitis B,129.0,86.3,0,2.04,2024-02-21
+KH-00226,60,Siem Reap,Moto/Tuk-tuk Driver,1,0,23.6,Hepatitis B,168.0,68.0,0,2.92,2024-04-07
+KH-00227,39,Other Rural,Rice Farmer,0,0,23.4,None,134.0,87.4,0,1.61,2024-04-26
+KH-00228,65,Other Rural,Construction Worker,0,0,24.5,None,141.0,64.4,0,2.35,2024-01-29
+KH-00229,53,Kampong Cham,Rice Farmer,0,0,20.6,None,60.0,85.0,1,1.86,2024-03-27
+KH-00230,62,Siem Reap,Rice Farmer,0,1,22.2,None,83.0,75.7,1,1.91,2024-10-18
+KH-00231,38,Phnom Penh,Moto/Tuk-tuk Driver,0,1,23.9,None,258.0,84.1,1,1.83,2024-07-21
+KH-00232,29,Other Rural,Garment Factory Worker,0,1,19.9,TB,163.0,95.0,0,1.59,2024-09-02
+KH-00233,36,Other Rural,Rice Farmer,0,0,21.3,TB,98.0,89.1,0,1.93,2024-07-28
+KH-00234,41,Siem Reap,Monk/Retired,0,1,19.0,Arthritis; Hepatitis B,96.0,91.9,0,2.61,2024-02-22
+KH-00235,46,Siem Reap,Market Vendor,0,1,21.5,None,122.0,90.2,0,1.44,2024-06-27
+KH-00236,64,Kampong Cham,Monk/Retired,1,1,27.9,COPD/Asthma,60.0,60.0,0,2.95,2024-06-19
+KH-00237,42,Other Rural,Rice Farmer,1,1,20.6,Hypertension; Hepatitis B,115.0,88.9,0,2.34,2024-11-18
+KH-00238,41,Phnom Penh,Garment Factory Worker,1,0,24.8,None,259.0,84.2,0,1.81,2024-01-26
+KH-00239,46,Other Rural,Rice Farmer,0,0,24.0,None,89.0,81.6,1,1.74,2024-04-08
+KH-00240,38,Preah Sihanouk,Moto/Tuk-tuk Driver,1,0,20.5,None,205.0,92.0,0,2.2,2024-12-28
+KH-00241,30,Battambang,Moto/Tuk-tuk Driver,1,0,27.1,Heart Disease,210.0,81.6,0,2.28,2024-04-18
+KH-00242,29,Phnom Penh,Garment Factory Worker,0,1,22.5,None,217.0,95.0,1,1.22,2024-12-20
+KH-00243,38,Phnom Penh,Market Vendor,1,1,20.6,None,229.0,95.0,0,1.54,2024-11-24
+KH-00244,30,Siem Reap,Rice Farmer,0,0,22.9,None,84.0,94.2,0,1.45,2024-01-15
+KH-00245,28,Other Rural,Garment Factory Worker,0,1,25.9,None,165.0,89.8,1,1.2,2024-03-07
+KH-00246,38,Phnom Penh,Civil Servant,0,1,24.4,None,451.0,89.9,0,1.24,2024-08-10
+KH-00247,45,Other Rural,Garment Factory Worker,0,0,19.7,None,162.0,93.5,0,1.63,2024-11-13
+KH-00248,42,Other Rural,Civil Servant,1,0,22.5,None,304.0,91.7,0,1.68,2024-01-07
+KH-00249,43,Other Rural,Rice Farmer,0,0,22.8,None,60.0,86.3,0,1.68,2024-01-21
+KH-00250,31,Other Rural,Rice Farmer,0,0,24.0,None,115.0,91.1,0,1.47,2024-03-03
+KH-00251,53,Kampong Cham,Moto/Tuk-tuk Driver,0,0,22.1,None,178.0,78.8,0,2.22,2024-07-24
+KH-00252,36,Other Rural,Rice Farmer,0,0,22.0,Hepatitis B,107.0,89.4,0,1.88,2024-03-22
+KH-00253,27,Other Rural,Moto/Tuk-tuk Driver,1,0,22.0,None,167.0,95.0,0,2.01,2024-04-22
+KH-00254,37,Other Rural,Market Vendor,0,0,20.8,Diabetes,153.0,95.0,0,1.62,2024-06-10
+KH-00255,85,Phnom Penh,Rice Farmer,0,0,25.7,TB,130.0,48.3,0,2.81,2024-03-27
+KH-00256,33,Phnom Penh,Garment Factory Worker,0,0,25.5,COPD/Asthma; TB,250.0,82.7,0,2.0,2024-07-11
+KH-00257,26,Battambang,Civil Servant,0,0,22.4,None,295.0,95.0,0,1.14,2024-03-23
+KH-00258,34,Battambang,Garment Factory Worker,0,0,22.0,None,128.0,95.0,0,1.43,2024-10-17
+KH-00259,53,Phnom Penh,Civil Servant,0,0,22.6,Hepatitis B,465.0,81.7,0,1.95,2024-06-29
+KH-00260,32,Battambang,Moto/Tuk-tuk Driver,0,1,20.3,None,164.0,95.0,0,1.73,2024-10-05
+KH-00261,34,Siem Reap,Rice Farmer,0,0,22.5,None,149.0,92.6,0,1.52,2024-04-06
+KH-00262,44,Phnom Penh,Garment Factory Worker,0,1,25.8,None,258.0,80.2,0,1.49,2024-02-10
+KH-00263,29,Other Rural,Market Vendor,0,1,22.7,None,77.0,95.0,0,1.13,2024-04-26
+KH-00264,34,Battambang,Rice Farmer,1,0,22.0,None,127.0,93.8,0,1.77,2024-12-30
+KH-00265,42,Other Rural,Garment Factory Worker,1,0,28.5,Diabetes,155.0,75.2,0,2.05,2024-06-02
+KH-00266,44,Kampong Cham,Garment Factory Worker,0,0,22.5,None,188.0,87.8,0,1.61,2024-07-07
+KH-00267,49,Preah Sihanouk,Rice Farmer,0,0,28.0,Hepatitis B,115.0,67.6,0,2.11,2024-03-08
+KH-00268,33,Kampong Cham,Market Vendor,0,1,16.4,Diabetes,107.0,95.0,0,1.42,2024-07-01
+KH-00269,43,Other Rural,Monk/Retired,0,0,22.1,None,66.0,86.4,1,2.22,2024-10-30
+KH-00270,59,Other Rural,Market Vendor,1,1,20.7,None,109.0,83.8,0,1.92,2024-10-20
+KH-00271,32,Siem Reap,Rice Farmer,1,1,27.8,None,133.0,81.6,0,1.62,2024-12-19
+KH-00272,35,Phnom Penh,Rice Farmer,0,1,21.4,None,175.0,94.4,1,1.42,2024-06-15
+KH-00273,48,Battambang,Rice Farmer,0,0,24.8,Hypertension; Diabetes,91.0,78.4,0,2.21,2024-02-26
+KH-00274,40,Phnom Penh,Rice Farmer,1,1,20.3,TB; Hepatitis B,154.0,85.8,0,2.45,2024-01-18
+KH-00275,35,Battambang,Moto/Tuk-tuk Driver,1,0,25.4,None,131.0,82.5,0,2.15,2024-03-29
+KH-00276,51,Kampong Cham,Market Vendor,0,0,19.7,None,141.0,91.1,0,1.65,2024-03-16
+KH-00277,56,Other Rural,Moto/Tuk-tuk Driver,0,1,25.9,Diabetes,162.0,68.2,0,2.38,2024-06-17
+KH-00278,37,Other Rural,Market Vendor,0,1,20.6,None,126.0,95.0,0,1.28,2024-07-07
+KH-00279,38,Other Rural,Construction Worker,1,0,17.3,None,191.0,95.0,0,2.11,2024-03-15
+KH-00280,40,Other Rural,Market Vendor,1,0,22.9,None,166.0,90.7,0,1.7,2024-03-01
+KH-00281,36,Other Rural,Moto/Tuk-tuk Driver,1,0,20.3,None,169.0,93.6,1,2.17,2024-09-07
+KH-00282,42,Phnom Penh,Moto/Tuk-tuk Driver,0,0,22.8,Heart Disease; TB,259.0,79.1,0,2.62,2024-08-03
+KH-00283,45,Battambang,Moto/Tuk-tuk Driver,0,0,22.6,Hepatitis B,123.0,79.6,0,2.4,2024-02-13
+KH-00284,47,Phnom Penh,Monk/Retired,0,0,23.2,None,115.0,81.4,0,2.3,2024-02-03
+KH-00285,36,Phnom Penh,Garment Factory Worker,1,0,21.9,None,202.0,94.2,1,1.72,2024-02-27
+KH-00286,40,Preah Sihanouk,Rice Farmer,1,0,20.2,None,159.0,94.1,0,1.88,2024-11-07
+KH-00287,28,Phnom Penh,Moto/Tuk-tuk Driver,1,0,24.3,None,257.0,89.3,0,2.02,2024-02-24
+KH-00288,40,Battambang,Rice Farmer,0,0,25.0,Hepatitis B,150.0,79.9,0,1.95,2024-11-20
+KH-00289,45,Battambang,Moto/Tuk-tuk Driver,0,1,28.6,None,169.0,68.8,0,1.96,2024-04-08
+KH-00290,40,Other Rural,Garment Factory Worker,1,0,22.1,None,177.0,91.1,0,1.79,2024-03-22
+KH-00291,58,Kampong Cham,Market Vendor,1,0,25.3,None,129.0,73.9,0,2.02,2024-07-22
+KH-00292,37,Phnom Penh,Rice Farmer,0,1,23.0,Arthritis,159.0,89.6,0,1.68,2024-01-17
+KH-00293,61,Other Rural,Market Vendor,1,0,23.6,COPD/Asthma,120.0,76.1,0,2.3,2024-03-14
+KH-00294,28,Other Rural,Rice Farmer,1,0,22.0,Diabetes,60.0,95.0,0,1.88,2024-10-17
+KH-00295,36,Kampong Cham,Construction Worker,0,1,20.4,Hypertension; Heart Disease,215.0,92.0,0,2.15,2024-11-18
+KH-00296,36,Other Rural,Monk/Retired,0,0,18.7,None,109.0,95.0,0,2.1,2024-12-27
+KH-00297,43,Preah Sihanouk,Rice Farmer,0,0,23.5,Hypertension,111.0,84.6,0,1.9,2024-06-14
+KH-00298,48,Other Rural,Construction Worker,0,0,24.8,Diabetes,197.0,74.2,0,2.26,2024-08-12
+KH-00299,33,Kampong Cham,Garment Factory Worker,0,1,22.0,None,174.0,95.0,0,1.29,2024-07-05
+KH-00300,48,Other Rural,Market Vendor,0,1,22.4,Hepatitis B,163.0,83.9,0,1.79,2024-08-10
+KH-00301,53,Phnom Penh,Rice Farmer,0,0,20.7,TB,163.0,79.8,0,2.23,2024-09-21
+KH-00302,31,Other Rural,Garment Factory Worker,1,0,16.7,None,134.0,95.0,0,1.63,2024-09-13
+KH-00303,37,Phnom Penh,Market Vendor,0,0,24.3,None,223.0,89.3,0,1.4,2024-07-18
+KH-00304,39,Kampong Cham,Rice Farmer,0,1,25.2,TB; Hepatitis B,134.0,75.2,0,2.18,2024-03-13
+KH-00305,44,Other Rural,Monk/Retired,1,0,25.1,None,113.0,78.9,1,2.49,2024-06-01
+KH-00306,67,Other Rural,Construction Worker,0,0,26.8,Arthritis,166.0,57.8,0,2.61,2024-10-27
+KH-00307,47,Siem Reap,Rice Farmer,0,0,23.8,None,78.0,81.5,0,1.76,2024-03-15
+KH-00308,31,Kampong Cham,Rice Farmer,1,0,20.0,None,72.0,95.0,0,1.72,2024-04-21
+KH-00309,54,Battambang,Moto/Tuk-tuk Driver,0,1,20.4,None,114.0,82.1,0,2.12,2024-03-06
+KH-00310,56,Siem Reap,Rice Farmer,0,0,25.8,None,75.0,71.2,0,1.92,2024-08-30
+KH-00311,51,Other Rural,Construction Worker,0,1,23.8,Hypertension,168.0,74.8,0,2.2,2024-03-02
+KH-00312,43,Siem Reap,Market Vendor,0,0,24.1,None,156.0,86.0,0,1.5,2024-07-14
+KH-00313,35,Other Rural,Rice Farmer,0,0,22.6,None,99.0,91.7,0,1.54,2024-03-08
+KH-00314,30,Other Rural,Rice Farmer,1,1,21.6,None,91.0,95.0,0,1.58,2024-03-11
+KH-00315,31,Kampong Cham,Rice Farmer,0,0,19.8,None,62.0,95.0,1,1.47,2024-02-13
+KH-00316,37,Other Rural,Garment Factory Worker,1,0,23.5,TB; Hepatitis B,124.0,81.8,0,2.43,2024-06-18
+KH-00317,75,Other Rural,Rice Farmer,1,0,21.5,Hepatitis B,92.0,66.3,0,2.83,2024-12-18
+KH-00318,28,Battambang,Monk/Retired,0,0,22.2,None,60.0,95.0,0,1.95,2024-05-29
+KH-00319,38,Kampong Cham,Monk/Retired,0,0,19.8,None,81.0,94.9,0,2.13,2024-04-29
+KH-00320,37,Other Rural,Garment Factory Worker,0,0,24.5,COPD/Asthma,151.0,87.4,0,1.71,2024-12-21
+KH-00321,37,Other Rural,Construction Worker,1,1,22.5,None,203.0,86.6,0,1.98,2024-11-29
+KH-00322,44,Other Rural,Rice Farmer,0,1,20.9,Diabetes,88.0,90.1,0,1.8,2024-08-02
+KH-00323,48,Battambang,Monk/Retired,1,0,27.2,Hypertension; Heart Disease; Arthritis,109.0,71.6,0,3.22,2024-01-21
+KH-00324,45,Other Rural,Construction Worker,1,0,22.9,None,193.0,80.5,0,2.24,2024-10-04
+KH-00325,34,Phnom Penh,Rice Farmer,0,1,25.0,TB,166.0,81.8,0,1.77,2024-09-10
+KH-00326,48,Other Rural,Rice Farmer,0,0,22.2,None,77.0,84.6,0,1.77,2024-01-29
+KH-00327,44,Phnom Penh,Moto/Tuk-tuk Driver,0,0,24.4,None,276.0,79.2,0,2.06,2024-07-07
+KH-00328,45,Kampong Cham,Moto/Tuk-tuk Driver,0,0,23.6,None,158.0,80.4,0,2.08,2024-01-21
+KH-00329,38,Battambang,Rice Farmer,0,0,24.0,Hypertension,79.0,86.5,1,1.81,2024-01-26
+KH-00330,47,Other Rural,Garment Factory Worker,0,1,24.9,None,153.0,80.3,0,1.55,2024-11-23
+KH-00331,51,Other Rural,Rice Farmer,1,0,24.4,None,117.0,77.6,1,2.08,2024-05-09
+KH-00332,61,Phnom Penh,Construction Worker,0,0,28.0,Arthritis,299.0,58.9,1,2.5,2024-03-18
+KH-00333,32,Other Rural,Rice Farmer,0,0,24.1,Hypertension,102.0,90.1,0,1.71,2024-05-25
+KH-00334,42,Other Rural,Moto/Tuk-tuk Driver,0,1,21.8,Hepatitis B,185.0,83.3,0,2.23,2024-09-18
+KH-00335,48,Phnom Penh,Rice Farmer,0,1,22.1,Arthritis,165.0,84.8,0,1.87,2024-04-25
+KH-00336,32,Kampong Cham,Rice Farmer,0,0,18.6,None,90.0,95.0,1,1.49,2024-02-22
+KH-00337,30,Other Rural,Construction Worker,0,0,19.8,None,192.0,95.0,1,1.72,2024-12-27
+KH-00338,41,Phnom Penh,Rice Farmer,1,0,27.8,TB,154.0,71.0,0,2.27,2024-12-22
+KH-00339,54,Other Rural,Moto/Tuk-tuk Driver,1,1,20.4,Diabetes,202.0,82.1,0,2.59,2024-08-23
+KH-00340,59,Phnom Penh,Garment Factory Worker,1,1,24.9,None,207.0,72.8,0,2.01,2024-05-31
+KH-00341,54,Phnom Penh,Market Vendor,0,1,24.5,Hypertension,279.0,78.2,0,1.8,2024-10-15
+KH-00342,42,Other Rural,Rice Farmer,0,0,23.3,Hepatitis B,120.0,82.6,0,1.99,2024-11-07
+KH-00343,85,Siem Reap,Garment Factory Worker,0,0,26.6,Diabetes; Hepatitis B,165.0,49.6,0,2.89,2024-05-07
+KH-00344,46,Preah Sihanouk,Monk/Retired,1,1,21.9,None,92.0,85.2,0,2.41,2024-12-22
+KH-00345,41,Other Rural,Civil Servant,1,0,22.8,Diabetes,320.0,91.6,0,1.88,2024-03-26
+KH-00346,39,Other Rural,Monk/Retired,0,1,20.9,Hepatitis B,77.0,88.6,0,2.35,2024-06-29
+KH-00347,50,Other Rural,Rice Farmer,1,1,24.6,None,93.0,77.8,0,1.94,2024-09-05
+KH-00348,33,Other Rural,Monk/Retired,0,0,24.5,Hepatitis B,109.0,84.3,0,2.36,2024-04-13
+KH-00349,76,Battambang,Moto/Tuk-tuk Driver,1,1,29.9,Hypertension,169.0,46.5,0,2.99,2024-12-20
+KH-00350,33,Other Rural,Market Vendor,0,0,22.3,None,194.0,95.0,1,1.32,2024-09-18
+KH-00351,37,Siem Reap,Garment Factory Worker,1,1,22.8,None,144.0,91.4,0,1.62,2024-11-22
+KH-00352,40,Phnom Penh,Construction Worker,0,0,22.4,Diabetes,298.0,84.8,0,2.12,2024-03-15
+KH-00353,50,Other Rural,Garment Factory Worker,0,0,25.0,None,176.0,78.3,0,1.72,2024-11-21
+KH-00354,34,Other Rural,Monk/Retired,0,0,22.5,None,60.0,91.1,0,2.06,2024-07-24
+KH-00355,39,Kampong Cham,Rice Farmer,0,0,19.3,None,143.0,95.0,0,1.61,2024-06-09
+KH-00356,43,Siem Reap,Garment Factory Worker,0,0,21.7,TB,147.0,85.3,0,1.96,2024-08-26
+KH-00357,60,Kampong Cham,Garment Factory Worker,1,0,23.1,None,176.0,76.4,0,2.15,2024-02-12
+KH-00358,35,Kampong Cham,Market Vendor,0,1,22.5,None,131.0,94.7,0,1.24,2024-05-18
+KH-00359,35,Kampong Cham,Civil Servant,1,1,18.9,None,314.0,95.0,0,1.44,2024-04-01
+KH-00360,44,Phnom Penh,Civil Servant,0,1,25.1,None,486.0,84.6,0,1.35,2024-03-28
+KH-00361,33,Other Rural,Garment Factory Worker,0,0,22.8,None,184.0,93.8,1,1.41,2024-01-29
+KH-00362,28,Phnom Penh,Construction Worker,0,0,21.0,None,269.0,95.0,0,1.68,2024-10-16
+KH-00363,59,Other Rural,Rice Farmer,0,0,17.0,Heart Disease,100.0,89.5,0,2.19,2024-02-06
+KH-00364,44,Kampong Cham,Construction Worker,0,0,24.3,Diabetes; Heart Disease,159.0,78.1,0,2.41,2024-07-19
+KH-00365,39,Other Rural,Garment Factory Worker,0,1,23.5,Heart Disease,109.0,88.5,0,1.62,2024-10-31
+KH-00366,63,Other Rural,Moto/Tuk-tuk Driver,0,0,27.3,None,190.0,60.7,1,2.4,2024-09-13
+KH-00367,27,Kampong Cham,Garment Factory Worker,0,0,22.9,None,162.0,95.0,0,1.31,2024-04-18
+KH-00368,42,Phnom Penh,Rice Farmer,0,0,21.9,TB; Hepatitis B,153.0,81.0,1,2.36,2024-05-11
+KH-00369,60,Other Rural,Moto/Tuk-tuk Driver,0,0,25.4,Diabetes,191.0,67.0,0,2.57,2024-01-08
+KH-00370,39,Phnom Penh,Market Vendor,0,0,24.8,None,235.0,86.9,0,1.43,2024-12-24
+KH-00371,38,Other Rural,Rice Farmer,0,1,23.1,None,120.0,88.7,0,1.47,2024-05-23
+KH-00372,36,Other Rural,Garment Factory Worker,0,0,20.8,Arthritis,151.0,95.0,0,1.69,2024-06-17
+KH-00373,57,Other Rural,Garment Factory Worker,0,0,20.0,Diabetes,142.0,85.4,0,2.07,2024-07-08
+KH-00374,30,Other Rural,Moto/Tuk-tuk Driver,0,0,25.9,None,187.0,84.5,0,1.81,2024-02-08
+KH-00375,46,Phnom Penh,Monk/Retired,0,0,19.9,COPD/Asthma,129.0,89.7,0,2.5,2024-09-07
+KH-00376,44,Preah Sihanouk,Civil Servant,0,1,22.0,None,400.0,91.7,0,1.35,2024-07-17
+KH-00377,44,Phnom Penh,Moto/Tuk-tuk Driver,0,1,23.4,None,232.0,81.5,0,1.94,2024-05-12
+KH-00378,31,Phnom Penh,Monk/Retired,1,1,18.0,Hepatitis B,141.0,95.0,0,2.46,2024-02-26
+KH-00379,37,Battambang,Construction Worker,0,1,26.3,Hypertension; Diabetes,207.0,77.7,0,2.17,2024-02-20
+KH-00380,46,Phnom Penh,Monk/Retired,1,0,27.1,None,181.0,73.1,0,2.53,2024-10-07
+KH-00381,46,Phnom Penh,Monk/Retired,0,0,23.4,None,138.0,81.7,0,2.28,2024-09-13
+KH-00382,32,Battambang,Garment Factory Worker,0,1,17.1,TB,169.0,95.0,1,1.65,2024-03-03
+KH-00383,35,Kampong Cham,Market Vendor,0,1,27.0,Hypertension,130.0,84.3,0,1.46,2024-01-17
+KH-00384,40,Other Rural,Market Vendor,0,1,22.0,None,130.0,92.8,0,1.33,2024-07-31
+KH-00385,39,Other Rural,Construction Worker,0,0,25.3,None,189.0,78.9,0,1.88,2024-11-21
+KH-00386,62,Other Rural,Rice Farmer,0,0,23.9,COPD/Asthma,82.0,71.9,0,2.25,2024-03-23
+KH-00387,41,Other Rural,Civil Servant,0,0,18.1,Hepatitis B,288.0,95.0,0,1.73,2024-07-16
+KH-00388,33,Other Rural,Garment Factory Worker,0,1,24.3,None,149.0,90.4,0,1.29,2024-11-18
+KH-00389,25,Battambang,Moto/Tuk-tuk Driver,0,0,19.4,None,171.0,95.0,1,1.72,2024-05-17
+KH-00390,40,Other Rural,Garment Factory Worker,0,0,18.4,Hepatitis B,164.0,95.0,0,1.86,2024-12-30
+KH-00391,41,Siem Reap,Civil Servant,0,1,20.6,None,300.0,95.0,0,1.29,2024-01-02
+KH-00392,42,Phnom Penh,Market Vendor,1,0,21.4,Hepatitis B,167.0,89.9,0,2.06,2024-04-27
+KH-00393,37,Battambang,Market Vendor,1,1,24.3,COPD/Asthma,133.0,89.2,0,1.75,2024-03-05
+KH-00394,58,Phnom Penh,Market Vendor,0,0,28.6,None,207.0,66.3,0,1.77,2024-01-02
+KH-00395,30,Other Rural,Rice Farmer,0,1,24.2,Hepatitis B,77.0,88.2,0,1.65,2024-07-10
+KH-00396,42,Other Rural,Rice Farmer,0,0,22.0,None,60.0,88.7,0,1.67,2024-05-14
+KH-00397,44,Siem Reap,Monk/Retired,0,0,20.9,None,60.0,88.7,1,2.24,2024-12-01
+KH-00398,30,Other Rural,Monk/Retired,0,0,22.7,None,113.0,93.1,1,1.99,2024-06-18
+KH-00399,60,Siem Reap,Rice Farmer,0,0,23.5,Hepatitis B,152.0,71.0,0,2.31,2024-10-13
+KH-00400,26,Phnom Penh,Civil Servant,0,1,23.6,None,464.0,95.0,0,1.02,2024-11-06
+KH-00401,30,Kampong Cham,Garment Factory Worker,0,1,21.7,None,149.0,95.0,0,1.24,2024-03-14
+KH-00402,57,Preah Sihanouk,Rice Farmer,1,0,26.0,TB,98.0,65.1,0,2.56,2024-12-06
+KH-00403,57,Phnom Penh,Construction Worker,0,0,24.8,Hypertension,337.0,68.6,0,2.43,2024-05-21
+KH-00404,42,Other Rural,Construction Worker,1,1,25.1,Diabetes,188.0,77.4,1,2.29,2024-04-18
+KH-00405,40,Other Rural,Garment Factory Worker,0,0,22.0,None,131.0,91.3,0,1.54,2024-05-11
+KH-00406,43,Preah Sihanouk,Garment Factory Worker,0,0,20.3,Diabetes,201.0,93.4,0,1.81,2024-08-29
+KH-00407,24,Kampong Cham,Moto/Tuk-tuk Driver,0,1,22.3,None,131.0,95.0,1,1.58,2024-08-25
+KH-00408,62,Preah Sihanouk,Rice Farmer,0,1,22.4,None,142.0,75.3,0,1.91,2024-04-19
+KH-00409,28,Phnom Penh,Market Vendor,0,0,22.9,COPD/Asthma,199.0,95.0,0,1.45,2024-04-06
+KH-00410,32,Phnom Penh,Moto/Tuk-tuk Driver,0,0,27.4,None,283.0,79.8,1,1.85,2024-04-04
+KH-00411,30,Battambang,Market Vendor,0,1,20.5,None,110.0,95.0,0,1.15,2024-12-10
+KH-00412,48,Other Rural,Garment Factory Worker,0,1,20.6,None,177.0,89.5,0,1.56,2024-02-10
+KH-00413,42,Siem Reap,Rice Farmer,0,1,24.6,Hypertension,60.0,82.7,0,1.77,2024-05-04
+KH-00414,43,Other Rural,Rice Farmer,0,1,22.3,None,102.0,87.3,0,1.56,2024-12-18
+KH-00415,45,Phnom Penh,Rice Farmer,0,0,22.1,None,155.0,86.7,0,1.72,2024-10-18
+KH-00416,32,Other Rural,Civil Servant,0,1,22.4,TB,280.0,93.1,0,1.5,2024-11-25
+KH-00417,26,Other Rural,Rice Farmer,0,0,23.7,Hypertension,104.0,94.7,0,1.6,2024-09-20
+KH-00418,28,Kampong Cham,Moto/Tuk-tuk Driver,0,1,19.9,Hepatitis B,166.0,95.0,0,1.97,2024-09-11
+KH-00419,31,Siem Reap,Market Vendor,0,0,23.1,None,105.0,95.0,1,1.29,2024-10-29
+KH-00420,37,Battambang,Civil Servant,0,0,17.6,None,278.0,95.0,0,1.34,2024-09-09
+KH-00421,28,Battambang,Rice Farmer,0,0,21.2,None,93.0,95.0,0,1.41,2024-11-20
+KH-00422,44,Siem Reap,Rice Farmer,1,1,21.6,None,71.0,88.5,0,1.83,2024-12-27
+KH-00423,28,Other Rural,Civil Servant,0,1,19.6,None,291.0,95.0,0,1.06,2024-04-14
+KH-00424,27,Preah Sihanouk,Construction Worker,0,0,26.8,Diabetes,197.0,82.8,0,1.89,2024-12-26
+KH-00425,28,Preah Sihanouk,Rice Farmer,0,1,19.6,None,121.0,95.0,0,1.29,2024-04-19
+KH-00426,40,Battambang,Garment Factory Worker,1,0,21.9,None,139.0,91.7,1,1.79,2024-06-21
+KH-00427,51,Other Rural,Market Vendor,0,0,19.7,None,146.0,91.2,0,1.65,2024-08-22
+KH-00428,56,Other Rural,Moto/Tuk-tuk Driver,0,0,25.5,Arthritis,150.0,69.2,0,2.5,2024-06-16
+KH-00429,44,Other Rural,Market Vendor,0,1,22.6,None,110.0,88.8,0,1.4,2024-08-23
+KH-00430,48,Phnom Penh,Rice Farmer,0,0,26.6,None,178.0,74.3,0,1.77,2024-10-19
+KH-00431,63,Other Rural,Rice Farmer,0,1,23.8,None,107.0,71.4,0,1.92,2024-07-09
+KH-00432,36,Phnom Penh,Market Vendor,0,0,25.3,None,203.0,87.7,1,1.38,2024-10-02
+KH-00433,33,Other Rural,Rice Farmer,0,0,23.9,None,75.0,90.0,0,1.5,2024-01-29
+KH-00434,63,Phnom Penh,Construction Worker,1,0,24.5,None,270.0,65.7,0,2.56,2024-09-06
+KH-00435,41,Other Rural,Garment Factory Worker,0,1,22.2,None,149.0,90.2,0,1.44,2024-10-05
+KH-00436,39,Other Rural,Rice Farmer,0,0,20.4,None,144.0,94.3,0,1.61,2024-02-11
+KH-00437,45,Battambang,Rice Farmer,1,0,23.7,Diabetes,106.0,82.9,0,2.19,2024-09-15
+KH-00438,71,Other Rural,Garment Factory Worker,0,0,20.6,None,129.0,75.2,0,2.1,2024-06-15
+KH-00439,65,Other Rural,Moto/Tuk-tuk Driver,0,0,22.3,Heart Disease,162.0,71.0,0,2.66,2024-12-07
+KH-00440,39,Kampong Cham,Rice Farmer,0,0,21.2,Heart Disease,135.0,92.4,1,1.83,2024-02-17
+KH-00441,42,Other Rural,Garment Factory Worker,1,0,21.0,None,219.0,92.4,0,1.83,2024-11-16
+KH-00442,47,Battambang,Market Vendor,0,0,23.8,Hypertension; Heart Disease,125.0,84.2,0,2.02,2024-05-01
+KH-00443,35,Phnom Penh,Rice Farmer,1,1,26.4,Arthritis,138.0,83.0,0,1.89,2024-12-11
+KH-00444,35,Battambang,Rice Farmer,0,1,21.6,None,96.0,93.9,1,1.42,2024-02-04
+KH-00445,44,Phnom Penh,Moto/Tuk-tuk Driver,0,0,19.8,TB; Hepatitis B,268.0,81.7,0,2.75,2024-07-02
+KH-00446,40,Other Rural,Rice Farmer,0,0,21.9,Heart Disease,103.0,90.3,0,1.85,2024-02-25
+KH-00447,43,Preah Sihanouk,Civil Servant,0,0,21.4,None,446.0,93.7,0,1.45,2024-07-02
+KH-00448,26,Battambang,Monk/Retired,1,0,19.1,Heart Disease,99.0,95.0,0,2.39,2024-06-16
+KH-00449,46,Siem Reap,Rice Farmer,0,1,23.4,None,77.0,83.0,0,1.62,2024-11-18
+KH-00450,28,Other Rural,Civil Servant,1,0,20.0,None,339.0,95.0,0,1.43,2024-09-01
+KH-00451,38,Other Rural,Garment Factory Worker,0,0,23.7,Hepatitis B,166.0,85.6,0,1.82,2024-04-17
+KH-00452,47,Kampong Cham,Market Vendor,0,0,22.5,TB,160.0,82.2,0,1.95,2024-12-02
+KH-00453,58,Phnom Penh,Rice Farmer,0,0,20.5,None,189.0,82.1,0,1.95,2024-08-09
+KH-00454,68,Battambang,Garment Factory Worker,0,0,25.2,None,117.0,66.6,0,2.04,2024-01-14
+KH-00455,31,Siem Reap,Rice Farmer,0,1,23.1,None,101.0,93.1,1,1.35,2024-07-15
+KH-00456,75,Preah Sihanouk,Construction Worker,0,1,23.4,Diabetes; COPD/Asthma,228.0,60.7,0,2.85,2024-07-30
+KH-00457,31,Siem Reap,Rice Farmer,0,1,23.7,None,147.0,91.8,0,1.35,2024-02-25
+KH-00458,33,Siem Reap,Market Vendor,0,0,23.5,None,160.0,93.6,0,1.32,2024-10-29
+KH-00459,56,Kampong Cham,Rice Farmer,0,1,24.1,Hypertension,89.0,75.1,0,2.02,2024-06-10
+KH-00460,41,Battambang,Garment Factory Worker,0,0,22.9,Heart Disease,186.0,88.7,0,1.78,2024-03-09
+KH-00461,52,Preah Sihanouk,Garment Factory Worker,0,1,26.2,None,197.0,74.2,0,1.64,2024-05-22
+KH-00462,41,Kampong Cham,Garment Factory Worker,0,0,21.8,None,141.0,91.2,0,1.56,2024-08-27
+KH-00463,56,Phnom Penh,Market Vendor,0,0,24.6,None,191.0,76.9,0,1.74,2024-09-16
+KH-00464,40,Battambang,Garment Factory Worker,0,0,24.5,None,146.0,85.5,0,1.54,2024-03-03
+KH-00465,45,Other Rural,Construction Worker,1,1,24.6,Diabetes; COPD/Asthma; Hepatitis B,224.0,73.6,0,2.88,2024-10-08
+KH-00466,40,Preah Sihanouk,Market Vendor,0,0,22.5,None,176.0,91.7,0,1.45,2024-02-21
+KH-00467,29,Other Rural,Garment Factory Worker,0,0,23.0,None,146.0,95.0,0,1.34,2024-10-06
+KH-00468,27,Kampong Cham,Garment Factory Worker,1,0,20.8,None,117.0,95.0,0,1.56,2024-04-18
+KH-00469,43,Other Rural,Rice Farmer,0,0,22.6,Hypertension,103.0,86.8,0,1.9,2024-12-02
+KH-00470,30,Other Rural,Rice Farmer,0,0,22.5,None,102.0,95.0,0,1.45,2024-03-07
+KH-00471,38,Other Rural,Garment Factory Worker,0,0,23.8,None,183.0,88.5,0,1.5,2024-02-17
+KH-00472,53,Kampong Cham,Market Vendor,0,1,22.5,None,102.0,83.4,0,1.56,2024-07-18
+KH-00473,32,Kampong Cham,Monk/Retired,0,0,22.0,TB,60.0,88.5,0,2.4,2024-11-20
+KH-00474,30,Phnom Penh,Monk/Retired,1,1,24.6,Heart Disease,144.0,88.9,1,2.34,2024-02-15
+KH-00475,48,Other Rural,Construction Worker,1,0,21.1,None,219.0,82.7,0,2.29,2024-10-29
+KH-00476,36,Phnom Penh,Market Vendor,1,1,16.1,None,188.0,95.0,0,1.51,2024-02-19
+KH-00477,51,Other Rural,Rice Farmer,0,1,25.4,Hypertension; Diabetes,143.0,75.4,0,2.15,2024-01-24
+KH-00478,54,Battambang,Rice Farmer,0,0,20.3,Hepatitis B,130.0,82.2,0,2.2,2024-01-25
+KH-00479,43,Phnom Penh,Rice Farmer,0,0,24.1,None,138.0,83.3,1,1.68,2024-04-03
+KH-00480,59,Kampong Cham,Rice Farmer,0,0,23.5,TB,74.0,69.7,0,2.34,2024-04-22
+KH-00481,28,Other Rural,Civil Servant,0,1,21.6,None,281.0,95.0,0,1.06,2024-07-18
+KH-00482,34,Battambang,Civil Servant,0,0,22.3,None,290.0,95.0,1,1.29,2024-04-04
+KH-00483,45,Other Rural,Moto/Tuk-tuk Driver,1,0,24.1,Heart Disease,195.0,79.2,0,2.55,2024-04-12
+KH-00484,47,Other Rural,Rice Farmer,0,1,20.8,None,61.0,88.4,0,1.64,2024-10-06
+KH-00485,47,Other Rural,Civil Servant,0,1,25.1,None,282.0,82.7,0,1.4,2024-05-29
+KH-00486,28,Preah Sihanouk,Moto/Tuk-tuk Driver,0,0,23.9,TB,234.0,85.3,0,2.14,2024-09-29
+KH-00487,39,Other Rural,Market Vendor,0,1,24.6,Hypertension,86.0,87.5,0,1.53,2024-11-10
+KH-00488,44,Preah Sihanouk,Market Vendor,1,0,21.5,None,211.0,91.3,0,1.77,2024-04-21
+KH-00489,41,Battambang,Market Vendor,0,0,21.2,None,144.0,94.0,0,1.47,2024-11-05
+KH-00490,59,Kampong Cham,Construction Worker,1,0,19.5,None,197.0,79.6,0,2.49,2024-01-16
+KH-00491,47,Other Rural,Rice Farmer,0,0,23.2,TB,60.0,77.9,0,2.13,2024-12-23
+KH-00492,25,Battambang,Rice Farmer,0,1,21.3,None,90.0,95.0,0,1.24,2024-06-10
+KH-00493,38,Other Rural,Garment Factory Worker,1,1,23.1,None,144.0,90.0,0,1.63,2024-03-02
+KH-00494,64,Siem Reap,Garment Factory Worker,0,0,20.9,None,181.0,78.8,0,1.97,2024-04-06
+KH-00495,56,Preah Sihanouk,Construction Worker,0,0,22.8,None,244.0,74.0,1,2.19,2024-06-10
+KH-00496,41,Phnom Penh,Monk/Retired,0,0,21.5,None,116.0,89.0,0,2.19,2024-05-14
+KH-00497,33,Phnom Penh,Construction Worker,0,0,25.4,Hypertension; Diabetes,290.0,82.2,0,2.21,2024-01-13
+KH-00498,46,Other Rural,Monk/Retired,0,0,23.9,None,95.0,80.5,0,2.28,2024-12-20
+KH-00499,59,Kampong Cham,Garment Factory Worker,0,0,24.5,None,208.0,73.8,0,1.88,2024-12-27
+KH-00500,43,Phnom Penh,Construction Worker,0,1,23.5,Heart Disease,253.0,80.3,0,2.05,2024-01-14
+KH-00501,38,Phnom Penh,Market Vendor,0,0,21.0,None,189.0,95.0,0,1.41,2024-05-07
+KH-00502,45,Battambang,Rice Farmer,0,1,26.0,Hypertension,135.0,77.7,0,1.82,2024-02-17
+KH-00503,41,Other Rural,Moto/Tuk-tuk Driver,0,1,29.4,None,188.0,69.5,1,1.89,2024-02-05
+KH-00504,34,Phnom Penh,Rice Farmer,0,0,25.4,None,193.0,85.9,0,1.52,2024-01-27
+KH-00505,40,Kampong Cham,Garment Factory Worker,0,1,20.0,None,115.0,95.0,0,1.42,2024-05-11
+KH-00506,49,Battambang,Rice Farmer,0,1,23.8,None,167.0,80.3,0,1.67,2024-09-06
+KH-00507,45,Kampong Cham,Construction Worker,1,1,30.4,TB,201.0,58.2,1,2.49,2024-10-08
+KH-00508,69,Phnom Penh,Rice Farmer,0,0,26.8,Diabetes; Hepatitis B,197.0,57.9,1,2.69,2024-09-04
+KH-00509,48,Phnom Penh,Rice Farmer,0,1,21.7,None,182.0,85.7,0,1.65,2024-12-10
+KH-00510,38,Battambang,Civil Servant,0,1,22.4,Diabetes; Hepatitis B,280.0,91.4,0,1.78,2024-02-26
+KH-00511,42,Other Rural,Rice Farmer,0,1,22.4,Arthritis,73.0,87.8,1,1.77,2024-01-14
+KH-00512,35,Phnom Penh,Rice Farmer,1,1,19.5,None,100.0,95.0,0,1.67,2024-03-12
+KH-00513,43,Phnom Penh,Garment Factory Worker,0,1,23.4,COPD/Asthma,217.0,86.3,1,1.69,2024-01-16
+KH-00514,75,Other Rural,Rice Farmer,0,0,24.2,Diabetes,118.0,63.1,0,2.48,2024-03-18
+KH-00515,42,Battambang,Rice Farmer,0,1,24.8,None,139.0,82.4,0,1.55,2024-03-31
+KH-00516,33,Other Rural,Rice Farmer,0,0,19.3,COPD/Asthma,85.0,95.0,0,1.72,2024-09-10
+KH-00517,32,Phnom Penh,Rice Farmer,0,0,25.3,None,190.0,87.4,1,1.49,2024-06-07
+KH-00518,50,Phnom Penh,Garment Factory Worker,0,1,21.5,None,217.0,86.4,0,1.6,2024-05-13
+KH-00519,36,Phnom Penh,Rice Farmer,1,0,27.1,None,150.0,80.7,1,1.81,2024-04-16
+KH-00520,38,Phnom Penh,Rice Farmer,0,0,23.7,None,166.0,87.4,0,1.59,2024-02-08
+KH-00521,43,Siem Reap,Garment Factory Worker,0,0,21.9,None,186.0,89.6,0,1.59,2024-09-15
+KH-00522,43,Other Rural,Rice Farmer,1,0,24.4,None,101.0,82.5,0,1.93,2024-10-06
+KH-00523,48,Other Rural,Rice Farmer,0,0,21.1,Hypertension,80.0,87.1,0,1.99,2024-03-23
+KH-00524,31,Kampong Cham,Monk/Retired,0,1,21.6,Diabetes,63.0,95.0,0,2.11,2024-08-28
+KH-00525,28,Other Rural,Garment Factory Worker,1,0,19.8,None,155.0,95.0,0,1.57,2024-11-27
+KH-00526,25,Siem Reap,Civil Servant,0,1,20.2,None,322.0,95.0,0,1.01,2024-09-08
+KH-00527,52,Siem Reap,Rice Farmer,1,0,26.4,COPD/Asthma; Hepatitis B,98.0,69.3,1,2.64,2024-06-20
+KH-00528,58,Battambang,Market Vendor,0,0,23.3,Hepatitis B,141.0,75.6,0,2.09,2024-02-28
+KH-00529,35,Other Rural,Monk/Retired,1,0,23.8,None,68.0,87.6,0,2.33,2024-12-21
+KH-00530,30,Other Rural,Moto/Tuk-tuk Driver,1,1,18.9,Diabetes; Arthritis,189.0,95.0,0,2.38,2024-03-03
+KH-00531,42,Siem Reap,Construction Worker,0,1,19.2,Heart Disease; TB,171.0,85.9,0,2.41,2024-06-13
+KH-00532,51,Battambang,Garment Factory Worker,0,0,26.6,None,175.0,74.0,0,1.74,2024-04-15
+KH-00533,39,Phnom Penh,Rice Farmer,0,1,26.5,TB; Hepatitis B,147.0,72.3,0,2.18,2024-06-02
+KH-00534,42,Kampong Cham,Rice Farmer,0,1,21.3,TB,88.0,85.3,0,1.92,2024-03-23
+KH-00535,33,Phnom Penh,Rice Farmer,0,0,24.7,None,196.0,88.1,0,1.5,2024-02-17
+KH-00536,54,Other Rural,Market Vendor,1,0,20.8,COPD/Asthma,131.0,86.8,0,2.17,2024-11-05
+KH-00537,50,Kampong Cham,Garment Factory Worker,1,0,20.3,Hepatitis B,151.0,86.0,0,2.29,2024-07-04
+KH-00538,46,Other Rural,Construction Worker,0,0,20.0,None,161.0,86.6,1,2.01,2024-10-06
+KH-00539,48,Battambang,Rice Farmer,0,0,24.3,None,60.0,79.8,0,1.77,2024-11-03
+KH-00540,47,Battambang,Market Vendor,1,1,23.6,None,98.0,84.8,0,1.71,2024-01-19
+KH-00541,28,Kampong Cham,Garment Factory Worker,0,0,19.4,None,128.0,95.0,0,1.32,2024-11-01
+KH-00542,28,Other Rural,Rice Farmer,0,0,21.3,None,89.0,95.0,0,1.41,2024-04-29
+KH-00543,41,Siem Reap,Rice Farmer,1,1,21.2,Arthritis,114.0,91.2,0,2.0,2024-10-08
+KH-00544,50,Kampong Cham,Rice Farmer,1,1,22.4,Arthritis,98.0,82.8,0,2.16,2024-08-16
+KH-00545,59,Phnom Penh,Garment Factory Worker,0,0,28.3,None,241.0,65.0,0,1.88,2024-05-26
+KH-00546,38,Kampong Cham,Market Vendor,0,0,20.9,Hypertension; TB,103.0,91.5,0,2.0,2024-12-29
+KH-00547,54,Other Rural,Garment Factory Worker,0,1,23.5,None,154.0,79.2,0,1.67,2024-05-26
+KH-00548,29,Other Rural,Civil Servant,1,0,23.4,Hepatitis B,276.0,94.9,0,1.77,2024-07-02
+KH-00549,69,Preah Sihanouk,Rice Farmer,1,0,27.4,Hypertension,184.0,59.3,0,2.62,2024-10-07
+KH-00550,40,Preah Sihanouk,Garment Factory Worker,0,1,25.2,None,185.0,84.0,0,1.42,2024-03-19
+KH-00551,41,Kampong Cham,Garment Factory Worker,1,0,21.0,None,139.0,93.0,0,1.81,2024-05-14
+KH-00552,38,Phnom Penh,Rice Farmer,1,1,25.4,None,176.0,83.4,0,1.72,2024-04-13
+KH-00553,32,Battambang,Rice Farmer,0,1,22.5,None,95.0,93.8,0,1.37,2024-06-09
+KH-00554,31,Siem Reap,Civil Servant,0,1,24.2,None,310.0,94.8,1,1.11,2024-09-09
+KH-00555,40,Other Rural,Rice Farmer,1,0,20.1,None,80.0,94.3,1,1.88,2024-12-27
+KH-00556,43,Other Rural,Rice Farmer,0,1,24.0,Hepatitis B,130.0,80.4,0,1.88,2024-12-04
+KH-00557,36,Phnom Penh,Civil Servant,0,0,21.2,None,407.0,95.0,1,1.32,2024-06-06
+KH-00558,36,Other Rural,Moto/Tuk-tuk Driver,0,0,23.1,None,175.0,87.1,1,1.92,2024-11-02
+KH-00559,37,Other Rural,Garment Factory Worker,1,0,22.6,None,148.0,91.8,0,1.74,2024-12-23
+KH-00560,35,Siem Reap,Garment Factory Worker,0,0,20.7,None,125.0,95.0,0,1.45,2024-11-15
+KH-00561,43,Other Rural,Rice Farmer,0,0,21.3,None,80.0,89.6,0,1.68,2024-04-29
+KH-00562,28,Battambang,Garment Factory Worker,1,0,19.7,None,163.0,95.0,0,1.57,2024-06-19
+KH-00563,52,Siem Reap,Rice Farmer,0,0,23.4,None,127.0,79.3,0,1.85,2024-08-12
+KH-00564,42,Other Rural,Garment Factory Worker,0,1,23.4,None,100.0,86.8,0,1.46,2024-03-31
+KH-00565,53,Siem Reap,Garment Factory Worker,1,1,25.8,None,134.0,74.5,0,1.9,2024-01-26
+KH-00566,25,Other Rural,Civil Servant,0,0,20.4,None,257.0,95.0,0,1.13,2024-05-16
+KH-00567,38,Preah Sihanouk,Rice Farmer,0,0,27.0,None,106.0,79.7,0,1.59,2024-09-05
+KH-00568,51,Siem Reap,Rice Farmer,1,0,20.7,COPD/Asthma,105.0,86.0,0,2.3,2024-10-05
+KH-00569,30,Phnom Penh,Rice Farmer,0,0,20.1,None,101.0,95.0,0,1.45,2024-03-05
+KH-00570,48,Siem Reap,Monk/Retired,0,1,18.9,Hepatitis B,113.0,87.6,0,2.51,2024-10-11
+KH-00571,43,Preah Sihanouk,Garment Factory Worker,0,0,23.2,None,177.0,86.8,0,1.59,2024-11-13
+KH-00572,45,Battambang,Market Vendor,0,1,20.7,Hypertension,96.0,92.7,0,1.64,2024-05-21
+KH-00573,32,Siem Reap,Rice Farmer,0,0,21.4,COPD/Asthma,121.0,95.0,0,1.71,2024-12-20
+KH-00574,37,Other Rural,Garment Factory Worker,0,0,23.1,None,148.0,90.7,0,1.49,2024-12-16
+KH-00575,51,Other Rural,Civil Servant,0,1,20.2,None,257.0,91.6,0,1.47,2024-07-26
+KH-00576,40,Other Rural,Rice Farmer,0,0,22.0,None,86.0,90.1,0,1.63,2024-01-01
+KH-00577,47,Other Rural,Rice Farmer,0,0,23.4,None,131.0,82.3,1,1.76,2024-09-01
+KH-00578,67,Other Rural,Rice Farmer,0,0,24.0,None,117.0,68.6,0,2.12,2024-02-28
+KH-00579,42,Phnom Penh,Civil Servant,0,1,22.5,None,476.0,91.7,1,1.31,2024-11-06
+KH-00580,33,Preah Sihanouk,Rice Farmer,1,0,25.4,None,151.0,86.4,0,1.75,2024-07-07
+KH-00581,49,Other Rural,Moto/Tuk-tuk Driver,0,1,22.3,None,108.0,81.0,0,2.03,2024-12-18
+KH-00582,39,Kampong Cham,Garment Factory Worker,0,0,21.8,None,152.0,92.5,0,1.52,2024-02-22
+KH-00583,33,Other Rural,Rice Farmer,1,0,24.2,Heart Disease,97.0,89.2,0,1.97,2024-03-04
+KH-00584,30,Battambang,Garment Factory Worker,0,1,16.0,Hepatitis B,163.0,95.0,0,1.56,2024-03-10
+KH-00585,49,Other Rural,Rice Farmer,0,0,23.1,None,114.0,81.8,0,1.79,2024-04-15
+KH-00586,34,Phnom Penh,Monk/Retired,0,0,23.9,None,159.0,87.9,0,2.06,2024-07-31
+KH-00587,58,Kampong Cham,Rice Farmer,0,0,22.4,None,108.0,77.7,0,1.95,2024-10-01
+KH-00588,37,Other Rural,Garment Factory Worker,0,1,22.8,None,194.0,91.5,0,1.37,2024-02-13
+KH-00589,46,Preah Sihanouk,Moto/Tuk-tuk Driver,1,0,22.9,None,218.0,81.3,0,2.35,2024-12-26
+KH-00590,57,Siem Reap,Rice Farmer,0,0,24.7,Hepatitis B,130.0,70.2,0,2.26,2024-10-07
+KH-00591,79,Other Rural,Moto/Tuk-tuk Driver,1,0,24.2,None,186.0,57.7,0,2.94,2024-01-07
+KH-00592,34,Kampong Cham,Civil Servant,1,1,22.3,None,296.0,95.0,0,1.42,2024-08-11
+KH-00593,63,Other Rural,Garment Factory Worker,0,0,21.8,None,183.0,77.6,0,1.95,2024-11-03
+KH-00594,51,Other Rural,Rice Farmer,0,1,26.7,TB,81.0,67.3,0,2.08,2024-09-05
+KH-00595,37,Other Rural,Rice Farmer,0,1,24.5,None,107.0,86.0,0,1.46,2024-06-26
+KH-00596,24,Preah Sihanouk,Civil Servant,0,0,21.9,None,375.0,95.0,0,1.11,2024-03-05
+KH-00597,51,Kampong Cham,Rice Farmer,0,0,24.5,TB,73.0,72.3,1,2.2,2024-12-17
+KH-00598,37,Other Rural,Monk/Retired,0,0,23.8,Hepatitis B,65.0,83.3,0,2.44,2024-12-23
+KH-00599,44,Other Rural,Monk/Retired,0,1,19.6,None,60.0,91.5,0,2.12,2024-09-15
+KH-00600,25,Preah Sihanouk,Market Vendor,0,1,21.0,None,125.0,95.0,0,1.06,2024-11-08
+KH-00601,66,Other Rural,Moto/Tuk-tuk Driver,0,0,21.3,None,167.0,72.5,0,2.46,2024-01-21
+KH-00602,46,Other Rural,Market Vendor,0,1,23.5,None,151.0,85.5,0,1.44,2024-11-21
+KH-00603,37,Other Rural,Civil Servant,0,1,26.6,None,277.0,85.4,0,1.22,2024-12-17
+KH-00604,30,Battambang,Moto/Tuk-tuk Driver,1,0,26.5,None,139.0,83.0,1,2.06,2024-11-29
+KH-00605,46,Kampong Cham,Market Vendor,1,0,23.2,None,154.0,86.2,0,1.81,2024-06-26
+KH-00606,36,Kampong Cham,Market Vendor,0,0,22.2,TB,131.0,89.8,0,1.75,2024-12-30
+KH-00607,37,Preah Sihanouk,Garment Factory Worker,0,0,19.0,None,210.0,95.0,1,1.49,2024-10-27
+KH-00608,57,Kampong Cham,Moto/Tuk-tuk Driver,0,1,24.6,None,162.0,70.6,0,2.18,2024-10-31
+KH-00609,43,Other Rural,Garment Factory Worker,0,0,24.6,None,193.0,83.5,0,1.59,2024-09-03
+KH-00610,43,Battambang,Rice Farmer,0,0,20.8,Diabetes,81.0,90.8,0,1.9,2024-05-29
+KH-00611,40,Other Rural,Rice Farmer,0,1,24.7,COPD/Asthma,109.0,83.8,0,1.73,2024-05-28
+KH-00612,40,Other Rural,Rice Farmer,1,0,24.6,Arthritis; Hepatitis B,133.0,81.0,0,2.42,2024-08-30
+KH-00613,32,Phnom Penh,Construction Worker,0,0,23.6,None,276.0,87.1,0,1.76,2024-07-30
+KH-00614,31,Phnom Penh,Garment Factory Worker,0,0,27.1,Hypertension; TB,207.0,80.2,1,1.97,2024-08-22
+KH-00615,29,Preah Sihanouk,Monk/Retired,0,0,20.9,None,93.0,95.0,0,1.97,2024-09-29
+KH-00616,35,Phnom Penh,Market Vendor,0,0,24.2,None,207.0,90.9,0,1.36,2024-12-08
+KH-00617,47,Preah Sihanouk,Civil Servant,0,0,18.3,None,380.0,95.0,0,1.52,2024-09-19
+KH-00618,33,Kampong Cham,Rice Farmer,0,1,26.4,None,89.0,84.2,0,1.38,2024-08-24
+KH-00619,58,Kampong Cham,Monk/Retired,0,1,23.2,None,96.0,74.6,1,2.37,2024-04-10
+KH-00620,31,Other Rural,Garment Factory Worker,0,0,22.6,None,125.0,95.0,0,1.38,2024-07-21
+KH-00621,32,Other Rural,Garment Factory Worker,0,1,23.5,None,171.0,93.0,0,1.28,2024-06-26
+KH-00622,41,Phnom Penh,Garment Factory Worker,0,1,27.9,None,224.0,77.2,0,1.44,2024-09-07
+KH-00623,38,Other Rural,Garment Factory Worker,0,1,22.2,Hepatitis B,191.0,89.2,1,1.7,2024-07-02
+KH-00624,46,Other Rural,Rice Farmer,1,0,20.3,None,86.0,90.3,1,1.99,2024-01-12
+KH-00625,24,Other Rural,Moto/Tuk-tuk Driver,1,0,19.1,None,163.0,95.0,0,1.95,2024-11-09
+KH-00626,55,Phnom Penh,Rice Farmer,0,1,24.7,COPD/Asthma,160.0,74.4,0,2.0,2024-01-14
+KH-00627,61,Battambang,Market Vendor,0,1,16.0,None,116.0,93.5,0,1.71,2024-01-30
+KH-00628,52,Other Rural,Garment Factory Worker,0,0,25.8,Heart Disease,140.0,75.2,0,1.98,2024-12-20
+KH-00629,33,Battambang,Construction Worker,0,0,19.2,None,198.0,95.0,0,1.77,2024-12-02
+KH-00630,51,Other Rural,Moto/Tuk-tuk Driver,0,1,24.5,None,112.0,74.6,0,2.07,2024-10-11
+KH-00631,28,Other Rural,Market Vendor,0,1,19.9,None,118.0,95.0,0,1.11,2024-12-19
+KH-00632,31,Phnom Penh,Civil Servant,0,1,22.7,None,459.0,95.0,0,1.11,2024-12-24
+KH-00633,28,Kampong Cham,Market Vendor,0,0,27.4,COPD/Asthma,157.0,87.9,0,1.45,2024-04-26
+KH-00634,30,Battambang,Rice Farmer,0,0,18.0,None,139.0,95.0,0,1.45,2024-01-21
+KH-00635,35,Other Rural,Civil Servant,0,0,23.9,None,336.0,92.8,0,1.31,2024-07-19
+KH-00636,37,Other Rural,Construction Worker,0,0,23.3,TB; Hepatitis B,163.0,76.7,1,2.54,2024-05-22
+KH-00637,37,Battambang,Monk/Retired,0,1,20.3,None,100.0,94.5,0,2.0,2024-01-11
+KH-00638,62,Phnom Penh,Garment Factory Worker,0,0,25.4,Hypertension; Diabetes,220.0,69.9,0,2.38,2024-11-17
+KH-00639,34,Kampong Cham,Rice Farmer,0,0,19.8,None,97.0,95.0,0,1.52,2024-11-25
+KH-00640,61,Phnom Penh,Moto/Tuk-tuk Driver,1,1,25.0,COPD/Asthma,256.0,67.1,0,2.72,2024-05-07
+KH-00641,45,Kampong Cham,Garment Factory Worker,0,0,26.1,Hypertension; Hepatitis B,189.0,75.7,0,2.17,2024-03-07
+KH-00642,60,Preah Sihanouk,Rice Farmer,1,0,22.0,Heart Disease,121.0,77.6,0,2.46,2024-11-16
+KH-00643,25,Phnom Penh,Rice Farmer,0,1,25.9,None,198.0,90.3,0,1.24,2024-03-16
+KH-00644,34,Siem Reap,Rice Farmer,0,0,23.0,None,124.0,91.4,0,1.52,2024-08-09
+KH-00645,49,Phnom Penh,Garment Factory Worker,0,0,23.2,None,212.0,82.9,1,1.7,2024-05-04
+KH-00646,40,Other Rural,Construction Worker,1,0,25.0,None,200.0,78.9,0,2.15,2024-03-08
+KH-00647,42,Preah Sihanouk,Moto/Tuk-tuk Driver,1,0,23.4,TB,234.0,77.8,1,2.65,2024-08-10
+KH-00648,54,Phnom Penh,Garment Factory Worker,0,1,23.4,None,253.0,79.3,0,1.67,2024-08-26
+KH-00649,41,Phnom Penh,Civil Servant,0,0,25.5,None,481.0,85.4,0,1.41,2024-05-13
+KH-00650,48,Other Rural,Moto/Tuk-tuk Driver,0,0,25.9,None,151.0,73.3,0,2.13,2024-02-08
+KH-00651,39,Phnom Penh,Garment Factory Worker,0,1,26.3,None,208.0,82.1,0,1.4,2024-01-26
+KH-00652,39,Siem Reap,Rice Farmer,1,0,25.4,None,60.0,82.7,0,1.86,2024-11-13
+KH-00653,37,Kampong Cham,Market Vendor,0,1,22.4,None,106.0,93.8,0,1.28,2024-07-20
+KH-00654,46,Phnom Penh,Garment Factory Worker,1,1,27.9,None,217.0,74.0,0,1.78,2024-05-29
+KH-00655,60,Other Rural,Garment Factory Worker,0,0,23.0,None,130.0,76.5,1,1.9,2024-05-02
+KH-00656,32,Siem Reap,Rice Farmer,0,1,19.6,None,158.0,95.0,0,1.37,2024-08-19
+KH-00657,31,Kampong Cham,Rice Farmer,1,1,22.2,None,112.0,95.0,0,1.6,2024-02-07
+KH-00658,48,Battambang,Moto/Tuk-tuk Driver,1,0,23.9,None,109.0,77.8,0,2.38,2024-12-08
+KH-00659,43,Kampong Cham,Rice Farmer,0,1,28.1,None,111.0,74.1,1,1.56,2024-09-03
+KH-00660,36,Other Rural,Civil Servant,0,1,23.0,COPD/Asthma,356.0,94.3,0,1.42,2024-12-03
+KH-00661,38,Preah Sihanouk,Garment Factory Worker,0,1,20.9,None,238.0,95.0,1,1.38,2024-09-19
+KH-00662,43,Other Rural,Civil Servant,0,1,22.0,None,292.0,92.2,0,1.33,2024-01-04
+KH-00663,58,Preah Sihanouk,Market Vendor,0,0,23.4,Hypertension,151.0,78.3,0,1.99,2024-06-09
+KH-00664,57,Kampong Cham,Monk/Retired,1,0,24.5,None,60.0,72.3,0,2.73,2024-08-05
+KH-00665,40,Other Rural,Rice Farmer,0,1,26.8,Hepatitis B,105.0,75.8,0,1.83,2024-05-05
+KH-00666,42,Siem Reap,Garment Factory Worker,1,0,23.6,None,151.0,86.4,0,1.83,2024-12-08
+KH-00667,52,Other Rural,Rice Farmer,0,0,24.3,TB; Hepatitis B,108.0,69.3,0,2.54,2024-01-31
+KH-00668,28,Other Rural,Construction Worker,0,0,25.1,Hypertension,151.0,86.0,1,1.9,2024-12-06
+KH-00669,30,Other Rural,Civil Servant,0,1,22.4,TB,307.0,94.5,0,1.47,2024-02-20
+KH-00670,50,Other Rural,Civil Servant,0,0,22.9,Hepatitis B,267.0,82.7,1,1.9,2024-03-09
+KH-00671,34,Kampong Cham,Rice Farmer,0,1,23.2,Hypertension,72.0,90.9,0,1.62,2024-01-10
+KH-00672,51,Kampong Cham,Rice Farmer,0,1,23.4,None,126.0,79.8,0,1.71,2024-10-05
+KH-00673,45,Kampong Cham,Construction Worker,0,0,20.9,None,203.0,85.2,0,1.99,2024-03-31
+KH-00674,45,Other Rural,Construction Worker,1,1,23.6,None,159.0,79.0,0,2.12,2024-05-22
+KH-00675,40,Battambang,Garment Factory Worker,0,1,21.0,None,159.0,93.6,0,1.42,2024-12-05
+KH-00676,33,Other Rural,Moto/Tuk-tuk Driver,1,1,25.3,None,195.0,83.9,0,1.99,2024-06-29
+KH-00677,45,Battambang,Garment Factory Worker,1,0,24.7,None,103.0,82.0,0,1.88,2024-06-21
+KH-00678,59,Other Rural,Rice Farmer,1,0,22.4,None,95.0,77.1,0,2.22,2024-01-26
+KH-00679,69,Other Rural,Moto/Tuk-tuk Driver,1,0,24.8,None,127.0,62.6,1,2.76,2024-06-03
+KH-00680,54,Phnom Penh,Rice Farmer,0,0,27.6,None,182.0,68.4,0,1.88,2024-01-07
+KH-00681,35,Kampong Cham,Rice Farmer,0,1,26.4,None,114.0,82.9,0,1.42,2024-09-02
+KH-00682,38,Kampong Cham,Civil Servant,0,0,20.9,None,338.0,95.0,0,1.36,2024-03-24
+KH-00683,66,Other Rural,Construction Worker,0,0,24.7,None,200.0,63.2,0,2.37,2024-11-08
+KH-00684,44,Phnom Penh,Monk/Retired,0,0,20.5,None,131.0,89.5,0,2.24,2024-01-29
+KH-00685,34,Phnom Penh,Moto/Tuk-tuk Driver,0,0,23.2,None,263.0,88.2,0,1.88,2024-02-01
+KH-00686,28,Other Rural,Rice Farmer,1,0,26.1,None,116.0,87.9,0,1.66,2024-03-14
+KH-00687,48,Preah Sihanouk,Rice Farmer,0,1,21.6,TB,103.0,80.8,1,2.02,2024-12-26
+KH-00688,45,Other Rural,Construction Worker,0,1,21.7,None,160.0,83.2,0,1.87,2024-12-09
+KH-00689,42,Battambang,Moto/Tuk-tuk Driver,1,1,22.0,Hypertension,200.0,86.0,0,2.38,2024-08-13
+KH-00690,57,Phnom Penh,Market Vendor,0,0,29.0,None,227.0,66.0,0,1.76,2024-09-02
+KH-00691,49,Phnom Penh,Rice Farmer,1,1,27.4,None,164.0,71.9,0,1.92,2024-05-08
+KH-00692,31,Battambang,Garment Factory Worker,0,0,24.0,None,172.0,92.3,1,1.38,2024-06-12
+KH-00693,42,Preah Sihanouk,Moto/Tuk-tuk Driver,0,1,22.6,Arthritis,194.0,84.5,0,2.13,2024-04-04
+KH-00694,36,Kampong Cham,Rice Farmer,0,0,19.0,None,106.0,95.0,0,1.56,2024-01-30
+KH-00695,36,Kampong Cham,Garment Factory Worker,0,0,19.3,None,136.0,95.0,0,1.47,2024-01-31
+KH-00696,56,Other Rural,Civil Servant,1,0,27.3,None,271.0,71.9,1,1.93,2024-11-09
+KH-00697,37,Phnom Penh,Rice Farmer,0,0,23.3,None,165.0,88.9,1,1.58,2024-05-16
+KH-00698,38,Kampong Cham,Moto/Tuk-tuk Driver,0,0,23.9,Hepatitis B,171.0,81.0,0,2.27,2024-10-29
+KH-00699,59,Siem Reap,Moto/Tuk-tuk Driver,1,1,25.7,TB,204.0,61.8,1,2.83,2024-08-07
+KH-00700,28,Other Rural,Market Vendor,1,0,23.4,None,180.0,95.0,1,1.48,2024-06-25
+KH-00701,38,Phnom Penh,Rice Farmer,1,1,25.4,None,142.0,83.3,0,1.72,2024-03-05
+KH-00702,53,Phnom Penh,Rice Farmer,1,1,26.9,Hypertension,151.0,70.5,0,2.21,2024-01-14
+KH-00703,38,Other Rural,Civil Servant,1,0,20.3,Hypertension; COPD/Asthma,288.0,95.0,0,2.05,2024-06-29
+KH-00704,37,Preah Sihanouk,Rice Farmer,0,0,20.5,None,111.0,95.0,0,1.58,2024-12-08
+KH-00705,33,Preah Sihanouk,Rice Farmer,0,0,20.0,None,179.0,95.0,0,1.5,2024-06-18
+KH-00706,32,Phnom Penh,Civil Servant,0,1,26.3,None,432.0,89.2,0,1.13,2024-05-25
+KH-00707,39,Kampong Cham,Rice Farmer,0,0,22.9,None,111.0,88.6,0,1.61,2024-11-29
+KH-00708,38,Phnom Penh,Garment Factory Worker,0,1,22.5,TB,206.0,86.5,0,1.75,2024-03-08
+KH-00709,57,Battambang,Moto/Tuk-tuk Driver,1,0,23.0,Diabetes; Heart Disease,136.0,74.3,0,2.99,2024-04-08
+KH-00710,44,Phnom Penh,Market Vendor,0,1,24.2,TB,204.0,80.3,0,1.77,2024-03-08
+KH-00711,33,Other Rural,Monk/Retired,0,0,22.0,Diabetes; Heart Disease; TB,88.0,87.9,0,2.85,2024-01-07
+KH-00712,31,Kampong Cham,Construction Worker,0,1,25.8,None,238.0,82.7,0,1.62,2024-11-20
+KH-00713,32,Phnom Penh,Rice Farmer,0,1,23.4,None,185.0,91.8,0,1.37,2024-08-13
+KH-00714,43,Other Rural,Garment Factory Worker,1,1,19.2,None,153.0,95.0,0,1.72,2024-05-17
+KH-00715,40,Other Rural,Construction Worker,0,0,21.9,None,218.0,86.0,1,1.9,2024-06-18
+KH-00716,38,Other Rural,Rice Farmer,0,0,22.0,None,102.0,91.3,0,1.59,2024-11-23
+KH-00717,41,Other Rural,Construction Worker,0,1,23.5,Hypertension,192.0,81.8,0,2.02,2024-12-15
+KH-00718,29,Battambang,Rice Farmer,0,1,26.4,None,112.0,86.7,0,1.31,2024-10-30
+KH-00719,41,Preah Sihanouk,Monk/Retired,0,1,22.0,None,129.0,88.0,0,2.07,2024-11-05
+KH-00720,45,Kampong Cham,Civil Servant,0,1,19.5,None,293.0,95.0,0,1.37,2024-10-23
+KH-00721,47,Battambang,Moto/Tuk-tuk Driver,0,0,23.6,COPD/Asthma,143.0,79.0,0,2.34,2024-06-16
+KH-00722,33,Other Rural,Moto/Tuk-tuk Driver,0,1,22.8,Arthritis; Hepatitis B,100.0,86.8,0,2.28,2024-02-25
+KH-00723,29,Preah Sihanouk,Civil Servant,0,0,22.9,Diabetes,375.0,95.0,0,1.42,2024-10-05
+KH-00724,47,Other Rural,Market Vendor,0,0,19.1,None,84.0,95.0,0,1.58,2024-06-09
+KH-00725,42,Other Rural,Garment Factory Worker,0,1,23.1,None,164.0,87.6,0,1.46,2024-06-12
+KH-00726,39,Phnom Penh,Civil Servant,1,0,24.2,None,468.0,89.8,0,1.63,2024-01-15
+KH-00727,48,Other Rural,Rice Farmer,1,0,27.0,None,131.0,73.4,0,2.02,2024-02-13
+KH-00728,46,Kampong Cham,Civil Servant,0,0,25.4,None,280.0,82.6,0,1.5,2024-06-01
+KH-00729,37,Phnom Penh,Market Vendor,0,0,19.0,Hypertension,199.0,95.0,0,1.62,2024-08-16
+KH-00730,28,Other Rural,Civil Servant,0,0,19.5,None,318.0,95.0,0,1.18,2024-07-28
+KH-00731,37,Siem Reap,Moto/Tuk-tuk Driver,0,0,23.6,Diabetes,166.0,85.3,0,2.16,2024-01-25
+KH-00732,37,Battambang,Garment Factory Worker,0,1,23.5,None,164.0,89.8,0,1.37,2024-03-27
+KH-00733,33,Other Rural,Civil Servant,0,0,21.3,None,279.0,95.0,0,1.27,2024-08-23
+KH-00734,33,Phnom Penh,Monk/Retired,0,0,23.3,None,81.0,90.0,1,2.04,2024-10-16
+KH-00735,44,Battambang,Rice Farmer,0,1,21.3,None,93.0,89.0,0,1.58,2024-09-24
+KH-00736,49,Other Rural,Rice Farmer,1,1,18.8,TB,98.0,86.6,0,2.29,2024-06-30
+KH-00737,37,Other Rural,Moto/Tuk-tuk Driver,0,1,22.9,None,136.0,87.0,0,1.82,2024-02-18
+KH-00738,30,Preah Sihanouk,Rice Farmer,0,0,22.1,None,138.0,95.0,0,1.45,2024-07-05
+KH-00739,27,Other Rural,Market Vendor,0,0,22.4,None,129.0,95.0,0,1.22,2024-09-25
+KH-00740,42,Phnom Penh,Moto/Tuk-tuk Driver,1,0,22.9,None,260.0,83.8,1,2.28,2024-11-03
+KH-00741,68,Siem Reap,Civil Servant,0,0,19.8,Hypertension,290.0,81.7,0,2.12,2024-07-31
+KH-00742,54,Other Rural,Construction Worker,1,0,24.1,None,185.0,72.1,0,2.4,2024-11-12
+KH-00743,68,Other Rural,Garment Factory Worker,0,1,24.8,None,186.0,67.4,0,1.92,2024-11-04
+KH-00744,41,Other Rural,Construction Worker,1,0,21.5,None,202.0,86.3,0,2.17,2024-09-29
+KH-00745,32,Other Rural,Rice Farmer,0,1,20.4,None,101.0,95.0,0,1.37,2024-09-06
+KH-00746,47,Battambang,Garment Factory Worker,0,0,17.5,None,125.0,95.0,0,1.67,2024-01-29
+KH-00747,41,Siem Reap,Civil Servant,0,0,20.8,None,296.0,95.0,1,1.41,2024-03-11
+KH-00748,43,Other Rural,Garment Factory Worker,1,1,23.2,None,154.0,86.8,0,1.72,2024-07-09
+KH-00749,33,Phnom Penh,Civil Servant,0,0,20.6,None,439.0,95.0,0,1.27,2024-01-06
+KH-00750,27,Phnom Penh,Rice Farmer,0,1,24.7,None,130.0,91.8,1,1.28,2024-07-10
+KH-00751,31,Kampong Cham,Market Vendor,0,0,21.2,Hepatitis B,138.0,95.0,0,1.61,2024-05-05
+KH-00752,32,Other Rural,Rice Farmer,0,0,19.7,None,147.0,95.0,0,1.49,2024-06-17
+KH-00753,30,Other Rural,Garment Factory Worker,1,1,23.1,None,142.0,95.0,0,1.49,2024-03-25
+KH-00754,43,Kampong Cham,Garment Factory Worker,0,0,19.4,COPD/Asthma,146.0,95.0,0,1.81,2024-08-21
+KH-00755,27,Siem Reap,Rice Farmer,1,1,24.3,Heart Disease,70.0,92.8,0,1.75,2024-07-13
+KH-00756,45,Other Rural,Garment Factory Worker,0,1,23.3,None,136.0,85.3,0,1.51,2024-04-20
+KH-00757,52,Phnom Penh,Moto/Tuk-tuk Driver,0,0,27.0,None,257.0,68.2,0,2.21,2024-08-21
+KH-00758,30,Other Rural,Civil Servant,0,0,20.3,None,257.0,95.0,0,1.22,2024-08-24
+KH-00759,44,Other Rural,Rice Farmer,0,1,21.0,Hypertension,99.0,89.8,0,1.8,2024-06-21
+KH-00760,53,Other Rural,Garment Factory Worker,1,0,21.9,None,127.0,83.4,0,2.02,2024-01-24
+KH-00761,32,Kampong Cham,Rice Farmer,1,0,24.2,None,60.0,89.9,0,1.74,2024-09-14
+KH-00762,29,Battambang,Construction Worker,0,1,23.4,TB,216.0,84.4,1,1.95,2024-10-25
+KH-00763,39,Phnom Penh,Monk/Retired,0,1,21.6,None,105.0,90.1,0,2.03,2024-08-15
+KH-00764,37,Other Rural,Moto/Tuk-tuk Driver,0,0,21.4,COPD/Asthma,173.0,90.5,0,2.16,2024-03-13
+KH-00765,44,Phnom Penh,Rice Farmer,0,1,26.1,None,147.0,78.1,0,1.58,2024-09-19
+KH-00766,50,Phnom Penh,Garment Factory Worker,0,0,21.0,None,176.0,87.5,1,1.72,2024-12-20
+KH-00767,57,Kampong Cham,Rice Farmer,0,0,26.7,Hepatitis B,74.0,65.4,0,2.26,2024-01-25
+KH-00768,42,Kampong Cham,Garment Factory Worker,0,0,23.2,None,177.0,87.4,0,1.58,2024-05-16
+KH-00769,42,Other Rural,Civil Servant,0,0,18.5,None,330.0,95.0,0,1.43,2024-11-27
+KH-00770,40,Other Rural,Rice Farmer,0,0,25.5,None,99.0,82.0,0,1.63,2024-09-24
+KH-00771,31,Siem Reap,Garment Factory Worker,0,0,21.0,None,135.0,95.0,0,1.38,2024-06-23
+KH-00772,50,Phnom Penh,Construction Worker,0,1,28.8,None,286.0,63.9,1,1.96,2024-07-20
+KH-00773,45,Kampong Cham,Moto/Tuk-tuk Driver,1,0,24.7,Heart Disease,172.0,77.8,1,2.55,2024-05-31
+KH-00774,42,Phnom Penh,Rice Farmer,1,1,24.4,None,157.0,83.2,1,1.8,2024-11-03
+KH-00775,35,Other Rural,Construction Worker,1,1,26.4,Arthritis; TB,200.0,73.7,0,2.53,2024-02-16
+KH-00776,78,Other Rural,Market Vendor,0,0,26.1,Hepatitis B,156.0,56.6,0,2.45,2024-06-16
+KH-00777,33,Other Rural,Construction Worker,1,1,21.7,Hypertension,170.0,90.7,0,2.12,2024-05-01
+KH-00778,40,Preah Sihanouk,Rice Farmer,0,0,21.4,None,140.0,91.3,0,1.63,2024-03-29
+KH-00779,70,Battambang,Market Vendor,1,0,24.6,Hypertension; COPD/Asthma,125.0,68.1,0,2.68,2024-06-01
+KH-00780,65,Other Rural,Rice Farmer,0,1,23.7,None,73.0,70.5,1,1.96,2024-11-14
+KH-00781,48,Siem Reap,Civil Servant,1,0,22.0,None,291.0,89.2,0,1.79,2024-12-20
+KH-00782,41,Other Rural,Market Vendor,0,1,19.7,None,119.0,95.0,0,1.35,2024-01-18
+KH-00783,36,Other Rural,Garment Factory Worker,0,0,22.4,None,151.0,92.9,0,1.47,2024-06-13
+KH-00784,47,Battambang,Garment Factory Worker,0,0,26.9,None,145.0,75.7,0,1.67,2024-02-06
+KH-00785,48,Siem Reap,Garment Factory Worker,0,0,22.3,None,154.0,85.6,0,1.68,2024-09-18
+KH-00786,44,Preah Sihanouk,Construction Worker,0,0,22.0,None,215.0,83.2,0,1.97,2024-09-12
+KH-00787,31,Kampong Cham,Rice Farmer,0,0,22.4,None,108.0,94.6,0,1.47,2024-01-08
+KH-00788,58,Phnom Penh,Garment Factory Worker,1,1,23.1,TB,192.0,72.7,0,2.36,2024-11-03
+KH-00789,38,Other Rural,Garment Factory Worker,0,1,23.5,None,160.0,89.1,0,1.38,2024-05-20
+KH-00790,45,Kampong Cham,Rice Farmer,0,1,21.2,None,67.0,88.7,0,1.6,2024-07-19
+KH-00791,60,Other Rural,Market Vendor,1,0,21.1,None,187.0,82.3,0,2.06,2024-09-30
+KH-00792,50,Siem Reap,Market Vendor,0,1,26.0,None,143.0,77.2,0,1.51,2024-11-11
+KH-00793,54,Phnom Penh,Garment Factory Worker,0,0,25.7,None,198.0,74.0,0,1.79,2024-03-02
+KH-00794,30,Battambang,Construction Worker,0,0,27.6,None,202.0,79.2,0,1.72,2024-08-13
+KH-00795,44,Kampong Cham,Moto/Tuk-tuk Driver,0,0,22.7,Arthritis; TB,161.0,78.2,0,2.65,2024-08-24
+KH-00796,52,Other Rural,Rice Farmer,0,0,19.6,None,144.0,88.0,0,1.85,2024-11-28
+KH-00797,53,Preah Sihanouk,Civil Servant,0,0,23.2,None,363.0,83.3,1,1.63,2024-11-10
+KH-00798,52,Other Rural,Monk/Retired,0,1,24.5,None,81.0,75.3,0,2.27,2024-01-21
+KH-00799,33,Other Rural,Monk/Retired,0,1,21.2,None,93.0,94.8,0,1.92,2024-04-13
+KH-00800,19,Other Rural,Rice Farmer,1,0,22.8,None,113.0,95.0,0,1.5,2024-12-19
+KH-00801,59,Other Rural,Garment Factory Worker,0,1,23.5,None,111.0,76.1,0,1.76,2024-11-15
+KH-00802,62,Siem Reap,Garment Factory Worker,0,0,25.9,TB,160.0,63.6,0,2.31,2024-01-19
+KH-00803,27,Other Rural,Rice Farmer,0,1,22.5,None,80.0,95.0,0,1.28,2024-11-29
+KH-00804,34,Phnom Penh,Construction Worker,1,0,21.6,None,280.0,90.4,1,2.04,2024-12-05
+KH-00805,40,Battambang,Construction Worker,0,1,23.6,None,168.0,82.1,0,1.78,2024-06-05
+KH-00806,33,Kampong Cham,Garment Factory Worker,0,0,21.3,None,179.0,95.0,1,1.41,2024-03-09
+KH-00807,26,Phnom Penh,Construction Worker,0,0,22.7,None,280.0,92.9,0,1.65,2024-08-02
+KH-00808,33,Other Rural,Construction Worker,0,0,20.9,None,219.0,92.8,0,1.77,2024-06-06
+KH-00809,58,Other Rural,Market Vendor,0,0,21.7,Hepatitis B,108.0,79.2,0,2.09,2024-01-16
+KH-00810,51,Phnom Penh,Rice Farmer,0,0,21.1,Hypertension,156.0,85.1,0,2.05,2024-01-23
+KH-00811,44,Siem Reap,Civil Servant,0,1,23.7,None,313.0,87.7,0,1.35,2024-06-09
+KH-00812,44,Other Rural,Garment Factory Worker,1,1,21.7,Hepatitis B,158.0,86.5,0,2.06,2024-09-20
+KH-00813,35,Siem Reap,Garment Factory Worker,1,1,23.2,COPD/Asthma,145.0,91.6,0,1.8,2024-09-26
+KH-00814,42,Siem Reap,Civil Servant,0,0,22.2,None,325.0,92.5,0,1.43,2024-04-27
+KH-00815,39,Other Rural,Monk/Retired,0,1,27.5,None,151.0,76.6,0,2.03,2024-07-27
+KH-00816,30,Phnom Penh,Rice Farmer,0,0,23.7,Diabetes,141.0,92.2,0,1.67,2024-04-12
+KH-00817,53,Other Rural,Monk/Retired,0,0,25.2,None,91.0,73.0,0,2.4,2024-01-12
+KH-00818,36,Other Rural,Rice Farmer,0,0,22.5,None,65.0,91.2,0,1.56,2024-02-14
+KH-00819,33,Siem Reap,Moto/Tuk-tuk Driver,1,1,21.5,None,183.0,92.6,0,1.99,2024-08-20
+KH-00820,35,Phnom Penh,Rice Farmer,0,1,24.3,None,121.0,87.9,1,1.42,2024-06-30
+KH-00821,22,Kampong Cham,Garment Factory Worker,0,1,23.7,None,140.0,95.0,0,1.1,2024-03-02
+KH-00822,28,Other Rural,Garment Factory Worker,1,0,22.1,None,145.0,95.0,0,1.57,2024-03-10
+KH-00823,37,Kampong Cham,Garment Factory Worker,1,1,22.3,None,171.0,92.5,0,1.62,2024-08-06
+KH-00824,58,Other Rural,Moto/Tuk-tuk Driver,0,0,21.7,Hypertension,158.0,76.7,0,2.53,2024-05-31
+KH-00825,23,Battambang,Monk/Retired,0,0,21.2,None,110.0,95.0,0,1.86,2024-07-20
+KH-00826,36,Other Rural,Civil Servant,0,1,22.1,None,305.0,95.0,1,1.2,2024-06-05
+KH-00827,29,Siem Reap,Rice Farmer,1,1,22.6,None,103.0,95.0,0,1.56,2024-07-09
+KH-00828,37,Other Rural,Moto/Tuk-tuk Driver,0,0,21.0,COPD/Asthma,169.0,91.3,0,2.16,2024-05-26
+KH-00829,74,Battambang,Market Vendor,0,0,23.4,Hepatitis B,132.0,65.4,1,2.38,2024-04-13
+KH-00830,55,Other Rural,Market Vendor,1,0,24.1,Arthritis,155.0,78.6,0,2.19,2024-03-31
+KH-00831,60,Battambang,Rice Farmer,0,1,20.4,None,72.0,81.2,0,1.87,2024-05-22
+KH-00832,49,Battambang,Garment Factory Worker,0,0,25.3,None,125.0,78.1,0,1.7,2024-10-21
+KH-00833,42,Phnom Penh,Civil Servant,0,0,25.1,TB,456.0,80.7,0,1.8,2024-02-17
+KH-00834,30,Battambang,Monk/Retired,1,1,22.4,None,91.0,94.0,0,2.12,2024-07-11
+KH-00835,50,Other Rural,Monk/Retired,0,0,22.7,None,60.0,80.8,0,2.35,2024-01-12
+KH-00836,28,Siem Reap,Moto/Tuk-tuk Driver,0,0,25.3,None,143.0,87.1,1,1.77,2024-11-04
+KH-00837,53,Phnom Penh,Moto/Tuk-tuk Driver,1,0,24.2,None,214.0,73.9,0,2.47,2024-02-19
+KH-00838,44,Other Rural,Market Vendor,0,0,21.4,None,102.0,91.7,0,1.52,2024-10-18
+KH-00839,51,Battambang,Market Vendor,0,0,23.0,None,172.0,83.5,0,1.65,2024-01-17
+KH-00840,37,Other Rural,Civil Servant,0,0,20.6,None,276.0,95.0,0,1.34,2024-01-13
+KH-00841,44,Other Rural,Construction Worker,0,0,20.5,None,189.0,86.6,0,1.97,2024-09-05
+KH-00842,39,Kampong Cham,Garment Factory Worker,0,0,21.4,None,205.0,93.4,0,1.52,2024-02-26
+KH-00843,33,Battambang,Moto/Tuk-tuk Driver,0,0,19.7,None,166.0,95.0,0,1.86,2024-02-06
+KH-00844,32,Siem Reap,Civil Servant,0,1,23.9,None,292.0,94.9,0,1.13,2024-02-22
+KH-00845,50,Other Rural,Rice Farmer,0,1,21.5,None,90.0,85.0,0,1.69,2024-02-28
+KH-00846,41,Battambang,Garment Factory Worker,0,1,24.1,Hypertension,143.0,86.0,0,1.66,2024-09-04
+KH-00847,44,Other Rural,Moto/Tuk-tuk Driver,0,0,22.6,None,122.0,83.2,1,2.06,2024-06-19
+KH-00848,28,Phnom Penh,Monk/Retired,0,1,22.0,Hepatitis B,162.0,93.1,0,2.15,2024-07-27
+KH-00849,35,Siem Reap,Garment Factory Worker,0,0,22.5,None,179.0,93.2,0,1.45,2024-01-27
+KH-00850,56,Phnom Penh,Rice Farmer,0,0,22.4,TB,117.0,74.1,0,2.29,2024-10-06
+KH-00851,57,Preah Sihanouk,Market Vendor,0,1,25.4,Diabetes,193.0,74.4,0,1.86,2024-08-27
+KH-00852,42,Other Rural,Garment Factory Worker,0,0,19.9,None,133.0,95.0,0,1.58,2024-10-31
+KH-00853,41,Kampong Cham,Garment Factory Worker,1,1,20.2,None,190.0,94.8,0,1.69,2024-04-06
+KH-00854,31,Siem Reap,Rice Farmer,0,0,21.8,None,92.0,95.0,1,1.47,2024-02-06
+KH-00855,44,Kampong Cham,Market Vendor,0,0,24.4,None,128.0,84.8,0,1.52,2024-04-14
+KH-00856,34,Preah Sihanouk,Rice Farmer,1,0,20.3,None,100.0,95.0,1,1.77,2024-05-19
+KH-00857,30,Other Rural,Garment Factory Worker,0,1,24.0,None,160.0,92.9,1,1.24,2024-02-02
+KH-00858,56,Siem Reap,Garment Factory Worker,0,1,23.2,Hypertension,137.0,78.7,0,1.93,2024-12-05
+KH-00859,34,Battambang,Moto/Tuk-tuk Driver,1,0,23.2,Diabetes,149.0,88.1,0,2.35,2024-10-17
+KH-00860,31,Battambang,Civil Servant,0,1,18.7,None,287.0,95.0,0,1.11,2024-08-17
+KH-00861,35,Kampong Cham,Construction Worker,1,1,20.9,None,176.0,91.4,0,1.94,2024-04-03
+KH-00862,38,Siem Reap,Garment Factory Worker,1,0,19.2,Hepatitis B,179.0,95.0,0,2.07,2024-06-25
+KH-00863,45,Other Rural,Moto/Tuk-tuk Driver,1,0,28.2,Hypertension,231.0,69.8,0,2.55,2024-11-22
+KH-00864,39,Kampong Cham,Garment Factory Worker,0,1,19.1,None,201.0,95.0,1,1.4,2024-11-07
+KH-00865,40,Other Rural,Market Vendor,1,1,22.1,Hepatitis B,118.0,89.4,0,1.9,2024-12-14
+KH-00866,59,Phnom Penh,Moto/Tuk-tuk Driver,0,0,21.9,None,259.0,75.6,1,2.33,2024-08-21
+KH-00867,39,Preah Sihanouk,Moto/Tuk-tuk Driver,0,1,19.4,None,245.0,93.8,0,1.85,2024-01-21
+KH-00868,42,Siem Reap,Monk/Retired,0,0,21.2,None,60.0,89.1,0,2.21,2024-05-23
+KH-00869,39,Kampong Cham,Rice Farmer,1,0,25.1,None,96.0,83.4,0,1.86,2024-11-13
+KH-00870,39,Siem Reap,Construction Worker,1,0,24.1,None,121.0,81.6,0,2.13,2024-08-12
+KH-00871,32,Preah Sihanouk,Rice Farmer,0,0,22.7,None,126.0,93.3,0,1.49,2024-02-12
+KH-00872,35,Other Rural,Moto/Tuk-tuk Driver,1,1,22.4,Hypertension,143.0,89.4,0,2.25,2024-01-13
+KH-00873,32,Battambang,Moto/Tuk-tuk Driver,0,1,18.8,None,160.0,95.0,1,1.73,2024-12-12
+KH-00874,66,Other Rural,Market Vendor,0,1,24.2,None,66.0,71.6,0,1.8,2024-11-14
+KH-00875,40,Phnom Penh,Moto/Tuk-tuk Driver,0,0,21.3,None,267.0,88.7,0,1.99,2024-01-04
+KH-00876,32,Kampong Cham,Rice Farmer,0,0,24.5,None,132.0,89.3,1,1.49,2024-07-05
+KH-00877,55,Phnom Penh,Rice Farmer,0,0,23.4,None,199.0,77.4,0,1.9,2024-05-01
+KH-00878,60,Other Rural,Construction Worker,1,0,22.2,None,177.0,72.7,1,2.51,2024-02-03
+KH-00879,42,Other Rural,Construction Worker,0,1,23.1,None,209.0,81.9,0,1.82,2024-10-30
+KH-00880,35,Other Rural,Construction Worker,0,0,26.9,Diabetes; COPD/Asthma,219.0,77.5,0,2.25,2024-04-19
+KH-00881,35,Phnom Penh,Rice Farmer,0,1,20.1,Arthritis,177.0,95.0,0,1.64,2024-07-28
+KH-00882,24,Kampong Cham,Rice Farmer,0,1,22.8,None,69.0,95.0,0,1.22,2024-12-03
+KH-00883,33,Battambang,Market Vendor,0,1,25.4,None,149.0,89.4,0,1.2,2024-07-28
+KH-00884,40,Kampong Cham,Market Vendor,0,1,20.1,None,131.0,95.0,0,1.33,2024-06-22
+KH-00885,51,Preah Sihanouk,Garment Factory Worker,0,1,22.9,None,162.0,82.4,0,1.62,2024-01-27
+KH-00886,36,Other Rural,Garment Factory Worker,1,0,25.5,None,209.0,85.8,0,1.72,2024-06-18
+KH-00887,31,Other Rural,Rice Farmer,1,0,21.5,None,122.0,95.0,0,1.72,2024-04-09
+KH-00888,34,Other Rural,Rice Farmer,1,0,23.5,None,116.0,90.3,0,1.77,2024-07-17
+KH-00889,50,Battambang,Construction Worker,1,0,26.3,Heart Disease,129.0,69.7,0,2.55,2024-01-12
+KH-00890,47,Kampong Cham,Monk/Retired,0,1,23.3,TB,105.0,76.1,0,2.55,2024-06-15
+KH-00891,42,Kampong Cham,Rice Farmer,0,0,23.9,COPD/Asthma,63.0,84.4,0,1.89,2024-02-13
+KH-00892,49,Other Rural,Rice Farmer,0,0,23.2,Diabetes,83.0,81.6,0,2.01,2024-01-20
+KH-00893,31,Other Rural,Rice Farmer,1,1,19.9,None,93.0,95.0,1,1.6,2024-04-05
+KH-00894,46,Phnom Penh,Garment Factory Worker,0,0,22.4,None,253.0,86.6,1,1.65,2024-08-28
+KH-00895,36,Other Rural,Rice Farmer,1,1,25.1,None,90.0,85.2,0,1.69,2024-01-23
+KH-00896,36,Other Rural,Rice Farmer,0,0,19.3,None,128.0,95.0,0,1.56,2024-03-25
+KH-00897,56,Preah Sihanouk,Civil Servant,0,0,23.9,None,426.0,79.7,0,1.68,2024-01-04
+KH-00898,54,Battambang,Construction Worker,0,0,22.5,Arthritis; TB,257.0,70.9,1,2.74,2024-12-26
+KH-00899,47,Phnom Penh,Market Vendor,0,0,29.0,None,219.0,72.2,0,1.58,2024-09-28
+KH-00900,68,Phnom Penh,Garment Factory Worker,0,1,22.1,None,210.0,73.6,0,1.92,2024-06-11
+KH-00901,56,Other Rural,Market Vendor,0,1,23.6,None,108.0,79.1,0,1.62,2024-02-03
+KH-00902,39,Battambang,Garment Factory Worker,0,0,23.1,COPD/Asthma,138.0,89.5,0,1.74,2024-01-27
+KH-00903,42,Siem Reap,Rice Farmer,1,0,21.4,None,121.0,90.1,0,1.92,2024-04-20
+KH-00904,42,Siem Reap,Moto/Tuk-tuk Driver,0,0,20.1,None,166.0,90.3,0,2.03,2024-04-16
+KH-00905,51,Other Rural,Rice Farmer,0,0,23.5,None,71.0,79.7,0,1.83,2024-09-12
+KH-00906,42,Other Rural,Construction Worker,0,0,25.1,None,182.0,77.3,0,1.94,2024-04-21
+KH-00907,41,Other Rural,Garment Factory Worker,0,0,22.4,None,168.0,89.9,0,1.56,2024-05-11
+KH-00908,46,Siem Reap,Garment Factory Worker,1,0,19.8,None,151.0,92.7,0,1.9,2024-10-30
+KH-00909,43,Other Rural,Monk/Retired,1,0,21.9,None,60.0,86.9,0,2.47,2024-01-19
+KH-00910,39,Other Rural,Moto/Tuk-tuk Driver,0,1,22.3,None,146.0,87.2,0,1.85,2024-10-08
+KH-00911,32,Battambang,Construction Worker,0,1,25.5,None,232.0,82.6,0,1.64,2024-06-25
+KH-00912,40,Other Rural,Rice Farmer,0,0,23.4,Diabetes,78.0,86.8,0,1.85,2024-08-27
+KH-00913,46,Kampong Cham,Market Vendor,1,1,20.5,None,124.0,92.6,0,1.69,2024-06-13
+KH-00914,37,Phnom Penh,Civil Servant,1,1,18.4,None,461.0,95.0,0,1.47,2024-01-30
+KH-00915,39,Kampong Cham,Garment Factory Worker,0,0,23.7,Hepatitis B,120.0,85.0,0,1.84,2024-09-11
+KH-00916,55,Other Rural,Civil Servant,1,1,24.2,None,260.0,79.7,0,1.8,2024-05-30
+KH-00917,32,Siem Reap,Moto/Tuk-tuk Driver,0,1,23.2,None,222.0,89.3,0,1.73,2024-11-30
+KH-00918,35,Other Rural,Rice Farmer,0,1,21.8,None,60.0,93.5,0,1.42,2024-06-23
+KH-00919,34,Siem Reap,Moto/Tuk-tuk Driver,0,0,20.1,None,159.0,95.0,0,1.88,2024-09-20
+KH-00920,41,Preah Sihanouk,Monk/Retired,1,1,21.7,Heart Disease,126.0,88.6,0,2.54,2024-12-05
+KH-00921,46,Other Rural,Construction Worker,1,0,19.1,Diabetes,197.0,88.6,1,2.48,2024-01-28
+KH-00922,40,Kampong Cham,Construction Worker,0,0,24.2,Heart Disease,173.0,80.6,1,2.12,2024-04-07
+KH-00923,40,Other Rural,Market Vendor,0,0,20.7,None,131.0,95.0,0,1.45,2024-09-08
+KH-00924,30,Other Rural,Garment Factory Worker,0,1,19.4,None,149.0,95.0,0,1.24,2024-09-01
+KH-00925,32,Phnom Penh,Rice Farmer,0,1,26.7,None,135.0,84.0,1,1.37,2024-07-28
+KH-00926,41,Other Rural,Rice Farmer,1,1,22.8,Diabetes,103.0,87.6,0,2.0,2024-11-05
+KH-00927,43,Other Rural,Garment Factory Worker,0,1,21.0,Hypertension; Hepatitis B,152.0,88.9,0,2.01,2024-04-23
+KH-00928,64,Battambang,Rice Farmer,0,0,24.7,TB,78.0,63.8,0,2.43,2024-06-02
+KH-00929,38,Siem Reap,Rice Farmer,0,1,20.8,None,105.0,93.9,1,1.47,2024-09-28
+KH-00930,31,Other Rural,Monk/Retired,0,1,23.8,COPD/Asthma,94.0,89.9,0,2.11,2024-10-21
+KH-00931,30,Other Rural,Rice Farmer,0,1,25.0,None,100.0,89.3,0,1.33,2024-04-13
+KH-00932,42,Siem Reap,Garment Factory Worker,0,1,25.2,None,120.0,82.9,0,1.46,2024-08-09
+KH-00933,48,Kampong Cham,Rice Farmer,1,0,22.4,Hepatitis B,107.0,81.0,0,2.34,2024-02-07
+KH-00934,48,Other Rural,Moto/Tuk-tuk Driver,0,0,19.6,Arthritis; Hepatitis B,205.0,84.6,0,2.67,2024-02-25
+KH-00935,41,Battambang,Garment Factory Worker,0,0,21.0,COPD/Asthma,132.0,93.0,0,1.78,2024-02-19
+KH-00936,69,Other Rural,Market Vendor,0,0,22.0,None,159.0,74.6,0,1.97,2024-08-09
+KH-00937,69,Phnom Penh,Rice Farmer,1,1,23.0,None,177.0,69.5,1,2.28,2024-06-26
+KH-00938,51,Siem Reap,Moto/Tuk-tuk Driver,0,0,21.3,None,177.0,82.0,0,2.19,2024-03-23
+KH-00939,40,Siem Reap,Moto/Tuk-tuk Driver,0,0,22.6,Hypertension,250.0,85.8,0,2.21,2024-04-28
+KH-00940,23,Other Rural,Civil Servant,0,0,23.1,None,234.0,95.0,0,1.09,2024-05-05
+KH-00941,36,Kampong Cham,Market Vendor,0,0,24.6,Arthritis,119.0,89.3,0,1.6,2024-03-12
+KH-00942,49,Phnom Penh,Garment Factory Worker,0,0,24.2,Hypertension; Arthritis,217.0,80.7,0,2.14,2024-04-18
+KH-00943,55,Phnom Penh,Rice Farmer,0,1,25.9,None,191.0,71.6,1,1.78,2024-11-03
+KH-00944,56,Other Rural,Moto/Tuk-tuk Driver,0,0,22.5,None,136.0,76.0,0,2.28,2024-04-26
+KH-00945,50,Other Rural,Moto/Tuk-tuk Driver,0,0,19.8,None,212.0,85.9,0,2.17,2024-02-29
+KH-00946,52,Other Rural,Rice Farmer,0,0,23.0,None,131.0,80.2,0,1.85,2024-03-11
+KH-00947,41,Kampong Cham,Garment Factory Worker,1,0,26.3,Hepatitis B,216.0,77.8,0,2.13,2024-05-16
+KH-00948,41,Preah Sihanouk,Construction Worker,1,1,23.4,None,261.0,81.9,0,2.05,2024-04-21
+KH-00949,69,Other Rural,Rice Farmer,0,0,23.6,Hepatitis B,100.0,65.2,0,2.47,2024-02-26
+KH-00950,44,Other Rural,Garment Factory Worker,0,1,22.6,None,137.0,87.4,0,1.49,2024-04-03
+KH-00951,33,Preah Sihanouk,Rice Farmer,0,1,20.0,None,133.0,95.0,0,1.38,2024-06-10
+KH-00952,53,Siem Reap,Moto/Tuk-tuk Driver,1,0,21.3,Hypertension,196.0,80.7,1,2.69,2024-06-01
+KH-00953,42,Other Rural,Market Vendor,0,0,21.8,None,146.0,92.0,0,1.49,2024-04-12
+KH-00954,29,Phnom Penh,Rice Farmer,0,0,23.5,None,171.0,93.4,0,1.43,2024-09-15
+KH-00955,39,Phnom Penh,Civil Servant,0,0,23.7,None,483.0,90.9,0,1.38,2024-05-17
+KH-00956,31,Kampong Cham,Civil Servant,1,1,21.5,None,331.0,95.0,0,1.36,2024-12-18
+KH-00957,44,Other Rural,Construction Worker,1,0,21.9,None,178.0,83.6,0,2.22,2024-10-27
+KH-00958,55,Kampong Cham,Rice Farmer,1,0,24.4,None,122.0,75.2,1,2.15,2024-11-01
+KH-00959,47,Kampong Cham,Market Vendor,0,0,23.9,None,156.0,84.0,1,1.58,2024-05-26
+KH-00960,40,Battambang,Construction Worker,0,1,22.1,None,184.0,85.6,0,1.78,2024-02-29
+KH-00961,39,Other Rural,Rice Farmer,0,0,24.5,None,86.0,84.8,1,1.61,2024-05-21
+KH-00962,28,Preah Sihanouk,Construction Worker,0,1,21.7,None,254.0,94.0,0,1.56,2024-03-26
+KH-00963,49,Other Rural,Rice Farmer,1,0,25.2,None,112.0,77.1,0,2.04,2024-01-07
+KH-00964,53,Siem Reap,Rice Farmer,0,1,21.1,None,119.0,83.8,0,1.74,2024-11-10
+KH-00965,50,Kampong Cham,Monk/Retired,0,0,25.0,None,92.0,75.5,0,2.35,2024-10-03
+KH-00966,39,Phnom Penh,Rice Farmer,0,0,24.6,None,182.0,84.6,1,1.61,2024-01-01
+KH-00967,29,Other Rural,Moto/Tuk-tuk Driver,1,0,23.8,None,199.0,89.8,0,2.04,2024-12-24
+KH-00968,52,Phnom Penh,Monk/Retired,0,0,25.8,Hepatitis B,108.0,69.3,1,2.71,2024-06-12
+KH-00969,34,Phnom Penh,Rice Farmer,1,1,21.5,TB,192.0,89.8,0,2.02,2024-07-07
+KH-00970,48,Preah Sihanouk,Civil Servant,1,1,20.9,Diabetes,408.0,91.7,0,1.89,2024-01-21
+KH-00971,47,Kampong Cham,Monk/Retired,0,1,22.4,Arthritis,60.0,83.3,0,2.4,2024-06-30
+KH-00972,38,Siem Reap,Rice Farmer,0,0,24.0,None,90.0,86.7,0,1.59,2024-04-12
+KH-00973,42,Other Rural,Market Vendor,0,0,24.4,Diabetes,147.0,85.9,0,1.71,2024-08-19
+KH-00974,67,Siem Reap,Rice Farmer,0,0,25.0,None,115.0,66.2,1,2.12,2024-01-04
+KH-00975,44,Battambang,Rice Farmer,0,0,24.1,None,109.0,82.6,0,1.7,2024-02-25
+KH-00976,40,Battambang,Garment Factory Worker,1,0,23.2,None,151.0,88.6,0,1.79,2024-09-18
+KH-00977,51,Phnom Penh,Moto/Tuk-tuk Driver,1,0,25.6,None,197.0,72.1,0,2.44,2024-11-23
+KH-00978,47,Siem Reap,Civil Servant,0,0,23.4,None,310.0,86.7,0,1.52,2024-09-04
+KH-00979,44,Other Rural,Rice Farmer,0,0,26.2,Diabetes,90.0,77.9,0,1.92,2024-11-03
+KH-00980,46,Phnom Penh,Civil Servant,0,1,24.2,None,439.0,85.4,0,1.38,2024-11-11
+KH-00981,47,Siem Reap,Rice Farmer,0,0,24.6,TB,131.0,74.6,0,2.13,2024-03-16
+KH-00982,36,Kampong Cham,Market Vendor,1,1,19.7,Hypertension,131.0,95.0,0,1.73,2024-03-17
+KH-00983,33,Other Rural,Construction Worker,1,0,20.9,None,215.0,92.7,0,2.02,2024-03-11
+KH-00984,48,Phnom Penh,Rice Farmer,0,0,25.8,None,160.0,76.2,0,1.77,2024-04-04
+KH-00985,41,Kampong Cham,Construction Worker,0,1,20.9,None,197.0,87.8,1,1.8,2024-10-21
+KH-00986,34,Phnom Penh,Garment Factory Worker,0,1,23.5,Hypertension,255.0,91.6,0,1.53,2024-02-21
+KH-00987,72,Other Rural,Garment Factory Worker,0,0,19.8,Hepatitis B,149.0,73.5,0,2.44,2024-11-27
+KH-00988,54,Siem Reap,Rice Farmer,0,0,21.8,None,96.0,81.6,0,1.88,2024-08-03
+KH-00989,39,Other Rural,Market Vendor,0,0,20.4,None,113.0,95.0,0,1.43,2024-07-23
+KH-00990,71,Other Rural,Moto/Tuk-tuk Driver,1,0,23.7,Heart Disease,181.0,64.0,0,3.02,2024-05-18
+KH-00991,39,Phnom Penh,Rice Farmer,0,1,24.1,Hypertension,196.0,85.7,1,1.71,2024-05-08
+KH-00992,55,Battambang,Market Vendor,1,0,20.5,None,174.0,86.8,1,1.97,2024-01-05
+KH-00993,38,Other Rural,Monk/Retired,1,0,20.4,None,102.0,93.5,1,2.38,2024-06-29
+KH-00994,58,Other Rural,Garment Factory Worker,0,1,19.7,None,201.0,85.4,1,1.74,2024-10-03
+KH-00995,49,Siem Reap,Market Vendor,0,1,23.8,None,166.0,83.0,0,1.49,2024-05-20
+KH-00996,26,Kampong Cham,Moto/Tuk-tuk Driver,0,0,18.4,None,196.0,95.0,0,1.74,2024-02-22
+KH-00997,34,Other Rural,Rice Farmer,0,1,26.1,None,77.0,84.3,0,1.4,2024-07-30
+KH-00998,33,Kampong Cham,Garment Factory Worker,0,0,22.4,None,168.0,94.7,0,1.41,2024-01-19
+KH-00999,40,Siem Reap,Moto/Tuk-tuk Driver,1,1,18.5,None,157.0,95.0,0,2.12,2024-12-19
+KH-01000,66,Other Rural,Market Vendor,0,1,24.4,None,143.0,71.1,0,1.8,2024-02-21
+KH-01001,46,Phnom Penh,Civil Servant,0,0,21.1,None,456.0,92.5,0,1.5,2024-12-26
+KH-01002,53,Other Rural,Rice Farmer,0,0,24.1,Diabetes,86.0,77.0,0,2.08,2024-10-17
+KH-01003,38,Phnom Penh,Garment Factory Worker,0,1,16.8,Hypertension,231.0,95.0,0,1.6,2024-11-13
+KH-01004,39,Battambang,Rice Farmer,0,0,28.1,None,96.0,76.6,0,1.61,2024-04-18
+KH-01005,47,Other Rural,Moto/Tuk-tuk Driver,0,1,22.8,Heart Disease,154.0,80.9,0,2.22,2024-03-17
+KH-01006,47,Other Rural,Moto/Tuk-tuk Driver,1,0,25.9,None,168.0,73.7,0,2.37,2024-11-27
+KH-01007,44,Siem Reap,Market Vendor,0,0,23.5,Hepatitis B,152.0,83.8,0,1.84,2024-05-30
+KH-01008,50,Other Rural,Moto/Tuk-tuk Driver,0,0,18.8,None,167.0,88.4,0,2.17,2024-12-26
+KH-01009,36,Other Rural,Rice Farmer,0,0,21.6,None,78.0,93.4,0,1.56,2024-11-13
+KH-01010,56,Kampong Cham,Civil Servant,0,0,22.9,None,310.0,82.0,1,1.68,2024-05-08
+KH-01011,34,Kampong Cham,Rice Farmer,0,0,25.8,Hypertension; Hepatitis B,117.0,82.0,0,2.06,2024-08-12
+KH-01012,59,Kampong Cham,Garment Factory Worker,1,0,24.3,None,130.0,74.3,0,2.13,2024-02-04
+KH-01013,45,Battambang,Civil Servant,0,1,20.1,None,295.0,95.0,0,1.37,2024-04-28
+KH-01014,46,Siem Reap,Rice Farmer,1,1,25.5,None,128.0,78.2,0,1.87,2024-01-26
+KH-01015,62,Phnom Penh,Moto/Tuk-tuk Driver,0,0,27.7,Heart Disease; Hepatitis B,230.0,57.4,0,2.93,2024-01-27
+KH-01016,52,Other Rural,Monk/Retired,0,1,24.0,None,60.0,76.4,0,2.27,2024-04-05
+KH-01017,36,Other Rural,Garment Factory Worker,0,1,22.8,None,121.0,92.0,0,1.35,2024-10-20
+KH-01018,65,Other Rural,Market Vendor,0,0,20.7,None,161.0,80.2,1,1.9,2024-12-08
+KH-01019,67,Kampong Cham,Construction Worker,1,1,22.8,None,205.0,67.0,1,2.52,2024-09-19
+KH-01020,43,Phnom Penh,Market Vendor,0,1,23.7,None,184.0,86.9,0,1.38,2024-08-17
+KH-01021,49,Other Rural,Civil Servant,1,0,22.6,None,296.0,87.1,0,1.81,2024-04-02
+KH-01022,31,Preah Sihanouk,Construction Worker,0,0,24.6,TB,206.0,80.5,0,2.11,2024-03-27
+KH-01023,85,Other Rural,Rice Farmer,0,0,29.0,None,102.0,45.7,0,2.44,2024-03-27
+KH-01024,33,Phnom Penh,Civil Servant,0,1,22.9,Hepatitis B,458.0,93.6,0,1.47,2024-07-14
+KH-01025,39,Phnom Penh,Rice Farmer,0,1,22.9,None,120.0,88.6,0,1.49,2024-10-02
+KH-01026,27,Other Rural,Garment Factory Worker,0,1,22.3,None,170.0,95.0,0,1.19,2024-06-21
+KH-01027,36,Other Rural,Rice Farmer,1,0,26.1,Hepatitis B,114.0,80.1,0,2.13,2024-12-15
+KH-01028,32,Preah Sihanouk,Garment Factory Worker,0,0,21.7,None,178.0,95.0,0,1.4,2024-04-01
+KH-01029,44,Phnom Penh,Construction Worker,1,0,26.3,None,255.0,73.5,0,2.22,2024-02-03
+KH-01030,28,Other Rural,Market Vendor,0,0,21.0,None,149.0,95.0,0,1.23,2024-07-09
+KH-01031,53,Other Rural,Garment Factory Worker,1,1,20.1,None,190.0,87.6,0,1.9,2024-10-26
+KH-01032,29,Other Rural,Garment Factory Worker,0,0,24.7,None,139.0,92.1,1,1.34,2024-10-22
+KH-01033,42,Preah Sihanouk,Moto/Tuk-tuk Driver,0,0,22.9,Hypertension,214.0,84.0,0,2.25,2024-02-29
+KH-01034,25,Other Rural,Garment Factory Worker,0,0,20.5,Diabetes,164.0,95.0,0,1.49,2024-01-31
+KH-01035,54,Other Rural,Garment Factory Worker,0,1,23.9,Diabetes,164.0,78.3,0,1.89,2024-01-06
+KH-01036,42,Battambang,Civil Servant,0,1,25.3,None,334.0,85.2,0,1.31,2024-11-11
+KH-01037,47,Kampong Cham,Market Vendor,0,1,27.5,None,152.0,75.7,0,1.46,2024-11-11
+KH-01038,30,Other Rural,Rice Farmer,1,1,22.0,TB,132.0,91.2,0,1.95,2024-12-13
+KH-01039,49,Siem Reap,Construction Worker,0,0,19.5,None,166.0,85.9,0,2.06,2024-10-09
+KH-01040,34,Battambang,Rice Farmer,0,1,24.0,None,65.0,89.1,0,1.4,2024-03-24
+KH-01041,58,Other Rural,Moto/Tuk-tuk Driver,0,1,21.1,Diabetes,131.0,77.9,0,2.41,2024-10-11
+KH-01042,41,Battambang,Rice Farmer,0,0,22.0,None,131.0,89.3,0,1.65,2024-03-25
+KH-01043,47,Siem Reap,Moto/Tuk-tuk Driver,0,1,25.8,TB,161.0,69.0,0,2.37,2024-05-11
+KH-01044,31,Phnom Penh,Construction Worker,1,0,20.5,None,301.0,94.8,1,1.99,2024-11-06
+KH-01045,62,Other Rural,Rice Farmer,0,0,25.3,TB; Hepatitis B,92.0,60.5,0,2.72,2024-05-19
+KH-01046,60,Kampong Cham,Market Vendor,0,1,21.4,None,75.0,81.6,0,1.69,2024-01-09
+KH-01047,55,Other Rural,Civil Servant,0,1,16.1,Hypertension,286.0,95.0,0,1.77,2024-12-28
+KH-01048,34,Phnom Penh,Rice Farmer,0,0,20.7,None,184.0,95.0,0,1.52,2024-03-27
+KH-01049,36,Phnom Penh,Rice Farmer,0,0,25.4,None,194.0,84.6,0,1.56,2024-02-12
+KH-01050,40,Other Rural,Market Vendor,0,1,21.3,None,145.0,94.3,0,1.33,2024-03-22
+KH-01051,33,Other Rural,Garment Factory Worker,0,0,21.9,Hepatitis B,173.0,93.0,0,1.73,2024-11-07
+KH-01052,32,Battambang,Garment Factory Worker,0,1,24.7,TB,128.0,85.1,1,1.65,2024-06-20
+KH-01053,48,Battambang,Civil Servant,0,1,24.5,Hypertension,289.0,83.5,0,1.64,2024-03-23
+KH-01054,46,Other Rural,Market Vendor,1,0,19.9,None,115.0,93.8,0,1.81,2024-02-20
+KH-01055,37,Battambang,Market Vendor,0,0,25.6,None,130.0,86.3,0,1.4,2024-08-04
+KH-01056,37,Other Rural,Garment Factory Worker,0,1,24.1,None,149.0,88.5,0,1.37,2024-10-27
+KH-01057,28,Kampong Cham,Rice Farmer,0,0,23.3,None,61.0,94.6,0,1.41,2024-11-07
+KH-01058,35,Kampong Cham,Garment Factory Worker,0,0,24.3,None,143.0,89.1,0,1.45,2024-01-24
+KH-01059,50,Kampong Cham,Market Vendor,1,0,20.4,None,143.0,90.2,0,1.88,2024-11-12
+KH-01060,55,Battambang,Construction Worker,0,0,22.6,Heart Disease,162.0,74.9,1,2.39,2024-07-16
+KH-01061,30,Phnom Penh,Monk/Retired,1,0,16.7,TB,135.0,95.0,0,2.61,2024-09-05
+KH-01062,59,Kampong Cham,Market Vendor,0,0,25.5,None,134.0,72.8,1,1.79,2024-05-03
+KH-01063,31,Phnom Penh,Construction Worker,1,0,23.8,None,241.0,87.4,0,1.99,2024-01-17
+KH-01064,36,Battambang,Garment Factory Worker,0,1,20.9,None,118.0,95.0,1,1.35,2024-09-17
+KH-01065,31,Preah Sihanouk,Rice Farmer,0,1,21.6,None,147.0,95.0,0,1.35,2024-12-08
+KH-01066,37,Siem Reap,Moto/Tuk-tuk Driver,0,0,23.6,None,167.0,85.4,0,1.94,2024-10-15
+KH-01067,52,Kampong Cham,Rice Farmer,0,0,24.0,None,94.0,77.9,0,1.85,2024-10-13
+KH-01068,39,Other Rural,Civil Servant,0,1,27.7,None,219.0,81.8,0,1.26,2024-05-18
+KH-01069,53,Siem Reap,Moto/Tuk-tuk Driver,0,0,21.7,None,131.0,79.6,0,2.22,2024-08-25
+KH-01070,39,Kampong Cham,Rice Farmer,0,1,23.6,None,121.0,86.8,1,1.49,2024-09-23
+KH-01071,53,Other Rural,Market Vendor,0,0,21.3,None,122.0,86.3,0,1.68,2024-08-30
+KH-01072,45,Kampong Cham,Civil Servant,1,0,22.5,None,290.0,89.8,0,1.74,2024-02-05
+KH-01073,39,Preah Sihanouk,Garment Factory Worker,0,0,20.4,None,200.0,95.0,0,1.52,2024-08-31
+KH-01074,29,Other Rural,Garment Factory Worker,0,1,25.5,None,160.0,90.2,1,1.22,2024-04-11
+KH-01075,49,Phnom Penh,Moto/Tuk-tuk Driver,0,0,20.6,None,267.0,84.9,1,2.15,2024-08-12
+KH-01076,44,Other Rural,Rice Farmer,1,1,28.4,None,122.0,72.7,0,1.83,2024-04-26
+KH-01077,36,Other Rural,Rice Farmer,1,0,22.3,None,127.0,91.8,0,1.81,2024-12-02
+KH-01078,36,Phnom Penh,Rice Farmer,0,0,24.8,Hypertension,172.0,85.9,0,1.78,2024-05-15
+KH-01079,57,Preah Sihanouk,Rice Farmer,0,0,23.9,None,143.0,74.9,0,1.94,2024-07-08
+KH-01080,36,Siem Reap,Market Vendor,0,0,22.2,Hepatitis B,136.0,91.7,0,1.7,2024-12-26
+KH-01081,32,Siem Reap,Moto/Tuk-tuk Driver,1,0,18.6,None,214.0,95.0,0,2.1,2024-06-23
+KH-01082,27,Preah Sihanouk,Moto/Tuk-tuk Driver,1,0,21.0,None,222.0,95.0,0,2.01,2024-10-05
+KH-01083,69,Preah Sihanouk,Rice Farmer,0,0,25.2,Diabetes; COPD/Asthma,134.0,64.4,0,2.59,2024-01-18
+KH-01084,48,Kampong Cham,Market Vendor,0,0,25.4,None,119.0,79.9,0,1.59,2024-09-20
+KH-01085,40,Other Rural,Monk/Retired,0,0,24.0,Hypertension,62.0,83.8,1,2.39,2024-11-08
+KH-01086,46,Kampong Cham,Civil Servant,0,0,22.6,None,282.0,89.1,0,1.5,2024-05-18
+KH-01087,29,Siem Reap,Garment Factory Worker,0,1,23.3,None,157.0,95.0,0,1.22,2024-10-05
+KH-01088,37,Phnom Penh,Moto/Tuk-tuk Driver,1,1,27.3,None,268.0,76.8,1,2.07,2024-06-21
+KH-01089,26,Kampong Cham,Rice Farmer,1,1,23.0,None,115.0,95.0,0,1.51,2024-06-01
+KH-01090,49,Siem Reap,Rice Farmer,0,1,25.4,None,110.0,76.4,0,1.67,2024-12-25
+KH-01091,53,Other Rural,Rice Farmer,1,0,24.5,None,90.0,76.0,0,2.11,2024-09-04
+KH-01092,47,Kampong Cham,Rice Farmer,0,0,25.9,TB,109.0,71.6,0,2.13,2024-03-30
+KH-01093,85,Other Rural,Market Vendor,0,0,22.3,None,138.0,64.0,1,2.26,2024-04-29
+KH-01094,35,Preah Sihanouk,Construction Worker,0,0,28.1,None,259.0,74.9,0,1.81,2024-09-27
+KH-01095,31,Phnom Penh,Construction Worker,0,1,27.2,None,305.0,79.4,0,1.62,2024-04-24
+KH-01096,51,Siem Reap,Garment Factory Worker,0,0,22.3,None,177.0,83.8,0,1.74,2024-10-27
+KH-01097,39,Phnom Penh,Garment Factory Worker,0,0,22.9,COPD/Asthma,239.0,89.9,0,1.74,2024-08-21
+KH-01098,28,Preah Sihanouk,Monk/Retired,1,0,25.8,None,165.0,87.2,0,2.2,2024-11-21
+KH-01099,28,Other Rural,Moto/Tuk-tuk Driver,0,1,19.5,TB,185.0,95.0,0,2.02,2024-09-26
+KH-01100,40,Kampong Cham,Market Vendor,0,0,22.1,None,157.0,92.5,0,1.45,2024-10-01
+KH-01101,32,Other Rural,Monk/Retired,1,1,23.3,Hepatitis B,117.0,87.5,0,2.48,2024-11-04
+KH-01102,29,Kampong Cham,Garment Factory Worker,0,0,24.7,None,164.0,91.9,0,1.34,2024-01-17
+KH-01103,38,Other Rural,Market Vendor,0,0,22.6,None,107.0,92.6,1,1.41,2024-12-22
+KH-01104,42,Phnom Penh,Construction Worker,1,0,23.3,None,261.0,81.6,0,2.19,2024-11-05
+KH-01105,39,Battambang,Market Vendor,1,0,25.8,Heart Disease,153.0,84.6,1,1.9,2024-12-04
+KH-01106,62,Siem Reap,Rice Farmer,0,1,20.9,None,133.0,78.8,1,1.91,2024-01-31
+KH-01107,42,Other Rural,Monk/Retired,1,0,19.9,Arthritis,76.0,92.2,1,2.68,2024-04-27
+KH-01108,57,Phnom Penh,Market Vendor,0,0,25.0,None,186.0,75.3,0,1.76,2024-02-25
+KH-01109,60,Kampong Cham,Moto/Tuk-tuk Driver,1,0,26.2,Diabetes,145.0,65.0,0,2.82,2024-04-25
+KH-01110,33,Other Rural,Rice Farmer,1,0,26.0,None,98.0,85.2,0,1.75,2024-11-29
+KH-01111,50,Battambang,Monk/Retired,0,0,24.2,None,111.0,77.3,0,2.35,2024-06-06
+KH-01112,56,Siem Reap,Rice Farmer,0,1,24.2,None,82.0,75.0,0,1.8,2024-01-09
+KH-01113,53,Other Rural,Rice Farmer,0,1,22.8,Diabetes; COPD/Asthma,96.0,80.1,0,2.18,2024-02-21
+KH-01114,39,Phnom Penh,Market Vendor,0,1,26.8,None,195.0,82.4,0,1.31,2024-12-18
+KH-01115,43,Other Rural,Moto/Tuk-tuk Driver,0,0,21.2,None,150.0,87.0,0,2.04,2024-11-01
+KH-01116,25,Other Rural,Monk/Retired,0,1,23.4,None,78.0,94.8,0,1.78,2024-08-20
+KH-01117,61,Kampong Cham,Rice Farmer,0,1,23.1,Diabetes; Hepatitis B,60.0,71.3,0,2.43,2024-08-01
+KH-01118,48,Preah Sihanouk,Garment Factory Worker,0,0,22.9,Hypertension,174.0,84.4,0,1.9,2024-03-17
+KH-01119,35,Kampong Cham,Rice Farmer,0,1,24.3,None,106.0,87.8,0,1.42,2024-07-02
+KH-01120,43,Other Rural,Garment Factory Worker,0,0,25.5,Heart Disease,120.0,81.5,0,1.81,2024-04-18
+KH-01121,37,Kampong Cham,Construction Worker,0,1,24.1,None,220.0,82.8,0,1.73,2024-07-05
+KH-01122,52,Kampong Cham,Garment Factory Worker,0,1,24.3,Diabetes,174.0,78.6,0,1.86,2024-08-07
+KH-01123,56,Other Rural,Moto/Tuk-tuk Driver,1,0,25.0,None,130.0,70.3,0,2.53,2024-03-25
+KH-01124,45,Siem Reap,Civil Servant,0,0,18.1,None,271.0,95.0,0,1.49,2024-11-22
+KH-01125,50,Other Rural,Market Vendor,0,0,27.5,COPD/Asthma,140.0,73.9,0,1.85,2024-01-12
+KH-01126,54,Kampong Cham,Civil Servant,0,1,19.6,None,315.0,90.9,1,1.53,2024-03-31
+KH-01127,35,Kampong Cham,Monk/Retired,1,1,23.3,None,91.0,88.8,1,2.21,2024-12-01
+KH-01128,25,Other Rural,Garment Factory Worker,0,0,22.8,Hypertension,159.0,95.0,0,1.49,2024-08-04
+KH-01129,48,Phnom Penh,Garment Factory Worker,1,0,25.3,None,252.0,78.7,0,1.93,2024-07-11
+KH-01130,44,Other Rural,Rice Farmer,1,1,21.4,None,89.0,88.9,1,1.83,2024-12-04
+KH-01131,46,Siem Reap,Civil Servant,0,1,21.9,None,311.0,90.7,0,1.38,2024-04-13
+KH-01132,29,Other Rural,Moto/Tuk-tuk Driver,0,1,23.9,None,174.0,89.7,1,1.67,2024-01-19
+KH-01133,40,Phnom Penh,Rice Farmer,0,1,22.5,None,132.0,88.9,0,1.51,2024-11-27
+KH-01134,54,Siem Reap,Market Vendor,0,0,22.0,None,101.0,84.1,0,1.7,2024-11-07
+KH-01135,30,Other Rural,Rice Farmer,1,0,27.6,None,75.0,83.2,0,1.7,2024-12-05
+KH-01136,46,Other Rural,Market Vendor,0,1,22.4,None,99.0,88.0,0,1.44,2024-06-05
+KH-01137,48,Other Rural,Garment Factory Worker,0,1,22.5,Diabetes,118.0,85.2,1,1.78,2024-11-23
+KH-01138,73,Preah Sihanouk,Moto/Tuk-tuk Driver,1,0,22.6,Heart Disease,195.0,65.1,1,3.05,2024-06-30
+KH-01139,44,Kampong Cham,Construction Worker,0,0,21.8,Heart Disease,203.0,83.7,0,2.19,2024-05-11
+KH-01140,43,Other Rural,Garment Factory Worker,0,1,20.2,None,157.0,93.5,1,1.47,2024-09-01
+KH-01141,38,Preah Sihanouk,Rice Farmer,0,0,20.3,None,137.0,95.0,1,1.59,2024-01-31
+KH-01142,57,Other Rural,Market Vendor,0,0,23.2,None,141.0,79.3,1,1.76,2024-10-09
+KH-01143,31,Kampong Cham,Civil Servant,0,1,24.3,None,322.0,94.6,1,1.11,2024-02-10
+KH-01144,75,Siem Reap,Construction Worker,0,0,21.3,TB,189.0,60.5,0,2.9,2024-01-29
+KH-01145,42,Battambang,Garment Factory Worker,0,1,22.6,Hepatitis B,98.0,85.8,1,1.78,2024-08-19
+KH-01146,30,Phnom Penh,Market Vendor,1,0,23.3,None,217.0,95.0,0,1.52,2024-08-30
+KH-01147,34,Other Rural,Rice Farmer,0,1,20.9,None,80.0,95.0,1,1.4,2024-04-22
+KH-01148,31,Battambang,Moto/Tuk-tuk Driver,0,0,19.8,Hepatitis B,162.0,94.9,0,2.15,2024-11-22
+KH-01149,42,Kampong Cham,Moto/Tuk-tuk Driver,1,1,21.4,None,200.0,87.3,0,2.16,2024-08-20
+KH-01150,30,Other Rural,Rice Farmer,1,1,23.3,None,92.0,93.2,1,1.58,2024-05-01
+KH-01151,43,Siem Reap,Market Vendor,1,1,23.5,None,119.0,87.4,0,1.63,2024-10-23
+KH-01152,37,Other Rural,Rice Farmer,0,0,21.1,None,77.0,94.0,0,1.58,2024-08-14
+KH-01153,53,Siem Reap,Market Vendor,0,0,22.3,Diabetes,143.0,84.0,0,1.9,2024-06-05
+KH-01154,42,Other Rural,Rice Farmer,0,0,24.1,None,92.0,84.0,0,1.67,2024-07-04
+KH-01155,36,Other Rural,Rice Farmer,0,1,17.6,None,95.0,95.0,1,1.44,2024-11-28
+KH-01156,42,Siem Reap,Garment Factory Worker,0,1,23.0,None,134.0,87.8,0,1.46,2024-11-12
+KH-01157,41,Other Rural,Moto/Tuk-tuk Driver,0,1,26.0,Diabetes,150.0,77.4,0,2.11,2024-09-10
+KH-01158,42,Other Rural,Rice Farmer,0,0,21.5,None,131.0,89.9,0,1.67,2024-06-16
+KH-01159,32,Other Rural,Rice Farmer,1,1,21.2,None,120.0,95.0,0,1.62,2024-02-26
+KH-01160,34,Phnom Penh,Market Vendor,0,0,24.0,None,244.0,92.0,0,1.34,2024-12-04
+KH-01161,50,Other Rural,Market Vendor,0,1,24.7,None,150.0,80.2,0,1.51,2024-08-15
+KH-01162,32,Other Rural,Rice Farmer,1,1,23.9,None,98.0,90.6,0,1.62,2024-09-27
+KH-01163,48,Kampong Cham,Rice Farmer,0,1,20.6,Hypertension; Hepatitis B,107.0,85.2,0,2.19,2024-10-31
+KH-01164,67,Other Rural,Moto/Tuk-tuk Driver,0,0,26.0,None,178.0,61.1,0,2.48,2024-11-09
+KH-01165,25,Battambang,Rice Farmer,0,0,22.1,None,84.0,95.0,1,1.36,2024-04-15
+KH-01166,52,Siem Reap,Rice Farmer,1,0,25.1,None,103.0,75.3,1,2.1,2024-03-06
+KH-01167,42,Kampong Cham,Garment Factory Worker,0,1,24.9,None,137.0,83.4,0,1.46,2024-08-09
+KH-01168,35,Kampong Cham,Market Vendor,0,0,19.6,None,106.0,95.0,0,1.36,2024-03-01
+KH-01169,34,Other Rural,Market Vendor,0,1,22.2,None,148.0,95.0,0,1.22,2024-07-10
+KH-01170,38,Other Rural,Construction Worker,0,1,24.3,None,162.0,81.7,0,1.74,2024-02-08
+KH-01171,36,Battambang,Construction Worker,0,0,21.2,Diabetes,214.0,90.1,0,2.05,2024-11-29
+KH-01172,33,Battambang,Monk/Retired,0,1,19.1,Hepatitis B,96.0,95.0,1,2.24,2024-06-29
+KH-01173,47,Other Rural,Construction Worker,0,0,27.6,None,181.0,68.6,1,2.03,2024-05-20
+KH-01174,41,Phnom Penh,Garment Factory Worker,0,0,24.5,None,225.0,84.9,0,1.56,2024-10-01
+KH-01175,35,Phnom Penh,Market Vendor,0,1,24.8,TB,195.0,84.4,0,1.61,2024-05-27
+KH-01176,58,Preah Sihanouk,Moto/Tuk-tuk Driver,0,1,20.1,Hypertension,263.0,80.4,0,2.41,2024-06-30
+KH-01177,33,Other Rural,Construction Worker,0,0,22.2,None,126.0,89.7,0,1.77,2024-04-03
+KH-01178,41,Battambang,Civil Servant,0,1,24.0,COPD/Asthma,275.0,89.0,0,1.51,2024-09-13
+KH-01179,26,Kampong Cham,Market Vendor,1,1,22.4,None,122.0,95.0,0,1.33,2024-04-13
+KH-01180,43,Siem Reap,Moto/Tuk-tuk Driver,0,0,22.8,TB,91.0,78.4,0,2.41,2024-07-21
+KH-01181,47,Other Rural,Garment Factory Worker,0,0,19.5,None,166.0,92.9,0,1.67,2024-02-08
+KH-01182,39,Other Rural,Rice Farmer,0,0,25.6,COPD/Asthma,80.0,82.2,0,1.83,2024-07-06
+KH-01183,41,Battambang,Rice Farmer,0,1,24.2,None,97.0,84.4,0,1.53,2024-09-26
+KH-01184,39,Other Rural,Construction Worker,0,0,21.3,None,183.0,88.0,0,1.88,2024-11-18
+KH-01185,43,Other Rural,Civil Servant,0,1,26.1,None,300.0,82.9,0,1.33,2024-03-26
+KH-01186,45,Preah Sihanouk,Garment Factory Worker,1,0,20.1,None,195.0,92.7,0,1.88,2024-04-20
+KH-01187,40,Kampong Cham,Construction Worker,0,1,21.9,None,226.0,86.0,0,1.78,2024-12-21
+KH-01188,64,Other Rural,Market Vendor,1,0,25.2,None,128.0,70.3,0,2.13,2024-10-10
+KH-01189,38,Siem Reap,Garment Factory Worker,0,0,27.1,None,124.0,80.9,0,1.5,2024-02-21
+KH-01190,50,Phnom Penh,Civil Servant,0,0,22.9,None,432.0,85.8,0,1.58,2024-08-12
+KH-01191,72,Other Rural,Monk/Retired,0,0,26.2,None,79.0,58.9,1,2.75,2024-06-06
+KH-01192,35,Other Rural,Rice Farmer,0,0,22.1,None,99.0,92.9,0,1.54,2024-12-21
+KH-01193,42,Siem Reap,Rice Farmer,1,1,24.4,Heart Disease,92.0,83.2,0,2.02,2024-12-10
+KH-01194,29,Other Rural,Garment Factory Worker,0,0,20.0,None,129.0,95.0,0,1.34,2024-11-27
+KH-01195,38,Battambang,Rice Farmer,0,0,25.6,Hypertension,104.0,82.8,0,1.81,2024-06-28
+KH-01196,40,Other Rural,Civil Servant,0,1,24.0,None,278.0,89.6,0,1.28,2024-07-27
+KH-01197,45,Other Rural,Moto/Tuk-tuk Driver,0,0,22.9,None,154.0,82.1,0,2.08,2024-10-31
+KH-01198,48,Battambang,Garment Factory Worker,0,1,26.6,TB,137.0,70.8,0,1.93,2024-12-18
+KH-01199,47,Other Rural,Rice Farmer,1,0,25.0,Hepatitis B,119.0,75.6,0,2.33,2024-03-29
+KH-01200,33,Phnom Penh,Rice Farmer,0,0,23.9,None,125.0,89.9,0,1.5,2024-12-30
+KH-01201,56,Other Rural,Monk/Retired,0,0,21.5,None,127.0,79.7,0,2.46,2024-01-26
+KH-01202,38,Siem Reap,Civil Servant,0,1,24.4,None,303.0,90.0,0,1.24,2024-11-16
+KH-01203,34,Other Rural,Garment Factory Worker,1,0,21.2,None,195.0,95.0,0,1.68,2024-04-02
+KH-01204,59,Phnom Penh,Garment Factory Worker,0,0,22.9,None,251.0,77.3,0,1.88,2024-08-01
+KH-01205,27,Other Rural,Rice Farmer,0,0,23.8,None,66.0,93.9,0,1.4,2024-12-08
+KH-01206,37,Phnom Penh,Civil Servant,1,0,27.7,None,453.0,82.8,0,1.59,2024-02-26
+KH-01207,52,Other Rural,Civil Servant,0,0,21.4,Hepatitis B,307.0,84.9,0,1.93,2024-11-28
+KH-01208,31,Kampong Cham,Rice Farmer,0,0,23.1,None,118.0,93.0,1,1.47,2024-10-10
+KH-01209,85,Phnom Penh,Rice Farmer,0,0,21.4,Heart Disease,156.0,63.4,0,2.66,2024-05-27
+KH-01210,65,Kampong Cham,Garment Factory Worker,1,0,19.4,None,121.0,81.8,0,2.24,2024-03-15
+KH-01211,28,Other Rural,Monk/Retired,0,0,22.8,Hypertension,83.0,94.1,0,2.17,2024-08-20
+KH-01212,71,Kampong Cham,Rice Farmer,1,0,23.4,None,121.0,67.3,0,2.44,2024-07-22
+KH-01213,57,Other Rural,Civil Servant,0,1,20.9,None,293.0,86.1,0,1.58,2024-08-05
+KH-01214,40,Battambang,Construction Worker,0,0,25.8,None,217.0,77.0,1,1.9,2024-01-30
+KH-01215,50,Other Rural,Moto/Tuk-tuk Driver,0,0,27.5,None,143.0,68.4,0,2.17,2024-08-23
+KH-01216,27,Other Rural,Moto/Tuk-tuk Driver,0,1,19.8,None,210.0,95.0,1,1.64,2024-03-24
+KH-01217,45,Battambang,Construction Worker,0,0,20.2,None,179.0,86.9,0,1.99,2024-05-04
+KH-01218,68,Preah Sihanouk,Rice Farmer,0,0,25.3,COPD/Asthma,166.0,64.8,0,2.35,2024-08-19
+KH-01219,39,Kampong Cham,Rice Farmer,0,0,21.5,None,138.0,91.6,0,1.61,2024-02-09
+KH-01220,53,Other Rural,Rice Farmer,1,1,24.3,TB,76.0,71.7,0,2.36,2024-09-19
+KH-01221,43,Battambang,Market Vendor,0,0,18.4,None,126.0,95.0,0,1.5,2024-07-26
+KH-01222,31,Kampong Cham,Market Vendor,0,1,23.1,None,144.0,95.0,0,1.17,2024-05-12
+KH-01223,53,Other Rural,Rice Farmer,1,0,20.6,None,111.0,85.2,0,2.11,2024-01-16
+KH-01224,44,Phnom Penh,Garment Factory Worker,1,1,21.4,None,269.0,90.2,0,1.74,2024-07-21
+KH-01225,33,Battambang,Moto/Tuk-tuk Driver,0,1,20.8,None,167.0,94.4,0,1.74,2024-11-28
+KH-01226,30,Other Rural,Moto/Tuk-tuk Driver,0,0,18.6,None,147.0,95.0,0,1.81,2024-06-15
+KH-01227,54,Phnom Penh,Market Vendor,0,0,26.0,COPD/Asthma; Arthritis,153.0,74.9,0,2.14,2024-05-31
+KH-01228,31,Other Rural,Garment Factory Worker,0,0,22.7,None,149.0,95.0,0,1.38,2024-03-23
+KH-01229,48,Siem Reap,Rice Farmer,0,0,20.8,None,85.0,87.7,0,1.77,2024-05-11
+KH-01230,42,Phnom Penh,Garment Factory Worker,0,0,23.9,None,205.0,85.8,0,1.58,2024-12-18
+KH-01231,59,Other Rural,Rice Farmer,1,0,28.9,Hypertension,72.0,62.1,0,2.44,2024-04-15
+KH-01232,42,Kampong Cham,Market Vendor,0,0,25.2,None,120.0,84.2,0,1.49,2024-06-12
+KH-01233,60,Other Rural,Market Vendor,0,0,20.6,Diabetes,136.0,83.4,1,2.03,2024-04-02
+KH-01234,49,Other Rural,Construction Worker,0,1,21.7,Heart Disease,207.0,80.9,0,2.16,2024-06-04
+KH-01235,47,Preah Sihanouk,Market Vendor,0,1,25.8,None,137.0,79.5,0,1.46,2024-11-19
+KH-01236,49,Kampong Cham,Moto/Tuk-tuk Driver,0,1,25.0,None,119.0,74.5,0,2.03,2024-01-10
+KH-01237,51,Other Rural,Garment Factory Worker,0,1,19.1,None,116.0,91.1,0,1.62,2024-02-07
+KH-01238,39,Other Rural,Construction Worker,1,1,24.6,None,173.0,80.3,0,2.01,2024-09-21
+KH-01239,53,Other Rural,Construction Worker,1,1,21.3,None,171.0,79.3,0,2.26,2024-08-12
+KH-01240,38,Siem Reap,Market Vendor,0,0,24.5,None,131.0,88.3,0,1.41,2024-06-21
+KH-01241,51,Siem Reap,Market Vendor,1,1,21.3,TB,118.0,82.5,0,2.15,2024-06-30
+KH-01242,32,Battambang,Garment Factory Worker,0,0,24.2,None,116.0,91.4,1,1.4,2024-03-12
+KH-01243,65,Battambang,Civil Servant,0,1,25.0,None,308.0,71.7,0,1.73,2024-01-24
+KH-01244,33,Kampong Cham,Market Vendor,0,0,25.6,None,173.0,88.9,0,1.32,2024-10-22
+KH-01245,48,Other Rural,Rice Farmer,1,0,25.6,None,145.0,76.6,0,2.02,2024-07-16
+KH-01246,38,Other Rural,Monk/Retired,0,0,24.7,Arthritis,119.0,83.5,0,2.35,2024-02-24
+KH-01247,33,Other Rural,Market Vendor,0,1,19.1,None,144.0,95.0,0,1.2,2024-06-25
+KH-01248,33,Other Rural,Moto/Tuk-tuk Driver,0,0,26.4,None,155.0,81.3,0,1.86,2024-12-30
+KH-01249,45,Other Rural,Market Vendor,0,1,17.9,None,86.0,95.0,0,1.42,2024-03-25
+KH-01250,36,Kampong Cham,Construction Worker,1,0,21.3,None,199.0,89.8,1,2.08,2024-07-20
+KH-01251,36,Phnom Penh,Rice Farmer,0,0,23.4,COPD/Asthma,148.0,89.3,0,1.78,2024-09-29
+KH-01252,36,Preah Sihanouk,Garment Factory Worker,0,1,22.1,Hypertension,216.0,93.6,0,1.57,2024-08-13
+KH-01253,43,Phnom Penh,Monk/Retired,1,1,26.4,None,142.0,76.5,0,2.35,2024-03-09
+KH-01254,29,Phnom Penh,Rice Farmer,0,1,20.5,None,152.0,95.0,1,1.31,2024-01-10
+KH-01255,74,Phnom Penh,Moto/Tuk-tuk Driver,0,0,26.0,Hepatitis B,229.0,53.8,1,2.92,2024-08-30
+KH-01256,33,Siem Reap,Garment Factory Worker,0,1,20.1,None,150.0,95.0,0,1.29,2024-03-15
+KH-01257,39,Phnom Penh,Rice Farmer,0,0,24.6,None,112.0,84.7,1,1.61,2024-09-01
+KH-01258,47,Preah Sihanouk,Construction Worker,0,1,23.3,None,261.0,78.3,0,1.91,2024-05-02
+KH-01259,27,Siem Reap,Rice Farmer,0,1,21.2,None,93.0,95.0,0,1.28,2024-02-04
+KH-01260,41,Other Rural,Rice Farmer,1,0,22.1,None,102.0,89.0,0,1.9,2024-12-04
+KH-01261,44,Other Rural,Garment Factory Worker,0,1,26.3,Hepatitis B,159.0,75.9,0,1.81,2024-03-23
+KH-01262,35,Phnom Penh,Garment Factory Worker,0,0,25.8,Hepatitis B,268.0,82.8,0,1.77,2024-01-09
+KH-01263,37,Battambang,Market Vendor,0,0,21.8,TB,162.0,90.2,0,1.77,2024-02-02
+KH-01264,42,Kampong Cham,Garment Factory Worker,1,1,22.9,Diabetes,173.0,88.1,0,1.93,2024-05-03
+KH-01265,34,Phnom Penh,Rice Farmer,0,0,23.3,None,183.0,90.7,0,1.52,2024-07-01
+KH-01266,53,Other Rural,Civil Servant,0,1,21.4,TB,320.0,82.5,1,1.88,2024-03-19
+KH-01267,35,Other Rural,Construction Worker,1,0,24.1,Diabetes,232.0,84.1,0,2.28,2024-06-30
+KH-01268,61,Kampong Cham,Market Vendor,0,0,20.4,Hepatitis B,165.0,80.3,0,2.15,2024-03-29
+KH-01269,29,Siem Reap,Monk/Retired,0,1,20.0,Hepatitis B,140.0,95.0,0,2.17,2024-12-01
+KH-01270,34,Battambang,Rice Farmer,0,0,20.5,None,99.0,95.0,0,1.52,2024-02-04
+KH-01271,44,Other Rural,Rice Farmer,0,0,22.0,None,141.0,87.6,0,1.7,2024-09-10
+KH-01272,31,Kampong Cham,Rice Farmer,1,1,20.5,None,87.0,95.0,1,1.6,2024-03-03
+KH-01273,35,Preah Sihanouk,Civil Servant,0,1,23.1,None,396.0,94.7,0,1.19,2024-04-17
+KH-01274,42,Other Rural,Moto/Tuk-tuk Driver,1,0,21.9,None,178.0,86.1,0,2.28,2024-12-03
+KH-01275,32,Battambang,Construction Worker,0,0,22.4,None,186.0,89.9,0,1.76,2024-06-06
+KH-01276,41,Phnom Penh,Market Vendor,0,0,26.2,Hepatitis B,166.0,79.5,0,1.79,2024-09-25
+KH-01277,53,Kampong Cham,Garment Factory Worker,0,0,25.6,Diabetes,116.0,75.0,0,1.99,2024-08-24
+KH-01278,40,Other Rural,Rice Farmer,1,1,23.1,None,84.0,87.3,1,1.76,2024-05-29
+KH-01279,31,Battambang,Garment Factory Worker,0,1,19.2,None,145.0,95.0,1,1.26,2024-09-21
+KH-01280,37,Kampong Cham,Rice Farmer,1,1,25.4,None,102.0,83.9,1,1.71,2024-04-10
+KH-01281,52,Kampong Cham,Garment Factory Worker,0,0,26.2,Hepatitis B,137.0,71.3,1,2.08,2024-10-19
+KH-01282,31,Battambang,Garment Factory Worker,0,1,23.8,None,122.0,92.8,0,1.26,2024-03-07
+KH-01283,42,Battambang,Garment Factory Worker,0,0,25.1,None,92.0,83.0,0,1.58,2024-06-22
+KH-01284,34,Battambang,Garment Factory Worker,0,1,23.6,None,135.0,91.5,0,1.31,2024-12-28
+KH-01285,40,Siem Reap,Rice Farmer,0,1,26.2,None,84.0,80.3,0,1.51,2024-03-22
+KH-01286,39,Siem Reap,Moto/Tuk-tuk Driver,1,0,21.4,None,174.0,89.2,0,2.22,2024-04-03
+KH-01287,35,Other Rural,Construction Worker,0,0,25.6,None,165.0,80.6,0,1.81,2024-04-23
+KH-01288,32,Kampong Cham,Moto/Tuk-tuk Driver,1,0,19.3,None,170.0,95.0,0,2.1,2024-07-06
+KH-01289,39,Kampong Cham,Moto/Tuk-tuk Driver,0,0,20.2,Hepatitis B,150.0,89.0,0,2.29,2024-05-09
+KH-01290,30,Phnom Penh,Construction Worker,0,1,22.1,Diabetes,278.0,91.7,1,1.82,2024-12-16
+KH-01291,40,Phnom Penh,Garment Factory Worker,0,0,21.9,None,182.0,91.6,0,1.54,2024-01-22
+KH-01292,40,Phnom Penh,Market Vendor,0,0,26.0,None,240.0,83.7,0,1.45,2024-07-24
+KH-01293,33,Phnom Penh,Moto/Tuk-tuk Driver,0,1,26.0,Diabetes,251.0,82.4,0,1.96,2024-09-22
+KH-01294,51,Battambang,Moto/Tuk-tuk Driver,0,0,23.7,Diabetes,153.0,76.5,0,2.41,2024-03-22
+KH-01295,35,Other Rural,Garment Factory Worker,1,0,20.1,COPD/Asthma,146.0,95.0,0,1.92,2024-09-18
+KH-01296,40,Other Rural,Moto/Tuk-tuk Driver,0,1,24.1,Hepatitis B,152.0,79.3,0,2.19,2024-01-11
+KH-01297,42,Phnom Penh,Moto/Tuk-tuk Driver,0,1,28.2,Diabetes,258.0,71.7,0,2.13,2024-09-14
+KH-01298,52,Other Rural,Rice Farmer,0,0,21.3,None,93.0,84.2,0,1.85,2024-11-16
+KH-01299,27,Kampong Cham,Moto/Tuk-tuk Driver,0,0,19.7,None,133.0,95.0,0,1.76,2024-03-27
+KH-01300,47,Siem Reap,Rice Farmer,0,0,22.8,None,103.0,83.7,0,1.76,2024-06-18
+KH-01301,37,Kampong Cham,Rice Farmer,1,1,21.5,COPD/Asthma,108.0,93.0,0,1.93,2024-11-01
+KH-01302,43,Phnom Penh,Moto/Tuk-tuk Driver,1,0,22.2,Hepatitis B,239.0,81.8,0,2.61,2024-12-05
+KH-01303,42,Kampong Cham,Moto/Tuk-tuk Driver,0,0,24.3,None,175.0,80.6,1,2.03,2024-08-18
+KH-01304,45,Battambang,Market Vendor,0,1,23.2,None,172.0,86.8,0,1.42,2024-01-28
+KH-01305,50,Other Rural,Rice Farmer,0,0,23.6,None,97.0,80.1,0,1.81,2024-05-29
+KH-01306,42,Phnom Penh,Rice Farmer,0,1,19.2,None,153.0,95.0,0,1.55,2024-08-23
+KH-01307,49,Battambang,Market Vendor,0,1,25.8,None,167.0,78.3,0,1.49,2024-04-18
+KH-01308,51,Preah Sihanouk,Civil Servant,0,1,24.2,None,381.0,82.2,0,1.47,2024-10-21
+KH-01309,30,Kampong Cham,Garment Factory Worker,0,1,22.4,None,213.0,95.0,0,1.24,2024-06-05
+KH-01310,28,Battambang,Garment Factory Worker,0,0,23.3,None,201.0,95.0,1,1.32,2024-06-17
+KH-01311,60,Other Rural,Rice Farmer,1,1,24.8,None,86.0,71.1,0,2.12,2024-12-06
+KH-01312,49,Battambang,Civil Servant,0,1,24.3,None,326.0,83.1,0,1.44,2024-11-24
+KH-01313,33,Phnom Penh,Rice Farmer,1,0,22.7,Hypertension; Hepatitis B,183.0,89.6,0,2.29,2024-01-18
+KH-01314,60,Siem Reap,Rice Farmer,0,1,22.7,Diabetes; TB,153.0,70.9,0,2.46,2024-05-02
+KH-01315,29,Other Rural,Rice Farmer,0,0,22.1,None,111.0,95.0,0,1.43,2024-09-15
+KH-01316,39,Battambang,Market Vendor,0,1,21.6,None,123.0,94.4,0,1.31,2024-07-18
+KH-01317,50,Phnom Penh,Rice Farmer,0,1,23.6,TB,141.0,75.1,0,2.06,2024-09-28
+KH-01318,44,Siem Reap,Market Vendor,0,1,23.9,None,151.0,85.9,0,1.4,2024-04-24
+KH-01319,44,Kampong Cham,Construction Worker,0,1,24.7,Diabetes; TB,157.0,72.1,0,2.44,2024-06-02
+KH-01320,33,Phnom Penh,Construction Worker,0,1,21.0,None,312.0,92.3,0,1.65,2024-09-15
+KH-01321,46,Other Rural,Rice Farmer,0,1,23.2,None,60.0,83.5,0,1.62,2024-09-19
+KH-01322,51,Other Rural,Rice Farmer,0,0,26.8,Diabetes; Heart Disease,77.0,72.1,1,2.27,2024-07-16
+KH-01323,56,Kampong Cham,Civil Servant,0,0,22.3,None,267.0,83.5,0,1.68,2024-02-01
+KH-01324,25,Kampong Cham,Rice Farmer,0,1,21.7,TB,87.0,95.0,0,1.61,2024-04-04
+KH-01325,42,Other Rural,Moto/Tuk-tuk Driver,0,1,23.4,None,238.0,82.8,0,1.91,2024-07-14
+KH-01326,72,Kampong Cham,Market Vendor,0,1,23.5,Diabetes; Hepatitis B,131.0,66.3,0,2.45,2024-08-29
+KH-01327,50,Phnom Penh,Garment Factory Worker,1,0,23.8,None,246.0,81.0,1,1.97,2024-01-11
+KH-01328,50,Other Rural,Rice Farmer,0,0,24.4,None,81.0,78.1,0,1.81,2024-07-23
+KH-01329,41,Battambang,Civil Servant,0,0,16.0,None,286.0,95.0,0,1.41,2024-03-19
+KH-01330,49,Preah Sihanouk,Moto/Tuk-tuk Driver,0,1,23.6,None,237.0,77.9,0,2.03,2024-06-22
+KH-01331,46,Preah Sihanouk,Market Vendor,0,0,24.0,TB,181.0,79.4,1,1.93,2024-12-05
+KH-01332,59,Other Rural,Monk/Retired,0,0,21.9,COPD/Asthma,103.0,77.0,1,2.73,2024-06-04
+KH-01333,46,Battambang,Rice Farmer,0,0,22.9,Diabetes,73.0,84.1,0,1.96,2024-11-09
+KH-01334,37,Siem Reap,Civil Servant,0,0,24.8,None,309.0,89.6,0,1.34,2024-11-17
+KH-01335,30,Other Rural,Market Vendor,0,0,22.1,None,121.0,95.0,0,1.27,2024-08-27
+KH-01336,57,Other Rural,Garment Factory Worker,0,0,25.4,None,163.0,72.9,0,1.85,2024-08-20
+KH-01337,27,Other Rural,Civil Servant,0,1,24.5,None,282.0,95.0,0,1.04,2024-09-17
+KH-01338,40,Other Rural,Garment Factory Worker,0,0,22.1,None,137.0,91.2,0,1.54,2024-12-17
+KH-01339,85,Siem Reap,Construction Worker,0,0,27.0,Hypertension,179.0,46.2,0,2.93,2024-05-10
+KH-01340,39,Siem Reap,Rice Farmer,0,1,21.8,None,114.0,91.1,0,1.49,2024-01-16
+KH-01341,59,Phnom Penh,Rice Farmer,0,1,20.3,None,134.0,82.0,1,1.85,2024-06-29
+KH-01342,44,Phnom Penh,Construction Worker,0,1,24.3,Arthritis,283.0,78.0,1,2.07,2024-10-07
+KH-01343,62,Battambang,Rice Farmer,0,0,24.3,Diabetes,100.0,70.9,0,2.25,2024-09-07
+KH-01344,26,Other Rural,Construction Worker,0,0,22.8,Hepatitis B,205.0,89.7,0,1.97,2024-02-22
+KH-01345,42,Kampong Cham,Rice Farmer,0,1,29.1,None,99.0,72.5,0,1.55,2024-07-15
+KH-01346,37,Kampong Cham,Rice Farmer,0,0,22.8,None,104.0,90.0,0,1.58,2024-07-22
+KH-01347,42,Kampong Cham,Civil Servant,1,1,21.0,None,305.0,95.0,0,1.56,2024-01-28
+KH-01348,26,Other Rural,Rice Farmer,1,0,18.5,None,94.0,95.0,1,1.63,2024-05-03
+KH-01349,50,Other Rural,Rice Farmer,0,0,22.0,None,97.0,83.7,1,1.81,2024-03-14
+KH-01350,32,Siem Reap,Monk/Retired,0,1,25.3,None,60.0,86.0,0,1.91,2024-10-09
+KH-01351,35,Siem Reap,Monk/Retired,0,0,22.8,COPD/Asthma,113.0,89.8,0,2.3,2024-04-27
+KH-01352,52,Other Rural,Rice Farmer,0,1,22.0,Diabetes,106.0,82.5,0,1.95,2024-05-04
+KH-01353,55,Phnom Penh,Civil Servant,0,1,24.0,Diabetes; Hepatitis B,449.0,77.1,0,2.09,2024-06-12
+KH-01354,51,Other Rural,Rice Farmer,0,0,27.5,None,162.0,70.5,0,1.83,2024-09-03
+KH-01355,38,Other Rural,Civil Servant,1,1,21.8,None,292.0,95.0,0,1.49,2024-03-08
+KH-01356,39,Other Rural,Garment Factory Worker,0,1,26.9,None,160.0,80.7,0,1.4,2024-10-14
+KH-01357,43,Other Rural,Market Vendor,1,1,19.4,Hepatitis B,130.0,94.0,0,1.95,2024-07-28
+KH-01358,24,Other Rural,Garment Factory Worker,0,0,24.0,None,138.0,95.0,0,1.25,2024-12-28
+KH-01359,48,Other Rural,Market Vendor,0,0,22.5,None,118.0,86.7,0,1.59,2024-09-17
+KH-01360,34,Battambang,Market Vendor,0,0,22.8,None,177.0,94.6,0,1.34,2024-02-02
+KH-01361,34,Other Rural,Market Vendor,0,0,20.1,None,141.0,95.0,0,1.34,2024-03-23
+KH-01362,69,Siem Reap,Construction Worker,1,0,23.0,None,201.0,65.3,1,2.67,2024-02-25
+KH-01363,40,Other Rural,Rice Farmer,0,0,25.0,TB,74.0,78.0,0,2.0,2024-06-24
+KH-01364,22,Other Rural,Rice Farmer,0,1,26.6,None,116.0,90.5,0,1.19,2024-02-18
+KH-01365,55,Battambang,Market Vendor,0,1,22.2,None,88.0,83.1,0,1.6,2024-10-30
+KH-01366,48,Battambang,Moto/Tuk-tuk Driver,1,0,24.5,None,184.0,76.4,0,2.38,2024-10-17
+KH-01367,45,Phnom Penh,Civil Servant,0,0,25.3,None,468.0,83.4,0,1.49,2024-04-12
+KH-01368,40,Battambang,Market Vendor,0,0,21.3,None,171.0,94.3,0,1.45,2024-10-01
+KH-01369,64,Other Rural,Civil Servant,0,0,23.7,None,308.0,75.3,1,1.83,2024-08-20
+KH-01370,48,Other Rural,Rice Farmer,0,1,21.4,None,162.0,86.3,1,1.65,2024-10-18
+KH-01371,50,Kampong Cham,Rice Farmer,0,0,25.5,None,140.0,75.7,0,1.81,2024-11-30
+KH-01372,45,Battambang,Rice Farmer,0,0,23.8,None,70.0,82.7,0,1.72,2024-08-20
+KH-01373,24,Preah Sihanouk,Rice Farmer,0,1,18.9,None,88.0,95.0,0,1.22,2024-02-01
+KH-01374,49,Other Rural,Rice Farmer,0,1,24.4,None,72.0,78.9,1,1.67,2024-09-03
+KH-01375,44,Other Rural,Rice Farmer,0,1,22.3,None,129.0,86.7,0,1.58,2024-04-02
+KH-01376,58,Siem Reap,Civil Servant,0,0,20.9,None,270.0,85.4,0,1.72,2024-09-14
+KH-01377,39,Battambang,Moto/Tuk-tuk Driver,0,1,21.7,TB,165.0,83.4,0,2.22,2024-05-29
+KH-01378,40,Other Rural,Garment Factory Worker,0,1,22.4,TB,149.0,85.4,1,1.79,2024-03-01
+KH-01379,43,Phnom Penh,Rice Farmer,0,1,23.4,None,150.0,84.8,1,1.56,2024-07-10
+KH-01380,25,Kampong Cham,Rice Farmer,1,0,21.4,None,97.0,95.0,0,1.61,2024-11-21
+KH-01381,21,Kampong Cham,Monk/Retired,0,1,23.2,None,83.0,95.0,0,1.71,2024-08-21
+KH-01382,56,Kampong Cham,Moto/Tuk-tuk Driver,0,1,21.1,None,198.0,79.3,0,2.16,2024-10-23
+KH-01383,34,Phnom Penh,Market Vendor,0,0,16.3,None,184.0,95.0,0,1.34,2024-07-21
+KH-01384,30,Other Rural,Garment Factory Worker,1,0,22.2,COPD/Asthma,96.0,95.0,0,1.83,2024-12-16
+KH-01385,75,Preah Sihanouk,Garment Factory Worker,1,1,25.6,None,171.0,61.2,0,2.3,2024-09-29
+KH-01386,43,Other Rural,Garment Factory Worker,0,0,20.8,None,126.0,92.4,0,1.59,2024-07-06
+KH-01387,38,Siem Reap,Rice Farmer,1,1,22.1,None,75.0,91.1,0,1.72,2024-11-27
+KH-01388,30,Other Rural,Garment Factory Worker,0,1,19.6,None,138.0,95.0,0,1.24,2024-07-05
+KH-01389,31,Other Rural,Rice Farmer,1,1,24.2,None,134.0,90.6,0,1.6,2024-01-05
+KH-01390,33,Battambang,Garment Factory Worker,1,1,25.0,Hepatitis B,138.0,85.8,0,1.86,2024-11-28
+KH-01391,51,Phnom Penh,Moto/Tuk-tuk Driver,0,1,24.6,None,254.0,74.4,0,2.07,2024-07-20
+KH-01392,41,Preah Sihanouk,Market Vendor,0,0,25.9,Diabetes,178.0,83.1,0,1.69,2024-10-07
+KH-01393,38,Preah Sihanouk,Garment Factory Worker,0,0,23.1,None,253.0,90.2,1,1.5,2024-11-24
+KH-01394,63,Phnom Penh,Rice Farmer,1,0,24.6,Hypertension,199.0,69.7,0,2.51,2024-06-28
+KH-01395,64,Other Rural,Garment Factory Worker,1,1,24.0,COPD/Asthma,153.0,71.9,0,2.32,2024-02-04
+KH-01396,62,Battambang,Market Vendor,0,1,23.3,None,131.0,76.0,1,1.73,2024-05-25
+KH-01397,59,Siem Reap,Garment Factory Worker,0,0,18.4,None,166.0,87.8,0,1.88,2024-01-19
+KH-01398,44,Phnom Penh,Garment Factory Worker,0,0,25.5,Hepatitis B,200.0,77.8,0,1.93,2024-01-13
+KH-01399,42,Other Rural,Garment Factory Worker,0,1,22.3,None,123.0,89.5,0,1.46,2024-11-03
+KH-01400,36,Battambang,Rice Farmer,1,0,20.2,None,60.0,95.0,1,1.81,2024-06-26
+KH-01401,24,Other Rural,Rice Farmer,1,1,21.7,None,103.0,95.0,0,1.47,2024-01-23
+KH-01402,52,Other Rural,Moto/Tuk-tuk Driver,1,0,24.9,COPD/Asthma,151.0,72.9,0,2.68,2024-08-19
+KH-01403,38,Battambang,Rice Farmer,0,1,21.2,TB,70.0,88.2,0,1.84,2024-11-25
+KH-01404,44,Preah Sihanouk,Garment Factory Worker,1,1,22.8,None,181.0,87.0,0,1.74,2024-07-21
+KH-01405,40,Phnom Penh,Market Vendor,0,1,24.1,Hypertension,199.0,87.9,0,1.55,2024-08-08
+KH-01406,34,Battambang,Garment Factory Worker,0,0,22.9,None,130.0,93.1,1,1.43,2024-06-26
+KH-01407,43,Battambang,Rice Farmer,0,1,25.4,None,106.0,80.3,0,1.56,2024-01-15
+KH-01408,50,Phnom Penh,Garment Factory Worker,0,1,23.4,None,204.0,81.8,0,1.6,2024-07-25
+KH-01409,36,Kampong Cham,Monk/Retired,1,1,22.0,None,120.0,91.1,0,2.23,2024-03-23
+KH-01410,31,Phnom Penh,Civil Servant,0,1,23.7,None,454.0,95.0,0,1.11,2024-05-29
+KH-01411,52,Other Rural,Monk/Retired,0,0,23.2,None,108.0,78.4,0,2.39,2024-01-06
+KH-01412,40,Kampong Cham,Market Vendor,0,0,25.0,TB,146.0,80.9,0,1.82,2024-02-20
+KH-01413,46,Other Rural,Market Vendor,0,0,21.5,None,126.0,90.1,0,1.56,2024-04-25
+KH-01414,44,Phnom Penh,Civil Servant,0,1,22.7,TB,458.0,85.1,1,1.72,2024-06-20
+KH-01415,75,Battambang,Garment Factory Worker,0,0,23.0,None,174.0,67.3,0,2.17,2024-04-07
+KH-01416,57,Battambang,Market Vendor,0,1,22.7,None,152.0,80.5,0,1.64,2024-03-01
+KH-01417,37,Battambang,Garment Factory Worker,0,0,19.5,Hypertension,205.0,95.0,0,1.71,2024-03-16
+KH-01418,43,Other Rural,Rice Farmer,0,0,25.2,None,72.0,80.8,0,1.68,2024-06-29
+KH-01419,45,Battambang,Construction Worker,0,1,27.4,COPD/Asthma,215.0,70.3,0,2.09,2024-05-16
+KH-01420,45,Other Rural,Monk/Retired,0,0,26.5,COPD/Asthma,60.0,75.1,0,2.48,2024-07-15
+KH-01421,33,Kampong Cham,Garment Factory Worker,1,0,25.6,None,105.0,87.5,1,1.66,2024-03-16
+KH-01422,41,Phnom Penh,Construction Worker,0,0,23.5,Hypertension,288.0,81.7,0,2.14,2024-06-03
+KH-01423,23,Preah Sihanouk,Moto/Tuk-tuk Driver,0,0,19.5,COPD/Asthma; TB,211.0,95.0,0,2.27,2024-09-03
+KH-01424,59,Siem Reap,Moto/Tuk-tuk Driver,0,0,18.0,Heart Disease,161.0,84.5,0,2.55,2024-08-19
+KH-01425,55,Other Rural,Garment Factory Worker,0,1,26.3,None,182.0,72.2,0,1.69,2024-12-02
+KH-01426,32,Phnom Penh,Monk/Retired,1,1,22.0,None,89.0,93.5,0,2.16,2024-12-20
+KH-01427,36,Battambang,Market Vendor,1,1,19.8,None,135.0,95.0,0,1.51,2024-04-12
+KH-01428,54,Other Rural,Garment Factory Worker,0,1,19.8,Heart Disease,157.0,87.6,0,1.89,2024-09-14
+KH-01429,33,Other Rural,Garment Factory Worker,0,1,21.2,None,251.0,95.0,0,1.29,2024-08-07
+KH-01430,76,Siem Reap,Garment Factory Worker,0,0,24.7,None,93.0,62.8,1,2.19,2024-11-24
+KH-01431,39,Other Rural,Market Vendor,0,0,19.4,None,148.0,95.0,1,1.43,2024-05-31
+KH-01432,26,Siem Reap,Monk/Retired,0,1,21.6,None,124.0,95.0,0,1.8,2024-04-25
+KH-01433,30,Other Rural,Market Vendor,0,0,24.4,Diabetes,165.0,93.5,0,1.49,2024-02-06
+KH-01434,29,Battambang,Market Vendor,1,0,20.2,None,139.0,95.0,0,1.5,2024-01-10
+KH-01435,39,Phnom Penh,Rice Farmer,0,1,18.9,None,211.0,95.0,0,1.49,2024-03-12
+KH-01436,41,Other Rural,Construction Worker,0,0,19.9,None,184.0,89.9,0,1.92,2024-05-14
+KH-01437,30,Other Rural,Monk/Retired,1,0,24.6,Arthritis,83.0,88.7,0,2.46,2024-02-05
+KH-01438,30,Other Rural,Garment Factory Worker,0,1,21.4,None,188.0,95.0,0,1.24,2024-01-14
+KH-01439,27,Other Rural,Rice Farmer,0,1,21.3,None,119.0,95.0,1,1.28,2024-05-09
+KH-01440,33,Siem Reap,Rice Farmer,0,1,23.3,TB,72.0,86.3,1,1.75,2024-10-28
+KH-01441,62,Kampong Cham,Garment Factory Worker,0,1,26.1,None,149.0,68.3,0,1.82,2024-08-13
+KH-01442,33,Other Rural,Market Vendor,0,0,26.9,COPD/Asthma,158.0,86.0,0,1.54,2024-12-18
+KH-01443,32,Kampong Cham,Civil Servant,0,0,22.9,None,286.0,95.0,0,1.25,2024-02-21
+KH-01444,33,Kampong Cham,Market Vendor,0,0,21.8,Arthritis,102.0,95.0,0,1.54,2024-05-07
+KH-01445,48,Phnom Penh,Garment Factory Worker,0,0,27.1,None,221.0,74.6,0,1.68,2024-06-16
+KH-01446,37,Other Rural,Rice Farmer,0,1,25.3,None,117.0,84.2,0,1.46,2024-11-12
+KH-01447,38,Battambang,Market Vendor,0,0,20.8,None,150.0,95.0,0,1.41,2024-05-09
+KH-01448,29,Siem Reap,Moto/Tuk-tuk Driver,1,0,25.1,TB,212.0,81.9,0,2.41,2024-05-27
+KH-01449,39,Battambang,Monk/Retired,0,0,25.2,None,132.0,81.9,0,2.15,2024-05-30
+KH-01450,35,Battambang,Garment Factory Worker,0,0,22.8,None,180.0,92.7,0,1.45,2024-02-17
+KH-01451,43,Siem Reap,Rice Farmer,0,0,23.8,None,115.0,83.9,0,1.68,2024-08-04
+KH-01452,61,Siem Reap,Rice Farmer,1,1,22.0,Hypertension; Heart Disease,107.0,76.9,0,2.58,2024-04-19
+KH-01453,45,Other Rural,Rice Farmer,0,1,21.9,None,81.0,87.0,0,1.6,2024-11-05
+KH-01454,49,Phnom Penh,Rice Farmer,0,1,25.1,Hypertension,181.0,77.1,0,1.89,2024-07-31
+KH-01455,58,Kampong Cham,Garment Factory Worker,0,0,27.0,None,158.0,68.7,0,1.86,2024-01-16
+KH-01456,38,Battambang,Market Vendor,1,0,25.8,None,122.0,85.2,0,1.66,2024-03-23
+KH-01457,39,Phnom Penh,Garment Factory Worker,1,1,22.3,None,231.0,91.4,0,1.65,2024-10-18
+KH-01458,36,Battambang,Rice Farmer,0,1,23.7,None,117.0,88.4,0,1.44,2024-08-05
+KH-01459,66,Other Rural,Garment Factory Worker,0,1,23.4,Heart Disease,154.0,71.9,1,2.11,2024-08-08
+KH-01460,26,Phnom Penh,Moto/Tuk-tuk Driver,0,0,22.8,None,255.0,94.2,1,1.74,2024-08-02
+KH-01461,41,Siem Reap,Rice Farmer,0,0,23.4,Diabetes,144.0,86.1,0,1.87,2024-01-18
+KH-01462,33,Siem Reap,Civil Servant,0,1,23.9,None,261.0,94.3,0,1.15,2024-05-11
+KH-01463,31,Preah Sihanouk,Moto/Tuk-tuk Driver,0,0,22.9,None,225.0,90.8,0,1.83,2024-06-02
+KH-01464,60,Phnom Penh,Construction Worker,0,0,26.5,Hypertension,310.0,63.0,1,2.48,2024-12-08
+KH-01465,24,Other Rural,Rice Farmer,0,1,21.7,TB,110.0,95.0,0,1.59,2024-05-10
+KH-01466,43,Battambang,Construction Worker,0,0,21.8,Heart Disease,184.0,84.4,0,2.17,2024-10-19
+KH-01467,37,Kampong Cham,Rice Farmer,0,0,19.6,None,105.0,95.0,0,1.58,2024-05-21
+KH-01468,40,Phnom Penh,Garment Factory Worker,0,1,22.2,Heart Disease,228.0,90.9,0,1.64,2024-09-13
+KH-01469,31,Other Rural,Construction Worker,0,1,17.1,None,215.0,95.0,1,1.62,2024-04-08
+KH-01470,34,Siem Reap,Market Vendor,1,1,24.5,None,137.0,90.8,1,1.47,2024-05-23
+KH-01471,59,Phnom Penh,Construction Worker,1,1,24.2,Hypertension,239.0,68.8,0,2.59,2024-10-27
+KH-01472,40,Other Rural,Civil Servant,0,0,23.6,Diabetes,266.0,90.4,0,1.62,2024-03-06
+KH-01473,55,Other Rural,Market Vendor,1,0,22.6,None,114.0,82.1,1,1.97,2024-09-11
+KH-01474,35,Battambang,Moto/Tuk-tuk Driver,0,1,19.9,None,210.0,95.0,0,1.78,2024-04-30
+KH-01475,45,Battambang,Rice Farmer,1,0,23.3,None,146.0,83.8,1,1.97,2024-02-24
+KH-01476,33,Preah Sihanouk,Rice Farmer,0,0,25.1,COPD/Asthma,124.0,87.2,0,1.72,2024-04-02
+KH-01477,35,Battambang,Rice Farmer,0,1,22.6,Hepatitis B,124.0,88.8,0,1.74,2024-05-02
+KH-01478,42,Other Rural,Rice Farmer,0,1,21.7,None,132.0,89.5,0,1.55,2024-11-15
+KH-01479,60,Other Rural,Market Vendor,0,1,21.8,None,160.0,80.6,0,1.69,2024-02-22
+KH-01480,37,Other Rural,Rice Farmer,0,0,21.0,None,100.0,94.2,0,1.58,2024-04-04
+KH-01481,40,Preah Sihanouk,Civil Servant,0,0,22.3,COPD/Asthma,372.0,93.4,0,1.62,2024-07-29
+KH-01482,42,Kampong Cham,Civil Servant,0,1,25.5,None,290.0,84.9,1,1.31,2024-06-11
+KH-01483,50,Other Rural,Garment Factory Worker,0,0,24.7,None,167.0,79.0,0,1.72,2024-01-18
+KH-01484,48,Other Rural,Moto/Tuk-tuk Driver,0,0,20.6,None,139.0,85.4,0,2.13,2024-11-26
+KH-01485,28,Other Rural,Rice Farmer,0,0,26.9,COPD/Asthma; Hepatitis B,137.0,83.2,0,1.95,2024-01-18
+KH-01486,23,Phnom Penh,Rice Farmer,0,1,25.6,Hepatitis B,149.0,89.2,0,1.52,2024-07-22
+KH-01487,28,Kampong Cham,Market Vendor,1,1,22.3,None,76.0,95.0,0,1.36,2024-08-25
+KH-01488,47,Siem Reap,Monk/Retired,0,1,24.3,None,102.0,78.9,0,2.18,2024-01-05
+KH-01489,53,Other Rural,Garment Factory Worker,0,0,27.9,None,151.0,69.6,0,1.77,2024-11-16
+KH-01490,40,Other Rural,Rice Farmer,0,0,23.6,None,101.0,86.3,0,1.63,2024-12-14
+KH-01491,34,Siem Reap,Garment Factory Worker,0,0,19.6,None,126.0,95.0,0,1.43,2024-01-28
+KH-01492,33,Other Rural,Construction Worker,0,0,21.3,Hypertension,207.0,91.8,0,1.99,2024-02-19
+KH-01493,41,Battambang,Rice Farmer,1,1,20.8,Diabetes,128.0,92.0,0,2.0,2024-06-01
+KH-01494,33,Other Rural,Civil Servant,1,0,23.8,None,273.0,94.3,0,1.52,2024-10-25
+KH-01495,48,Preah Sihanouk,Rice Farmer,1,1,20.5,None,118.0,88.4,0,1.9,2024-01-25
+KH-01496,37,Other Rural,Garment Factory Worker,0,1,25.8,TB,99.0,79.5,0,1.74,2024-03-17
+KH-01497,29,Other Rural,Garment Factory Worker,0,1,30.0,None,179.0,79.8,0,1.22,2024-12-02
+KH-01498,32,Other Rural,Moto/Tuk-tuk Driver,1,0,26.7,None,178.0,81.3,0,2.1,2024-06-18
+KH-01499,44,Phnom Penh,Rice Farmer,0,0,24.1,None,173.0,82.7,0,1.7,2024-07-12
+KH-01500,39,Other Rural,Construction Worker,1,0,22.8,None,181.0,84.7,0,2.13,2024-09-15
+KH-01501,27,Kampong Cham,Rice Farmer,0,1,21.5,None,73.0,95.0,0,1.28,2024-12-16
+KH-01502,47,Preah Sihanouk,Rice Farmer,0,0,25.9,None,123.0,76.7,0,1.76,2024-08-15
+KH-01503,37,Other Rural,Garment Factory Worker,0,1,19.1,None,161.0,95.0,1,1.37,2024-10-14
+KH-01504,59,Battambang,Rice Farmer,0,0,20.5,None,140.0,81.5,0,1.97,2024-11-03
+KH-01505,46,Other Rural,Market Vendor,0,0,22.0,None,164.0,89.0,0,1.56,2024-03-18
+KH-01506,47,Other Rural,Rice Farmer,0,0,19.9,Heart Disease,131.0,90.3,1,1.98,2024-06-16
+KH-01507,43,Kampong Cham,Rice Farmer,0,0,21.6,COPD/Asthma,61.0,89.0,0,1.9,2024-10-12
+KH-01508,45,Other Rural,Market Vendor,1,0,22.9,None,113.0,87.6,0,1.79,2024-02-18
+KH-01509,35,Preah Sihanouk,Construction Worker,0,1,25.1,COPD/Asthma,234.0,81.8,0,1.91,2024-10-08
+KH-01510,37,Kampong Cham,Civil Servant,0,0,21.3,None,304.0,95.0,0,1.34,2024-11-18
+KH-01511,40,Battambang,Construction Worker,0,0,20.3,None,185.0,89.7,0,1.9,2024-01-25
+KH-01512,34,Other Rural,Rice Farmer,1,1,26.0,None,132.0,84.6,1,1.65,2024-02-29
+KH-01513,45,Siem Reap,Moto/Tuk-tuk Driver,0,0,28.6,None,181.0,68.8,0,2.08,2024-12-07
+KH-01514,37,Other Rural,Moto/Tuk-tuk Driver,0,0,24.7,None,216.0,82.9,1,1.94,2024-03-29
+KH-01515,36,Phnom Penh,Monk/Retired,0,0,23.9,None,126.0,86.8,0,2.1,2024-08-20
+KH-01516,28,Other Rural,Market Vendor,0,0,20.4,COPD/Asthma,105.0,95.0,0,1.45,2024-01-05
+KH-01517,30,Other Rural,Moto/Tuk-tuk Driver,0,1,22.0,Diabetes,231.0,93.3,0,1.91,2024-10-08
+KH-01518,35,Other Rural,Civil Servant,0,0,22.8,Heart Disease; Hepatitis B,272.0,92.4,1,1.85,2024-03-08
+KH-01519,33,Other Rural,Rice Farmer,0,1,24.3,None,97.0,89.0,0,1.38,2024-10-07
+KH-01520,54,Other Rural,Garment Factory Worker,1,1,21.9,None,145.0,82.9,0,1.92,2024-08-11
+KH-01521,35,Battambang,Rice Farmer,0,1,19.2,None,103.0,95.0,0,1.42,2024-01-14
+KH-01522,33,Siem Reap,Rice Farmer,0,0,23.7,Arthritis,90.0,90.4,0,1.72,2024-07-15
+KH-01523,49,Phnom Penh,Rice Farmer,0,1,21.5,None,152.0,85.6,0,1.67,2024-07-25
+KH-01524,36,Other Rural,Rice Farmer,1,0,24.2,None,84.0,87.4,0,1.81,2024-04-06
+KH-01525,44,Siem Reap,Market Vendor,0,1,21.1,None,101.0,92.4,0,1.4,2024-01-27
+KH-01526,62,Other Rural,Garment Factory Worker,0,1,27.1,None,131.0,65.8,0,1.82,2024-03-20
+KH-01527,37,Battambang,Moto/Tuk-tuk Driver,0,0,21.2,None,202.0,90.8,0,1.94,2024-06-13
+KH-01528,51,Siem Reap,Garment Factory Worker,0,1,19.6,Arthritis,155.0,90.1,0,1.84,2024-05-30
+KH-01529,36,Phnom Penh,Garment Factory Worker,0,1,21.0,None,200.0,95.0,0,1.35,2024-06-05
+KH-01530,53,Phnom Penh,Rice Farmer,1,0,27.0,None,186.0,70.3,0,2.11,2024-08-20
+KH-01531,52,Other Rural,Construction Worker,0,0,22.8,None,144.0,76.5,0,2.12,2024-05-28
+KH-01532,27,Other Rural,Moto/Tuk-tuk Driver,0,0,22.2,None,143.0,94.8,0,1.76,2024-02-11
+KH-01533,29,Battambang,Rice Farmer,1,0,22.4,Arthritis,93.0,95.0,0,1.9,2024-09-26
+KH-01534,35,Phnom Penh,Rice Farmer,0,0,21.1,Hepatitis B,168.0,92.2,1,1.86,2024-05-15
+KH-01535,38,Preah Sihanouk,Moto/Tuk-tuk Driver,0,1,21.1,None,228.0,90.4,0,1.83,2024-10-08
+KH-01536,41,Siem Reap,Rice Farmer,0,0,22.8,None,106.0,87.6,0,1.65,2024-04-14
+KH-01537,26,Other Rural,Monk/Retired,0,1,25.0,None,76.0,90.3,0,1.8,2024-12-08
+KH-01538,36,Other Rural,Moto/Tuk-tuk Driver,0,0,22.3,None,160.0,88.9,1,1.92,2024-01-05
+KH-01539,42,Other Rural,Construction Worker,1,1,21.9,None,203.0,84.8,1,2.07,2024-11-19
+KH-01540,38,Siem Reap,Market Vendor,0,0,24.9,None,105.0,87.3,0,1.41,2024-06-29
+KH-01541,50,Other Rural,Rice Farmer,0,1,22.5,None,84.0,82.6,0,1.69,2024-05-03
+KH-01542,38,Kampong Cham,Garment Factory Worker,0,0,25.0,None,132.0,85.6,1,1.5,2024-02-24
+KH-01543,38,Siem Reap,Construction Worker,0,0,20.9,Hypertension,172.0,89.5,0,2.08,2024-07-19
+KH-01544,62,Other Rural,Rice Farmer,1,0,25.5,None,82.0,68.3,0,2.28,2024-02-29
+KH-01545,43,Other Rural,Moto/Tuk-tuk Driver,1,0,23.4,None,138.0,82.2,0,2.29,2024-03-13
+KH-01546,31,Battambang,Moto/Tuk-tuk Driver,0,0,21.1,COPD/Asthma; TB,137.0,89.9,0,2.42,2024-01-07
+KH-01547,43,Other Rural,Garment Factory Worker,0,1,19.8,Arthritis,159.0,94.6,0,1.69,2024-11-22
+KH-01548,67,Battambang,Market Vendor,1,1,23.2,None,139.0,73.2,0,2.07,2024-10-22
+KH-01549,24,Other Rural,Garment Factory Worker,1,1,25.2,None,165.0,93.9,0,1.38,2024-09-18
+KH-01550,53,Other Rural,Garment Factory Worker,0,0,22.5,Hypertension,137.0,82.0,0,1.99,2024-04-21
+KH-01551,29,Kampong Cham,Garment Factory Worker,0,0,23.8,None,157.0,94.2,0,1.34,2024-03-04
+KH-01552,49,Kampong Cham,Rice Farmer,0,1,19.5,None,65.0,90.1,0,1.67,2024-06-05
+KH-01553,32,Battambang,Civil Servant,0,1,23.6,None,345.0,95.0,0,1.13,2024-01-08
+KH-01554,52,Phnom Penh,Rice Farmer,1,0,23.0,None,125.0,80.2,0,2.1,2024-06-29
+KH-01555,29,Other Rural,Rice Farmer,0,0,22.0,None,86.0,95.0,0,1.43,2024-04-14
+KH-01556,60,Other Rural,Moto/Tuk-tuk Driver,0,0,27.4,Hepatitis B,164.0,59.3,0,2.67,2024-05-03
+KH-01557,46,Other Rural,Moto/Tuk-tuk Driver,0,1,23.3,None,162.0,80.4,0,1.98,2024-02-18
+KH-01558,39,Phnom Penh,Garment Factory Worker,0,0,27.7,None,250.0,78.9,0,1.52,2024-06-16
+KH-01559,50,Other Rural,Garment Factory Worker,1,0,24.4,Heart Disease,126.0,79.6,0,2.19,2024-09-06
+KH-01560,35,Kampong Cham,Garment Factory Worker,0,0,27.9,None,177.0,80.8,0,1.45,2024-01-07
+KH-01561,54,Kampong Cham,Monk/Retired,0,0,22.5,None,100.0,78.8,1,2.42,2024-11-15
+KH-01562,48,Preah Sihanouk,Civil Servant,0,0,18.4,Heart Disease,392.0,95.0,0,1.76,2024-03-28
+KH-01563,40,Battambang,Rice Farmer,0,0,20.0,Hypertension,138.0,94.6,0,1.85,2024-02-25
+KH-01564,39,Phnom Penh,Civil Servant,1,0,21.8,None,489.0,95.0,0,1.63,2024-10-19
+KH-01565,43,Siem Reap,Garment Factory Worker,0,0,23.5,TB,151.0,81.0,0,1.96,2024-04-23
+KH-01566,44,Kampong Cham,Rice Farmer,0,0,23.5,None,132.0,84.0,0,1.7,2024-04-15
+KH-01567,43,Phnom Penh,Moto/Tuk-tuk Driver,1,0,25.8,None,206.0,76.4,0,2.29,2024-03-08
+KH-01568,35,Siem Reap,Garment Factory Worker,0,0,23.6,TB,173.0,85.8,1,1.82,2024-09-01
+KH-01569,47,Other Rural,Moto/Tuk-tuk Driver,0,1,21.0,None,176.0,85.1,0,2.0,2024-12-30
+KH-01570,52,Other Rural,Monk/Retired,0,0,22.2,None,99.0,80.7,0,2.39,2024-07-02
+KH-01571,26,Other Rural,Moto/Tuk-tuk Driver,1,1,19.9,None,168.0,95.0,0,1.87,2024-06-03
+KH-01572,30,Phnom Penh,Construction Worker,0,1,29.1,None,247.0,75.7,1,1.6,2024-12-20
+KH-01573,31,Phnom Penh,Garment Factory Worker,0,1,23.6,None,217.0,93.3,0,1.26,2024-12-07
+KH-01574,32,Battambang,Civil Servant,0,1,21.7,None,261.0,95.0,0,1.13,2024-04-15
+KH-01575,33,Phnom Penh,Garment Factory Worker,1,1,24.3,TB,247.0,85.4,0,1.91,2024-03-21
+KH-01576,42,Battambang,Garment Factory Worker,0,1,23.9,None,191.0,85.8,0,1.46,2024-08-17
+KH-01577,36,Other Rural,Market Vendor,0,0,22.2,Diabetes,165.0,94.9,1,1.6,2024-02-01
+KH-01578,44,Phnom Penh,Moto/Tuk-tuk Driver,0,1,26.8,Arthritis,294.0,73.7,0,2.16,2024-01-15
+KH-01579,41,Siem Reap,Construction Worker,0,1,22.9,COPD/Asthma,197.0,83.1,0,2.02,2024-09-29
+KH-01580,26,Other Rural,Civil Servant,0,0,17.4,None,321.0,95.0,0,1.14,2024-08-03
+KH-01581,43,Other Rural,Rice Farmer,0,0,23.8,None,120.0,84.1,0,1.68,2024-12-17
+KH-01582,36,Other Rural,Rice Farmer,0,0,27.0,Heart Disease,102.0,80.9,0,1.78,2024-10-23
+KH-01583,33,Other Rural,Rice Farmer,1,1,22.0,None,95.0,94.3,0,1.63,2024-10-05
+KH-01584,85,Other Rural,Rice Farmer,0,0,24.2,Diabetes,79.0,56.8,0,2.66,2024-04-19
+KH-01585,30,Kampong Cham,Moto/Tuk-tuk Driver,0,0,21.9,None,183.0,93.7,0,1.81,2024-04-05
+KH-01586,32,Phnom Penh,Garment Factory Worker,1,1,23.8,None,248.0,92.1,0,1.53,2024-10-21
+KH-01587,60,Phnom Penh,Construction Worker,0,0,25.6,Heart Disease,261.0,64.9,1,2.48,2024-12-09
+KH-01588,59,Battambang,Rice Farmer,0,1,26.4,None,101.0,68.1,0,1.85,2024-09-03
+KH-01589,30,Siem Reap,Moto/Tuk-tuk Driver,0,1,22.4,None,149.0,92.5,0,1.69,2024-02-29
+KH-01590,59,Kampong Cham,Garment Factory Worker,0,0,26.0,Hypertension,167.0,70.4,0,2.1,2024-04-24
+KH-01591,30,Phnom Penh,Garment Factory Worker,0,0,23.1,Hypertension,234.0,95.0,0,1.58,2024-03-27
+KH-01592,47,Kampong Cham,Garment Factory Worker,0,1,20.8,None,120.0,89.8,0,1.55,2024-07-09
+KH-01593,33,Siem Reap,Rice Farmer,0,0,19.0,Hepatitis B,100.0,95.0,0,1.82,2024-06-15
+KH-01594,49,Other Rural,Civil Servant,0,1,19.9,None,262.0,93.4,0,1.44,2024-01-18
+KH-01595,36,Other Rural,Garment Factory Worker,1,0,24.7,None,197.0,87.7,0,1.72,2024-11-09
+KH-01596,29,Kampong Cham,Moto/Tuk-tuk Driver,0,0,20.4,None,129.0,95.0,0,1.79,2024-07-24
+KH-01597,58,Other Rural,Civil Servant,0,0,22.2,None,293.0,82.4,0,1.72,2024-12-14
+KH-01598,51,Phnom Penh,Construction Worker,0,0,24.4,Heart Disease,286.0,73.3,0,2.32,2024-07-22
+KH-01599,46,Kampong Cham,Rice Farmer,0,0,21.1,None,129.0,88.4,0,1.74,2024-04-13
+KH-01600,24,Kampong Cham,Moto/Tuk-tuk Driver,1,0,22.3,None,192.0,95.0,0,1.95,2024-01-30
+KH-01601,40,Phnom Penh,Rice Farmer,0,0,24.0,None,181.0,85.3,0,1.63,2024-10-04
+KH-01602,56,Phnom Penh,Moto/Tuk-tuk Driver,1,1,23.4,COPD/Asthma,262.0,73.9,0,2.63,2024-06-11
+KH-01603,70,Other Rural,Moto/Tuk-tuk Driver,0,0,22.0,Hepatitis B,143.0,65.3,0,2.85,2024-02-20
+KH-01604,33,Phnom Penh,Market Vendor,0,0,26.0,Diabetes,219.0,87.9,0,1.54,2024-04-03
+KH-01605,34,Phnom Penh,Garment Factory Worker,0,0,24.8,None,218.0,88.7,0,1.43,2024-11-05
+KH-01606,41,Phnom Penh,Garment Factory Worker,0,0,24.8,None,190.0,84.3,0,1.56,2024-10-21
+KH-01607,43,Other Rural,Rice Farmer,1,0,23.2,None,111.0,85.3,0,1.93,2024-04-02
+KH-01608,50,Phnom Penh,Market Vendor,0,0,22.5,None,167.0,85.4,0,1.63,2024-06-19
+KH-01609,36,Siem Reap,Rice Farmer,0,1,26.7,None,97.0,81.5,1,1.44,2024-02-03
+KH-01610,36,Phnom Penh,Garment Factory Worker,1,1,25.9,None,220.0,84.8,0,1.6,2024-05-16
+KH-01611,35,Other Rural,Monk/Retired,0,1,25.3,None,122.0,84.2,1,1.96,2024-04-03
+KH-01612,39,Preah Sihanouk,Rice Farmer,0,0,21.7,None,102.0,91.2,0,1.61,2024-05-11
+KH-01613,39,Other Rural,Moto/Tuk-tuk Driver,1,1,28.1,Hypertension; COPD/Asthma,224.0,73.6,0,2.54,2024-08-02
+KH-01614,43,Other Rural,Civil Servant,0,0,24.9,None,304.0,85.6,1,1.45,2024-05-26
+KH-01615,39,Battambang,Market Vendor,0,0,19.4,None,129.0,95.0,0,1.43,2024-01-30
+KH-01616,57,Other Rural,Garment Factory Worker,1,0,24.7,None,120.0,74.6,1,2.1,2024-01-01
+KH-01617,55,Other Rural,Moto/Tuk-tuk Driver,1,0,24.4,None,174.0,72.3,0,2.51,2024-12-02
+KH-01618,30,Other Rural,Garment Factory Worker,0,0,20.3,None,189.0,95.0,0,1.36,2024-04-08
+KH-01619,42,Other Rural,Rice Farmer,0,1,19.0,Heart Disease,110.0,95.0,0,1.77,2024-11-24
+KH-01620,51,Battambang,Garment Factory Worker,1,0,24.7,None,157.0,78.2,1,1.99,2024-10-05
+KH-01621,44,Phnom Penh,Rice Farmer,0,1,25.9,None,151.0,78.5,0,1.58,2024-11-04
+KH-01622,37,Other Rural,Civil Servant,0,0,22.9,None,284.0,93.9,0,1.34,2024-08-19
+KH-01623,56,Kampong Cham,Rice Farmer,1,0,23.9,None,144.0,75.6,0,2.17,2024-03-15
+KH-01624,56,Phnom Penh,Rice Farmer,1,1,21.6,None,127.0,81.0,0,2.05,2024-01-21
+KH-01625,42,Other Rural,Rice Farmer,1,1,22.9,None,113.0,86.6,0,1.8,2024-12-05
+KH-01626,48,Other Rural,Rice Farmer,0,0,21.3,Diabetes,84.0,86.5,0,1.99,2024-08-20
+KH-01627,38,Kampong Cham,Rice Farmer,0,1,20.1,TB,76.0,90.7,1,1.84,2024-03-29
+KH-01628,36,Other Rural,Moto/Tuk-tuk Driver,1,0,23.4,None,190.0,86.4,0,2.17,2024-01-24
+KH-01629,53,Other Rural,Construction Worker,0,0,24.5,Diabetes,224.0,71.9,1,2.35,2024-01-04
+KH-01630,46,Other Rural,Rice Farmer,0,0,19.3,TB,101.0,87.5,0,2.11,2024-05-07
+KH-01631,33,Kampong Cham,Rice Farmer,0,0,21.3,None,81.0,95.0,0,1.5,2024-06-10
+KH-01632,68,Other Rural,Rice Farmer,1,1,22.9,Hypertension; Heart Disease,60.0,70.4,0,2.7,2024-08-01
+KH-01633,55,Kampong Cham,Rice Farmer,0,1,20.7,Hepatitis B,82.0,80.6,0,2.1,2024-07-16
+KH-01634,43,Siem Reap,Garment Factory Worker,0,1,24.1,COPD/Asthma,119.0,84.6,0,1.69,2024-01-14
+KH-01635,60,Other Rural,Garment Factory Worker,0,1,22.4,Hepatitis B,160.0,74.9,0,2.1,2024-11-10
+KH-01636,42,Siem Reap,Rice Farmer,0,1,26.3,None,60.0,78.8,0,1.55,2024-09-12
+KH-01637,49,Phnom Penh,Rice Farmer,1,1,22.2,None,201.0,84.0,0,1.92,2024-01-30
+KH-01638,38,Kampong Cham,Rice Farmer,0,1,22.0,None,89.0,91.3,0,1.47,2024-09-18
+KH-01639,55,Kampong Cham,Market Vendor,0,0,23.9,Hypertension,94.0,79.1,0,1.94,2024-09-24
+KH-01640,48,Other Rural,Garment Factory Worker,0,0,27.0,None,164.0,74.7,0,1.68,2024-09-15
+KH-01641,35,Other Rural,Civil Servant,0,1,23.4,COPD/Asthma,274.0,94.1,1,1.41,2024-02-19
+KH-01642,64,Kampong Cham,Market Vendor,1,1,24.7,TB,131.0,66.6,0,2.38,2024-03-22
+KH-01643,38,Other Rural,Moto/Tuk-tuk Driver,0,1,22.4,None,167.0,87.5,0,1.83,2024-11-13
+KH-01644,58,Other Rural,Garment Factory Worker,0,0,22.5,None,115.0,79.0,0,1.86,2024-08-14
+KH-01645,53,Siem Reap,Garment Factory Worker,1,0,19.8,Arthritis,169.0,88.4,0,2.24,2024-12-16
+KH-01646,64,Battambang,Moto/Tuk-tuk Driver,0,0,23.9,Diabetes,126.0,67.9,0,2.64,2024-12-13
+KH-01647,31,Other Rural,Market Vendor,0,0,25.5,None,138.0,90.3,1,1.29,2024-09-28
+KH-01648,39,Preah Sihanouk,Construction Worker,0,0,23.2,None,231.0,83.7,1,1.88,2024-02-28
+KH-01649,35,Other Rural,Moto/Tuk-tuk Driver,0,0,20.2,Hepatitis B,176.0,91.5,0,2.22,2024-03-27
+KH-01650,41,Kampong Cham,Civil Servant,0,1,22.2,None,283.0,93.0,0,1.29,2024-04-24
+KH-01651,56,Phnom Penh,Rice Farmer,1,0,27.8,None,180.0,66.7,1,2.17,2024-08-26
+KH-01652,60,Siem Reap,Market Vendor,0,0,22.5,TB,133.0,74.2,1,2.18,2024-01-22
+KH-01653,42,Battambang,Garment Factory Worker,0,1,20.8,None,139.0,92.9,0,1.46,2024-06-04
+KH-01654,34,Battambang,Civil Servant,1,0,22.9,None,293.0,95.0,0,1.54,2024-12-03
+KH-01655,33,Phnom Penh,Moto/Tuk-tuk Driver,1,0,26.5,None,265.0,81.3,0,2.11,2024-10-30
+KH-01656,30,Phnom Penh,Market Vendor,0,0,21.9,None,172.0,95.0,0,1.27,2024-10-23
+KH-01657,50,Preah Sihanouk,Rice Farmer,0,0,21.3,None,128.0,85.4,0,1.81,2024-06-19
+KH-01658,41,Other Rural,Rice Farmer,0,0,22.8,COPD/Asthma,80.0,87.6,0,1.87,2024-07-18
+KH-01659,29,Kampong Cham,Rice Farmer,0,1,20.9,None,85.0,95.0,1,1.31,2024-11-16
+KH-01660,48,Battambang,Market Vendor,0,0,18.3,None,153.0,95.0,0,1.59,2024-05-13
+KH-01661,50,Other Rural,Rice Farmer,0,0,22.9,None,75.0,81.6,0,1.81,2024-02-01
+KH-01662,50,Kampong Cham,Garment Factory Worker,1,0,22.3,Heart Disease,135.0,84.3,0,2.19,2024-11-17
+KH-01663,35,Phnom Penh,Market Vendor,0,1,20.0,TB,259.0,95.0,0,1.61,2024-01-15
+KH-01664,23,Siem Reap,Garment Factory Worker,1,1,21.3,Heart Disease,156.0,95.0,0,1.58,2024-07-20
+KH-01665,42,Other Rural,Market Vendor,0,0,18.5,None,167.0,95.0,0,1.49,2024-10-03
+KH-01666,49,Preah Sihanouk,Rice Farmer,0,0,23.3,Hypertension,162.0,81.4,0,2.01,2024-05-04
+KH-01667,46,Other Rural,Moto/Tuk-tuk Driver,0,0,21.1,None,216.0,85.5,0,2.1,2024-11-24
+KH-01668,37,Other Rural,Rice Farmer,0,1,21.9,None,116.0,92.1,1,1.46,2024-11-09
+KH-01669,58,Other Rural,Market Vendor,0,0,22.4,COPD/Asthma; Hepatitis B,183.0,77.6,0,2.31,2024-06-06
+KH-01670,45,Preah Sihanouk,Rice Farmer,0,1,21.3,None,151.0,88.4,0,1.6,2024-11-22
+KH-01671,34,Preah Sihanouk,Civil Servant,0,0,26.2,TB,364.0,83.3,0,1.66,2024-04-04
+KH-01672,29,Battambang,Garment Factory Worker,1,0,18.7,None,171.0,95.0,0,1.59,2024-02-15
+KH-01673,46,Battambang,Civil Servant,0,1,23.7,None,299.0,86.5,0,1.38,2024-08-14
+KH-01674,43,Siem Reap,Construction Worker,0,1,21.6,None,182.0,84.8,0,1.83,2024-09-24
+KH-01675,48,Phnom Penh,Construction Worker,0,0,24.8,None,282.0,74.3,0,2.04,2024-10-24
+KH-01676,67,Kampong Cham,Monk/Retired,0,0,26.8,None,104.0,60.6,0,2.66,2024-05-07
+KH-01677,34,Other Rural,Garment Factory Worker,0,0,22.7,None,143.0,93.5,0,1.43,2024-09-18
+KH-01678,43,Other Rural,Civil Servant,0,0,25.4,None,271.0,84.4,1,1.45,2024-09-02
+KH-01679,54,Other Rural,Moto/Tuk-tuk Driver,1,0,25.1,COPD/Asthma,178.0,71.4,1,2.71,2024-05-08
+KH-01680,34,Preah Sihanouk,Garment Factory Worker,0,0,23.0,COPD/Asthma,228.0,92.8,0,1.65,2024-11-11
+KH-01681,44,Battambang,Market Vendor,0,1,23.8,None,124.0,86.2,0,1.4,2024-11-14
+KH-01682,47,Phnom Penh,Moto/Tuk-tuk Driver,0,0,25.3,None,269.0,75.1,0,2.12,2024-03-27
+KH-01683,30,Kampong Cham,Rice Farmer,1,1,21.5,None,98.0,95.0,0,1.58,2024-12-06
+KH-01684,44,Other Rural,Garment Factory Worker,1,1,19.0,None,138.0,95.0,0,1.74,2024-01-29
+KH-01685,46,Phnom Penh,Rice Farmer,0,1,21.9,None,187.0,86.5,0,1.62,2024-02-19
+KH-01686,54,Kampong Cham,Rice Farmer,0,1,21.9,None,60.0,81.5,0,1.76,2024-01-15
+KH-01687,33,Other Rural,Market Vendor,0,1,23.8,TB,97.0,88.1,1,1.57,2024-09-25
+KH-01688,31,Phnom Penh,Market Vendor,1,1,21.9,None,241.0,95.0,1,1.42,2024-02-19
+KH-01689,39,Phnom Penh,Civil Servant,0,1,23.1,None,429.0,92.2,0,1.26,2024-11-26
+KH-01690,34,Other Rural,Civil Servant,0,0,24.3,None,311.0,92.6,0,1.29,2024-03-23
+KH-01691,54,Other Rural,Moto/Tuk-tuk Driver,0,1,21.5,None,170.0,79.5,0,2.12,2024-02-26
+KH-01692,33,Other Rural,Moto/Tuk-tuk Driver,0,0,25.4,None,152.0,83.6,0,1.86,2024-01-04
+KH-01693,53,Phnom Penh,Rice Farmer,0,1,25.7,None,142.0,73.3,0,1.74,2024-07-09
+KH-01694,29,Phnom Penh,Construction Worker,0,1,23.2,TB,274.0,84.9,0,1.95,2024-02-13
+KH-01695,34,Kampong Cham,Rice Farmer,0,0,22.4,None,127.0,92.8,0,1.52,2024-11-10
+KH-01696,41,Other Rural,Market Vendor,1,0,21.6,None,133.0,93.0,0,1.72,2024-02-14
+KH-01697,25,Other Rural,Garment Factory Worker,1,1,21.5,None,169.0,95.0,1,1.4,2024-08-17
+KH-01698,62,Battambang,Rice Farmer,0,0,23.6,None,134.0,72.7,0,2.03,2024-12-11
+KH-01699,34,Other Rural,Garment Factory Worker,0,1,24.0,Heart Disease,135.0,90.4,0,1.53,2024-06-19
+KH-01700,63,Other Rural,Garment Factory Worker,0,0,24.4,None,172.0,71.5,0,1.95,2024-02-28
+KH-01701,30,Other Rural,Garment Factory Worker,0,0,21.2,None,206.0,95.0,1,1.36,2024-06-23
+KH-01702,46,Other Rural,Garment Factory Worker,0,1,19.9,None,162.0,92.4,0,1.53,2024-04-04
+KH-01703,66,Other Rural,Moto/Tuk-tuk Driver,0,0,18.6,Hypertension,176.0,78.9,1,2.68,2024-01-09
+KH-01704,44,Phnom Penh,Rice Farmer,1,0,25.2,None,200.0,80.0,0,1.95,2024-05-15
+KH-01705,28,Siem Reap,Moto/Tuk-tuk Driver,0,0,22.1,Hepatitis B,181.0,91.4,0,2.09,2024-12-23
+KH-01706,34,Phnom Penh,Moto/Tuk-tuk Driver,1,1,25.2,None,239.0,83.6,0,2.01,2024-09-22
+KH-01707,33,Phnom Penh,Construction Worker,1,0,23.2,Hepatitis B,298.0,84.3,1,2.34,2024-06-17
+KH-01708,39,Kampong Cham,Market Vendor,0,1,18.4,None,130.0,95.0,0,1.31,2024-05-29
+KH-01709,56,Siem Reap,Garment Factory Worker,0,0,18.3,None,158.0,90.0,0,1.83,2024-07-02
+KH-01710,51,Phnom Penh,Rice Farmer,0,1,22.4,None,181.0,82.2,0,1.71,2024-01-10
+KH-01711,44,Preah Sihanouk,Rice Farmer,0,1,23.5,None,110.0,84.0,0,1.58,2024-04-19
+KH-01712,28,Other Rural,Garment Factory Worker,0,0,22.5,None,163.0,95.0,0,1.32,2024-11-14
+KH-01713,38,Other Rural,Monk/Retired,0,0,24.8,Diabetes,60.0,83.3,0,2.35,2024-03-13
+KH-01714,60,Phnom Penh,Rice Farmer,0,0,18.4,None,141.0,85.7,0,1.99,2024-01-20
+KH-01715,49,Other Rural,Rice Farmer,0,1,23.3,Hepatitis B,97.0,78.4,0,1.99,2024-09-05
+KH-01716,36,Battambang,Garment Factory Worker,0,1,28.3,Hypertension; Hepatitis B,173.0,76.3,0,1.89,2024-11-20
+KH-01717,49,Siem Reap,Market Vendor,1,0,23.4,None,144.0,84.0,0,1.86,2024-11-14
+KH-01718,26,Other Rural,Garment Factory Worker,0,1,16.4,None,138.0,95.0,0,1.17,2024-11-06
+KH-01719,30,Phnom Penh,Rice Farmer,0,1,21.4,None,182.0,95.0,0,1.33,2024-05-11
+KH-01720,50,Battambang,Market Vendor,0,0,24.1,None,123.0,81.8,0,1.63,2024-04-28
+KH-01721,54,Kampong Cham,Garment Factory Worker,1,0,24.1,None,150.0,77.7,1,2.04,2024-06-12
+KH-01722,36,Battambang,Rice Farmer,0,0,26.1,None,158.0,83.1,0,1.56,2024-12-02
+KH-01723,43,Preah Sihanouk,Market Vendor,0,0,22.9,None,174.0,88.8,1,1.5,2024-09-30
+KH-01724,30,Other Rural,Garment Factory Worker,0,1,25.0,None,168.0,90.7,0,1.24,2024-11-23
+KH-01725,56,Phnom Penh,Rice Farmer,1,1,24.9,None,159.0,73.2,0,2.05,2024-09-28
+KH-01726,36,Preah Sihanouk,Monk/Retired,1,1,23.5,None,108.0,87.5,1,2.23,2024-09-25
+KH-01727,60,Other Rural,Construction Worker,0,0,25.1,COPD/Asthma,226.0,66.1,0,2.48,2024-07-22
+KH-01728,66,Preah Sihanouk,Market Vendor,1,0,26.4,None,146.0,66.5,0,2.17,2024-02-17
+KH-01729,56,Other Rural,Garment Factory Worker,0,0,23.7,None,166.0,77.6,0,1.83,2024-12-26
+KH-01730,73,Other Rural,Garment Factory Worker,0,0,22.2,None,215.0,70.3,0,2.13,2024-01-28
+KH-01731,40,Battambang,Construction Worker,0,0,19.6,Hepatitis B,151.0,88.4,0,2.22,2024-08-23
+KH-01732,37,Kampong Cham,Garment Factory Worker,0,1,24.8,TB,193.0,81.8,0,1.74,2024-07-05
+KH-01733,50,Preah Sihanouk,Monk/Retired,1,0,24.1,None,131.0,77.4,0,2.6,2024-01-12
+KH-01734,33,Kampong Cham,Garment Factory Worker,0,0,26.9,COPD/Asthma,185.0,84.5,0,1.63,2024-01-20
+KH-01735,51,Kampong Cham,Garment Factory Worker,0,0,22.8,COPD/Asthma,176.0,82.6,0,1.96,2024-01-08
+KH-01736,39,Siem Reap,Rice Farmer,0,0,16.0,None,119.0,95.0,0,1.61,2024-11-07
+KH-01737,25,Battambang,Market Vendor,0,1,22.2,None,132.0,95.0,0,1.06,2024-07-16
+KH-01738,50,Other Rural,Rice Farmer,0,0,21.5,Hypertension; Arthritis,76.0,84.8,1,2.25,2024-06-28
+KH-01739,33,Kampong Cham,Construction Worker,1,0,26.3,Hypertension; Heart Disease,184.0,80.2,0,2.46,2024-01-19
+KH-01740,65,Phnom Penh,Garment Factory Worker,0,0,24.2,None,279.0,70.8,0,1.99,2024-12-15
+KH-01741,51,Other Rural,Civil Servant,0,0,26.0,None,301.0,78.2,0,1.59,2024-05-29
+KH-01742,41,Battambang,Rice Farmer,0,1,23.5,Hepatitis B,108.0,82.8,0,1.85,2024-05-09
+KH-01743,44,Siem Reap,Civil Servant,0,1,23.2,None,317.0,89.0,0,1.35,2024-10-02
+KH-01744,51,Other Rural,Garment Factory Worker,0,1,24.4,Hypertension,181.0,79.0,0,1.84,2024-12-05
+KH-01745,38,Preah Sihanouk,Garment Factory Worker,0,1,22.1,None,211.0,92.3,0,1.38,2024-07-21
+KH-01746,50,Preah Sihanouk,Construction Worker,0,1,22.3,Hypertension,256.0,78.8,0,2.18,2024-07-11
+KH-01747,34,Other Rural,Rice Farmer,0,0,24.9,None,110.0,87.0,0,1.52,2024-08-16
+KH-01748,36,Other Rural,Construction Worker,0,0,20.4,None,197.0,91.9,1,1.83,2024-12-14
+KH-01749,30,Phnom Penh,Garment Factory Worker,0,1,21.9,Hepatitis B,187.0,94.9,0,1.56,2024-09-26
+KH-01750,55,Other Rural,Rice Farmer,0,1,25.5,None,79.0,72.6,1,1.78,2024-05-06
+KH-01751,44,Phnom Penh,Market Vendor,0,1,21.1,None,239.0,92.3,0,1.4,2024-04-04
+KH-01752,39,Phnom Penh,Market Vendor,0,1,23.9,COPD/Asthma,201.0,88.9,0,1.53,2024-02-24
+KH-01753,35,Other Rural,Garment Factory Worker,1,0,21.0,None,167.0,95.0,1,1.7,2024-10-06
+KH-01754,38,Other Rural,Civil Servant,1,1,22.4,COPD/Asthma,264.0,94.5,0,1.71,2024-11-21
+KH-01755,29,Other Rural,Rice Farmer,0,0,26.3,Hepatitis B,112.0,83.8,0,1.75,2024-10-27
+KH-01756,47,Kampong Cham,Construction Worker,0,0,22.2,TB,191.0,75.9,1,2.4,2024-03-08
+KH-01757,35,Other Rural,Market Vendor,0,0,20.9,None,147.0,95.0,0,1.36,2024-08-19
+KH-01758,41,Other Rural,Construction Worker,1,1,22.9,Hypertension,132.0,83.1,0,2.27,2024-05-16
+KH-01759,26,Phnom Penh,Rice Farmer,0,0,25.0,COPD/Asthma,128.0,91.7,1,1.6,2024-03-25
+KH-01760,56,Preah Sihanouk,Moto/Tuk-tuk Driver,0,0,26.0,Diabetes; Heart Disease,176.0,68.0,1,2.72,2024-10-27
+KH-01761,33,Other Rural,Rice Farmer,0,0,19.2,Diabetes,130.0,95.0,0,1.72,2024-05-14
+KH-01762,70,Phnom Penh,Moto/Tuk-tuk Driver,0,0,22.8,None,265.0,66.7,0,2.53,2024-10-31
+KH-01763,31,Other Rural,Construction Worker,0,0,22.0,None,193.0,91.5,0,1.74,2024-07-11
+KH-01764,33,Other Rural,Garment Factory Worker,0,0,23.9,None,125.0,91.4,0,1.41,2024-05-25
+KH-01765,41,Other Rural,Market Vendor,0,0,19.2,None,132.0,95.0,0,1.47,2024-12-26
+KH-01766,27,Preah Sihanouk,Construction Worker,0,0,22.1,Hepatitis B,244.0,90.6,0,1.99,2024-04-06
+KH-01767,42,Other Rural,Garment Factory Worker,0,0,24.3,Hepatitis B,159.0,81.8,0,1.9,2024-02-22
+KH-01768,48,Battambang,Garment Factory Worker,0,1,19.4,None,180.0,92.4,0,1.56,2024-06-10
+KH-01769,32,Phnom Penh,Rice Farmer,1,1,21.3,Diabetes; TB,128.0,91.5,0,2.21,2024-01-29
+KH-01770,47,Other Rural,Civil Servant,1,0,23.0,None,282.0,87.4,0,1.77,2024-04-16
+KH-01771,29,Other Rural,Market Vendor,0,0,20.3,None,140.0,95.0,0,1.25,2024-06-15
+KH-01772,58,Other Rural,Moto/Tuk-tuk Driver,1,0,22.8,None,152.0,74.2,1,2.56,2024-07-25
+KH-01773,47,Phnom Penh,Garment Factory Worker,0,1,26.2,TB,239.0,72.3,0,1.92,2024-07-08
+KH-01774,52,Other Rural,Rice Farmer,0,0,26.8,Hypertension; Arthritis,148.0,71.3,0,2.29,2024-08-09
+KH-01775,27,Other Rural,Garment Factory Worker,0,0,24.3,None,167.0,94.1,0,1.31,2024-03-26
+KH-01776,44,Other Rural,Construction Worker,0,1,26.0,Hepatitis B,181.0,71.0,0,2.17,2024-04-23
+KH-01777,41,Other Rural,Rice Farmer,0,0,23.5,None,89.0,86.0,0,1.65,2024-01-27
+KH-01778,39,Preah Sihanouk,Rice Farmer,0,0,25.7,None,177.0,82.0,1,1.61,2024-07-11
+KH-01779,36,Siem Reap,Market Vendor,0,0,22.3,None,129.0,94.6,0,1.38,2024-05-05
+KH-01780,60,Preah Sihanouk,Moto/Tuk-tuk Driver,0,0,22.9,None,242.0,72.7,0,2.35,2024-10-05
+KH-01781,44,Kampong Cham,Construction Worker,0,1,18.0,Heart Disease,166.0,92.6,1,2.07,2024-05-22
+KH-01782,47,Other Rural,Rice Farmer,0,0,21.2,None,119.0,87.5,0,1.76,2024-06-24
+KH-01783,45,Preah Sihanouk,Moto/Tuk-tuk Driver,0,1,25.2,None,235.0,76.7,0,1.96,2024-06-22
+KH-01784,28,Kampong Cham,Market Vendor,0,0,21.7,Hypertension,132.0,95.0,0,1.45,2024-03-14
+KH-01785,51,Kampong Cham,Rice Farmer,0,0,23.6,None,86.0,79.4,0,1.83,2024-08-14
+KH-01786,38,Siem Reap,Garment Factory Worker,0,0,20.4,None,172.0,95.0,1,1.5,2024-02-16
+KH-01787,52,Battambang,Market Vendor,0,1,24.5,None,156.0,79.5,0,1.55,2024-09-30
+KH-01788,42,Other Rural,Rice Farmer,0,0,23.5,COPD/Asthma,131.0,85.2,1,1.89,2024-09-02
+KH-01789,48,Other Rural,Rice Farmer,0,1,21.1,None,110.0,87.0,0,1.65,2024-10-20
+KH-01790,36,Kampong Cham,Garment Factory Worker,0,0,20.0,None,146.0,95.0,0,1.47,2024-06-06
+KH-01791,42,Other Rural,Construction Worker,1,1,21.2,TB,165.0,81.4,0,2.44,2024-02-29
+KH-01792,58,Other Rural,Civil Servant,0,1,30.1,None,303.0,64.2,0,1.6,2024-10-29
+KH-01793,47,Other Rural,Garment Factory Worker,0,1,22.6,None,169.0,85.5,0,1.55,2024-06-12
+KH-01794,33,Phnom Penh,Market Vendor,0,1,21.2,Hepatitis B,234.0,95.0,1,1.52,2024-04-11
+KH-01795,50,Other Rural,Market Vendor,1,1,23.6,None,112.0,82.9,1,1.76,2024-03-09
+KH-01796,36,Other Rural,Market Vendor,0,0,24.4,None,124.0,89.7,1,1.38,2024-08-14
+KH-01797,41,Phnom Penh,Rice Farmer,0,0,24.2,Hepatitis B,177.0,81.2,0,1.97,2024-08-26
+KH-01798,40,Other Rural,Rice Farmer,0,0,23.9,Hepatitis B,153.0,82.5,0,1.95,2024-01-02
+KH-01799,65,Phnom Penh,Monk/Retired,0,0,25.4,None,130.0,65.0,0,2.62,2024-08-05
+KH-01800,41,Other Rural,Rice Farmer,1,1,23.2,None,130.0,86.5,0,1.78,2024-10-14
+KH-01801,52,Siem Reap,Rice Farmer,0,1,22.1,None,73.0,82.3,1,1.73,2024-09-02
+KH-01802,49,Battambang,Civil Servant,1,1,24.2,None,289.0,83.4,0,1.69,2024-06-29
+KH-01803,67,Battambang,Monk/Retired,0,0,25.3,None,102.0,64.0,0,2.66,2024-10-01
+KH-01804,36,Phnom Penh,Civil Servant,1,0,27.4,TB,447.0,79.2,1,1.94,2024-01-18
+KH-01805,36,Other Rural,Market Vendor,1,1,19.8,Hepatitis B,119.0,95.0,0,1.83,2024-03-05
+KH-01806,37,Kampong Cham,Garment Factory Worker,0,1,22.6,None,132.0,91.9,0,1.37,2024-04-04
+KH-01807,46,Preah Sihanouk,Market Vendor,0,0,21.1,Hypertension; TB,231.0,86.1,0,2.15,2024-10-25
+KH-01808,44,Kampong Cham,Garment Factory Worker,1,1,23.6,None,96.0,85.2,0,1.74,2024-06-10
+KH-01809,25,Battambang,Monk/Retired,0,0,22.0,TB,113.0,92.9,1,2.27,2024-10-03
+KH-01810,44,Other Rural,Garment Factory Worker,0,1,18.7,None,156.0,95.0,0,1.49,2024-06-30
+KH-01811,44,Other Rural,Monk/Retired,0,0,20.9,None,66.0,88.7,0,2.24,2024-01-11
+KH-01812,51,Preah Sihanouk,Rice Farmer,0,0,26.1,None,212.0,73.6,0,1.83,2024-03-24
+KH-01813,46,Battambang,Market Vendor,0,1,21.7,None,160.0,89.7,0,1.44,2024-09-15
+KH-01814,59,Other Rural,Rice Farmer,0,0,22.9,Hypertension,95.0,76.1,0,2.19,2024-04-09
+KH-01815,26,Other Rural,Rice Farmer,0,1,20.5,None,121.0,95.0,0,1.26,2024-11-15
+KH-01816,51,Other Rural,Market Vendor,0,0,21.1,None,147.0,88.0,0,1.65,2024-05-16
+KH-01817,64,Other Rural,Market Vendor,0,1,28.6,None,148.0,62.6,0,1.76,2024-12-21
+KH-01818,44,Other Rural,Rice Farmer,1,0,23.1,Heart Disease; COPD/Asthma,125.0,84.9,0,2.39,2024-05-20
+KH-01819,39,Battambang,Garment Factory Worker,0,1,23.5,None,140.0,88.4,0,1.4,2024-10-13
+KH-01820,52,Phnom Penh,Garment Factory Worker,0,0,25.9,None,195.0,74.8,0,1.76,2024-08-24
+KH-01821,42,Battambang,Moto/Tuk-tuk Driver,1,0,27.2,Arthritis,162.0,74.0,0,2.5,2024-07-06
+KH-01822,35,Battambang,Rice Farmer,1,0,24.5,None,70.0,87.4,0,1.79,2024-08-21
+KH-01823,34,Battambang,Moto/Tuk-tuk Driver,0,0,22.8,None,176.0,89.1,0,1.88,2024-06-04
+KH-01824,29,Battambang,Market Vendor,0,0,23.2,None,163.0,95.0,0,1.25,2024-11-02
+KH-01825,85,Phnom Penh,Market Vendor,1,0,22.4,Diabetes; COPD/Asthma; Arthritis,164.0,63.8,0,3.17,2024-10-03
+KH-01826,48,Siem Reap,Rice Farmer,0,1,24.4,Hypertension; Arthritis; Hepatitis B,110.0,76.3,0,2.41,2024-12-06
+KH-01827,36,Other Rural,Rice Farmer,0,0,20.4,Hepatitis B,110.0,93.1,0,1.88,2024-10-25
+KH-01828,42,Kampong Cham,Rice Farmer,0,0,25.0,Diabetes,141.0,81.7,0,1.89,2024-04-30
+KH-01829,43,Kampong Cham,Market Vendor,0,0,21.3,None,154.0,92.5,0,1.5,2024-11-16
+KH-01830,39,Siem Reap,Rice Farmer,1,1,23.4,None,95.0,87.3,1,1.74,2024-09-17
+KH-01831,37,Siem Reap,Rice Farmer,0,0,20.1,None,80.0,95.0,0,1.58,2024-09-16
+KH-01832,31,Phnom Penh,Rice Farmer,1,1,25.5,None,156.0,87.5,1,1.6,2024-03-08
+KH-01833,63,Battambang,Construction Worker,1,0,24.4,Diabetes; Arthritis,189.0,65.8,0,3.0,2024-04-08
+KH-01834,42,Kampong Cham,Garment Factory Worker,0,1,21.6,None,164.0,91.1,0,1.46,2024-02-04
+KH-01835,36,Other Rural,Construction Worker,0,0,22.6,Heart Disease,184.0,86.9,1,2.05,2024-11-04
+KH-01836,45,Siem Reap,Market Vendor,1,0,22.6,Diabetes,155.0,88.2,0,2.01,2024-06-03
+KH-01837,45,Other Rural,Market Vendor,0,0,24.3,None,103.0,84.3,0,1.54,2024-12-16
+KH-01838,44,Phnom Penh,Garment Factory Worker,0,1,24.0,Hepatitis B,264.0,81.1,0,1.81,2024-10-27
+KH-01839,37,Battambang,Rice Farmer,1,0,27.9,None,151.0,78.2,0,1.83,2024-01-10
+KH-01840,31,Other Rural,Rice Farmer,0,1,24.0,None,83.0,90.9,0,1.35,2024-04-19
+KH-01841,47,Phnom Penh,Rice Farmer,1,0,21.2,Hypertension,156.0,87.4,1,2.23,2024-04-05
+KH-01842,27,Preah Sihanouk,Rice Farmer,1,0,19.8,None,150.0,95.0,0,1.65,2024-10-27
+KH-01843,47,Other Rural,Moto/Tuk-tuk Driver,0,1,22.9,Hepatitis B,157.0,77.8,0,2.32,2024-12-26
+KH-01844,44,Other Rural,Market Vendor,1,1,20.5,None,156.0,93.6,0,1.65,2024-02-15
+KH-01845,41,Battambang,Construction Worker,0,1,20.5,Hepatitis B,188.0,85.5,0,2.12,2024-10-16
+KH-01846,39,Phnom Penh,Market Vendor,0,0,26.2,None,199.0,83.7,0,1.43,2024-09-05
+KH-01847,27,Siem Reap,Garment Factory Worker,0,0,21.6,None,166.0,95.0,0,1.31,2024-12-10
+KH-01848,35,Phnom Penh,Market Vendor,0,1,21.6,None,216.0,95.0,0,1.24,2024-01-02
+KH-01849,53,Kampong Cham,Moto/Tuk-tuk Driver,1,0,21.1,Diabetes,166.0,81.1,1,2.69,2024-01-11
+KH-01850,30,Phnom Penh,Rice Farmer,0,1,25.5,None,130.0,88.1,0,1.33,2024-10-12
+KH-01851,53,Other Rural,Garment Factory Worker,0,1,23.4,None,157.0,80.1,0,1.65,2024-07-09
+KH-01852,35,Phnom Penh,Rice Farmer,1,0,23.3,None,189.0,90.2,0,1.79,2024-05-17
+KH-01853,50,Siem Reap,Rice Farmer,1,1,19.9,None,84.0,88.5,1,1.94,2024-04-16
+KH-01854,33,Other Rural,Civil Servant,0,1,19.9,None,270.0,95.0,0,1.15,2024-04-21
+KH-01855,50,Kampong Cham,Garment Factory Worker,0,0,24.6,None,134.0,79.2,1,1.72,2024-09-03
+KH-01856,37,Other Rural,Rice Farmer,0,0,22.7,None,92.0,90.2,0,1.58,2024-09-29
+KH-01857,44,Siem Reap,Market Vendor,0,1,19.8,None,92.0,95.0,0,1.4,2024-06-08
+KH-01858,47,Other Rural,Moto/Tuk-tuk Driver,0,1,22.8,None,165.0,81.0,0,2.0,2024-09-22
+KH-01859,52,Kampong Cham,Garment Factory Worker,1,1,18.9,None,174.0,91.0,0,1.89,2024-08-02
+KH-01860,27,Phnom Penh,Construction Worker,0,0,22.2,None,286.0,93.4,0,1.67,2024-04-27
+KH-01861,46,Other Rural,Garment Factory Worker,0,1,24.3,None,159.0,82.3,0,1.53,2024-08-01
+KH-01862,33,Battambang,Monk/Retired,0,0,24.9,Hypertension; Diabetes,107.0,86.2,1,2.48,2024-12-01
+KH-01863,48,Siem Reap,Rice Farmer,0,0,26.9,COPD/Asthma,91.0,73.8,0,1.99,2024-12-18
+KH-01864,31,Siem Reap,Rice Farmer,0,1,25.3,None,115.0,87.9,0,1.35,2024-02-26
+KH-01865,44,Other Rural,Monk/Retired,0,0,27.0,None,89.0,74.5,0,2.24,2024-12-09
+KH-01866,50,Preah Sihanouk,Garment Factory Worker,0,0,25.7,Heart Disease,142.0,76.5,0,1.94,2024-03-21
+KH-01867,41,Other Rural,Market Vendor,0,0,22.3,None,152.0,91.4,0,1.47,2024-03-15
+KH-01868,35,Battambang,Rice Farmer,0,1,23.0,None,109.0,90.7,0,1.42,2024-01-21
+KH-01869,49,Phnom Penh,Rice Farmer,1,0,27.6,TB; Hepatitis B,126.0,63.5,0,2.73,2024-09-30
+KH-01870,41,Other Rural,Civil Servant,0,0,25.2,Diabetes,310.0,86.1,0,1.63,2024-04-19
+KH-01871,77,Preah Sihanouk,Rice Farmer,0,0,22.8,None,126.0,65.1,0,2.3,2024-10-30
+KH-01872,31,Other Rural,Garment Factory Worker,0,1,26.3,None,150.0,87.0,1,1.26,2024-11-07
+KH-01873,47,Battambang,Moto/Tuk-tuk Driver,1,0,22.8,None,144.0,81.1,0,2.37,2024-05-19
+KH-01874,33,Other Rural,Garment Factory Worker,1,0,21.6,Hypertension,137.0,95.0,0,1.88,2024-09-22
+KH-01875,37,Siem Reap,Garment Factory Worker,0,1,19.0,None,176.0,95.0,0,1.37,2024-12-19
+KH-01876,31,Kampong Cham,Rice Farmer,0,0,22.1,None,100.0,95.0,0,1.47,2024-08-11
+KH-01877,34,Other Rural,Garment Factory Worker,1,0,19.7,None,142.0,95.0,1,1.68,2024-01-31
+KH-01878,62,Other Rural,Market Vendor,0,0,22.6,None,113.0,77.7,0,1.85,2024-04-24
+KH-01879,73,Siem Reap,Rice Farmer,1,1,25.5,None,103.0,61.2,0,2.35,2024-09-01
+KH-01880,41,Battambang,Rice Farmer,0,1,21.4,None,98.0,90.7,0,1.53,2024-04-16
+KH-01881,25,Phnom Penh,Civil Servant,0,1,23.0,Hepatitis B,426.0,95.0,0,1.33,2024-09-30
+KH-01882,30,Other Rural,Rice Farmer,1,0,27.2,None,88.0,84.3,0,1.7,2024-05-06
+KH-01883,47,Other Rural,Rice Farmer,1,1,24.8,None,146.0,79.2,0,1.89,2024-03-18
+KH-01884,34,Battambang,Garment Factory Worker,0,1,26.2,COPD/Asthma,120.0,85.5,0,1.53,2024-01-16
+KH-01885,31,Phnom Penh,Garment Factory Worker,0,0,21.5,None,206.0,95.0,0,1.38,2024-09-03
+KH-01886,24,Siem Reap,Civil Servant,0,0,18.9,None,306.0,95.0,0,1.11,2024-06-10
+KH-01887,31,Preah Sihanouk,Garment Factory Worker,0,0,19.3,None,195.0,95.0,0,1.38,2024-12-20
+KH-01888,48,Phnom Penh,Monk/Retired,0,0,22.2,Heart Disease,114.0,83.1,0,2.53,2024-03-12
+KH-01889,49,Kampong Cham,Market Vendor,0,1,21.3,None,153.0,88.8,0,1.49,2024-10-06
+KH-01890,45,Battambang,Rice Farmer,0,0,23.9,Arthritis; Hepatitis B,111.0,79.5,1,2.26,2024-01-16
+KH-01891,37,Siem Reap,Market Vendor,0,1,23.6,Diabetes,142.0,91.0,1,1.5,2024-12-13
+KH-01892,31,Other Rural,Rice Farmer,0,0,17.0,None,60.0,95.0,0,1.47,2024-07-03
+KH-01893,38,Other Rural,Garment Factory Worker,0,0,20.4,None,119.0,95.0,0,1.5,2024-10-26
+KH-01894,48,Battambang,Civil Servant,0,1,19.9,None,290.0,94.1,0,1.42,2024-05-17
+KH-01895,43,Siem Reap,Civil Servant,0,1,21.3,None,347.0,93.8,0,1.33,2024-08-02
+KH-01896,85,Other Rural,Rice Farmer,0,0,19.6,Arthritis,67.0,67.3,0,2.66,2024-04-22
+KH-01897,30,Other Rural,Market Vendor,1,0,23.3,None,145.0,95.0,0,1.52,2024-12-07
+KH-01898,31,Other Rural,Monk/Retired,0,0,20.6,None,92.0,95.0,0,2.01,2024-01-09
+KH-01899,62,Other Rural,Garment Factory Worker,0,0,23.4,None,168.0,74.4,1,1.94,2024-10-28
+KH-01900,26,Siem Reap,Monk/Retired,0,1,28.4,None,85.0,82.5,0,1.8,2024-07-01
+KH-01901,55,Phnom Penh,Rice Farmer,0,0,23.7,None,188.0,76.6,0,1.9,2024-09-03
+KH-01902,35,Siem Reap,Moto/Tuk-tuk Driver,1,0,25.2,TB,177.0,78.0,1,2.52,2024-04-21
+KH-01903,65,Other Rural,Rice Farmer,0,0,20.9,TB,65.0,71.8,1,2.45,2024-07-03
+KH-01904,40,Kampong Cham,Market Vendor,0,1,23.5,None,102.0,89.3,1,1.33,2024-08-01
+KH-01905,44,Phnom Penh,Rice Farmer,0,1,25.4,TB,180.0,74.7,0,1.95,2024-11-29
+KH-01906,36,Other Rural,Rice Farmer,1,1,22.8,None,72.0,90.7,0,1.69,2024-11-13
+KH-01907,42,Other Rural,Market Vendor,0,0,22.3,None,196.0,90.8,0,1.49,2024-06-01
+KH-01908,41,Other Rural,Rice Farmer,1,1,21.9,Diabetes,135.0,89.6,0,2.0,2024-01-08
+KH-01909,39,Kampong Cham,Market Vendor,0,0,21.5,None,109.0,94.5,0,1.43,2024-05-11
+KH-01910,80,Kampong Cham,Civil Servant,0,0,27.6,Heart Disease,306.0,56.3,0,2.34,2024-05-24
+KH-01911,41,Kampong Cham,Market Vendor,0,0,23.3,None,132.0,89.0,0,1.47,2024-05-28
+KH-01912,24,Other Rural,Garment Factory Worker,0,0,24.9,None,99.0,94.7,0,1.25,2024-01-20
+KH-01913,36,Other Rural,Rice Farmer,1,1,21.0,None,99.0,94.8,0,1.69,2024-03-21
+KH-01914,49,Siem Reap,Monk/Retired,1,1,25.4,Arthritis,74.0,75.2,0,2.68,2024-07-28
+KH-01915,43,Kampong Cham,Construction Worker,0,0,26.0,None,181.0,74.6,0,1.95,2024-07-25
+KH-01916,50,Kampong Cham,Market Vendor,0,1,23.9,None,170.0,82.2,0,1.51,2024-01-16
+KH-01917,75,Other Rural,Garment Factory Worker,0,0,26.6,Diabetes,157.0,58.8,0,2.39,2024-05-05
+KH-01918,47,Preah Sihanouk,Monk/Retired,0,1,22.3,None,150.0,83.5,1,2.18,2024-06-02
+KH-01919,65,Phnom Penh,Garment Factory Worker,0,1,24.1,None,243.0,71.0,0,1.87,2024-07-14
+KH-01920,42,Preah Sihanouk,Construction Worker,0,1,20.9,None,242.0,87.1,0,1.82,2024-07-30
+KH-01921,48,Other Rural,Rice Farmer,0,1,26.6,None,96.0,74.3,0,1.65,2024-12-20
+KH-01922,26,Phnom Penh,Garment Factory Worker,1,1,21.9,None,238.0,95.0,0,1.42,2024-12-22
+KH-01923,46,Siem Reap,Monk/Retired,0,0,21.9,None,110.0,84.9,1,2.28,2024-04-30
+KH-01924,30,Siem Reap,Market Vendor,0,1,20.4,COPD/Asthma,162.0,95.0,0,1.37,2024-05-03
+KH-01925,52,Other Rural,Rice Farmer,0,1,23.8,Hypertension,108.0,78.4,0,1.95,2024-05-02
+KH-01926,38,Other Rural,Rice Farmer,0,1,21.6,TB,123.0,87.0,0,1.84,2024-06-25
+KH-01927,29,Siem Reap,Rice Farmer,0,1,16.4,None,124.0,95.0,0,1.31,2024-04-20
+KH-01928,35,Other Rural,Garment Factory Worker,0,0,17.4,None,172.0,95.0,0,1.45,2024-08-14
+KH-01929,46,Kampong Cham,Market Vendor,0,0,26.5,TB,136.0,73.7,0,1.93,2024-03-19
+KH-01930,34,Battambang,Construction Worker,0,0,23.3,Hepatitis B,197.0,83.5,1,2.11,2024-09-02
+KH-01931,47,Phnom Penh,Moto/Tuk-tuk Driver,0,0,21.5,None,240.0,84.0,0,2.12,2024-08-02
+KH-01932,42,Siem Reap,Rice Farmer,0,0,24.1,Hepatitis B,96.0,80.9,0,1.99,2024-10-22
+KH-01933,39,Battambang,Garment Factory Worker,1,1,21.7,None,155.0,92.7,0,1.65,2024-04-30
+KH-01934,28,Other Rural,Rice Farmer,0,0,20.1,None,60.0,95.0,0,1.41,2024-04-14
+KH-01935,32,Phnom Penh,Rice Farmer,0,1,23.2,None,151.0,92.3,0,1.37,2024-03-23
+KH-01936,39,Other Rural,Rice Farmer,0,0,21.7,None,117.0,91.4,0,1.61,2024-04-01
+KH-01937,54,Siem Reap,Rice Farmer,0,1,24.3,Hypertension,137.0,76.0,0,1.98,2024-02-12
+KH-01938,27,Other Rural,Moto/Tuk-tuk Driver,1,1,21.9,None,153.0,95.0,0,1.89,2024-08-25
+KH-01939,43,Other Rural,Garment Factory Worker,1,1,20.4,Diabetes; Hepatitis B,152.0,90.1,0,2.26,2024-07-17
+KH-01940,43,Other Rural,Civil Servant,1,0,23.8,None,337.0,88.1,0,1.7,2024-10-15
+KH-01941,25,Phnom Penh,Market Vendor,0,0,24.4,Diabetes,157.0,95.0,0,1.4,2024-01-05
+KH-01942,33,Battambang,Garment Factory Worker,1,0,20.7,None,175.0,95.0,0,1.66,2024-02-26
+KH-01943,42,Kampong Cham,Rice Farmer,1,0,20.3,None,60.0,92.7,1,1.92,2024-08-31
+KH-01944,43,Other Rural,Moto/Tuk-tuk Driver,0,0,25.1,None,193.0,78.2,0,2.04,2024-12-27
+KH-01945,37,Siem Reap,Construction Worker,1,1,23.6,Hepatitis B,155.0,81.0,0,2.3,2024-10-16
+KH-01946,48,Kampong Cham,Rice Farmer,1,1,23.4,None,120.0,81.8,0,1.9,2024-10-11
+KH-01947,67,Other Rural,Rice Farmer,0,0,19.3,None,80.0,79.4,0,2.12,2024-09-25
+KH-01948,36,Other Rural,Monk/Retired,1,1,22.9,Arthritis,79.0,89.0,0,2.45,2024-12-23
+KH-01949,37,Other Rural,Garment Factory Worker,0,1,22.6,None,87.0,91.9,0,1.37,2024-10-20
+KH-01950,75,Phnom Penh,Rice Farmer,1,1,25.3,TB,140.0,55.6,0,2.76,2024-02-23
+KH-01951,44,Battambang,Garment Factory Worker,0,0,22.9,None,128.0,86.9,0,1.61,2024-06-17
+KH-01952,39,Other Rural,Rice Farmer,0,0,23.9,None,104.0,86.2,0,1.61,2024-04-09
+KH-01953,39,Kampong Cham,Construction Worker,1,1,21.6,Hypertension; Heart Disease; Hepatitis B,213.0,84.2,0,2.77,2024-11-28
+KH-01954,38,Siem Reap,Garment Factory Worker,0,1,23.0,None,128.0,90.3,0,1.38,2024-06-09
+KH-01955,43,Other Rural,Rice Farmer,0,0,20.2,None,107.0,92.2,0,1.68,2024-01-03
+KH-01956,56,Other Rural,Garment Factory Worker,0,0,24.7,None,175.0,75.1,0,1.83,2024-06-27
+KH-01957,52,Phnom Penh,Garment Factory Worker,1,0,28.0,None,223.0,70.0,0,2.01,2024-06-04
+KH-01958,35,Battambang,Market Vendor,0,0,27.0,None,128.0,84.3,0,1.36,2024-05-08
+KH-01959,57,Phnom Penh,Construction Worker,1,1,24.8,None,227.0,68.7,0,2.34,2024-06-18
+KH-01960,44,Preah Sihanouk,Rice Farmer,1,1,20.7,None,160.0,90.5,0,1.83,2024-12-24
+KH-01961,38,Other Rural,Moto/Tuk-tuk Driver,1,0,22.4,Heart Disease,159.0,87.6,1,2.42,2024-02-12
+KH-01962,36,Kampong Cham,Garment Factory Worker,0,1,25.1,None,145.0,86.8,0,1.35,2024-08-08
+KH-01963,37,Phnom Penh,Garment Factory Worker,1,0,19.4,TB,215.0,94.2,0,2.11,2024-07-26
+KH-01964,41,Preah Sihanouk,Garment Factory Worker,0,1,19.8,None,192.0,95.0,0,1.44,2024-04-22
+KH-01965,31,Kampong Cham,Market Vendor,1,1,26.0,Heart Disease,126.0,89.1,0,1.64,2024-12-03
+KH-01966,85,Kampong Cham,Garment Factory Worker,0,0,24.5,Diabetes,186.0,57.6,1,2.57,2024-01-18
+KH-01967,34,Other Rural,Garment Factory Worker,0,0,20.8,None,164.0,95.0,0,1.43,2024-10-18
+KH-01968,25,Battambang,Construction Worker,1,0,20.2,None,214.0,95.0,1,1.88,2024-07-05
+KH-01969,73,Other Rural,Market Vendor,0,0,23.5,None,162.0,68.7,0,2.04,2024-12-06
+KH-01970,39,Preah Sihanouk,Rice Farmer,1,1,22.0,None,163.0,90.6,0,1.74,2024-06-15
+KH-01971,49,Other Rural,Garment Factory Worker,0,0,22.6,None,102.0,84.3,0,1.7,2024-01-15
+KH-01972,46,Other Rural,Rice Farmer,0,0,22.9,Hepatitis B,105.0,81.1,0,2.06,2024-02-26
+KH-01973,47,Kampong Cham,Monk/Retired,0,1,22.8,None,111.0,82.4,1,2.18,2024-08-27
+KH-01974,29,Kampong Cham,Moto/Tuk-tuk Driver,0,0,24.4,None,150.0,88.5,1,1.79,2024-02-13
+KH-01975,44,Other Rural,Rice Farmer,0,0,22.9,None,108.0,85.5,0,1.7,2024-09-18
+KH-01976,34,Battambang,Civil Servant,0,0,21.0,None,298.0,95.0,0,1.29,2024-05-15
+KH-01977,41,Battambang,Market Vendor,0,0,19.1,None,140.0,95.0,0,1.47,2024-03-22
+KH-01978,85,Phnom Penh,Market Vendor,0,1,29.0,None,222.0,48.7,1,2.14,2024-05-09
+KH-01979,38,Siem Reap,Moto/Tuk-tuk Driver,0,1,19.4,None,198.0,94.4,0,1.83,2024-11-26
+KH-01980,41,Other Rural,Garment Factory Worker,1,1,22.3,None,134.0,90.2,0,1.69,2024-03-26
+KH-01981,36,Other Rural,Rice Farmer,0,0,23.5,None,74.0,89.0,0,1.56,2024-02-09
+KH-01982,53,Other Rural,Rice Farmer,0,0,22.7,None,97.0,80.3,0,1.86,2024-06-29
+KH-01983,49,Other Rural,Market Vendor,0,0,25.9,None,140.0,78.2,0,1.61,2024-08-25
+KH-01984,55,Siem Reap,Garment Factory Worker,0,0,22.7,Hypertension,153.0,80.4,1,2.03,2024-09-29
+KH-01985,33,Siem Reap,Market Vendor,0,1,24.2,Heart Disease,122.0,92.0,0,1.42,2024-01-15
+KH-01986,43,Preah Sihanouk,Garment Factory Worker,0,0,20.9,None,185.0,92.0,0,1.59,2024-03-26
+KH-01987,31,Other Rural,Construction Worker,0,1,22.4,None,224.0,90.4,0,1.62,2024-12-03
+KH-01988,26,Phnom Penh,Moto/Tuk-tuk Driver,0,1,23.5,COPD/Asthma,232.0,92.4,0,1.84,2024-06-19
+KH-01989,29,Siem Reap,Monk/Retired,0,1,24.0,None,74.0,90.8,0,1.85,2024-11-04
+KH-01990,45,Phnom Penh,Construction Worker,0,0,23.2,Hepatitis B,297.0,76.9,0,2.31,2024-02-22
+KH-01991,40,Siem Reap,Garment Factory Worker,0,1,21.0,None,161.0,93.6,1,1.42,2024-02-23
+KH-01992,28,Battambang,Rice Farmer,0,0,18.9,None,100.0,95.0,0,1.41,2024-08-13
+KH-01993,29,Other Rural,Civil Servant,0,0,22.7,None,286.0,95.0,0,1.2,2024-12-04
+KH-01994,42,Other Rural,Rice Farmer,0,1,23.0,None,115.0,86.3,1,1.55,2024-08-14
+KH-01995,42,Other Rural,Moto/Tuk-tuk Driver,0,0,19.9,TB,177.0,85.8,0,2.4,2024-07-04
+KH-01996,60,Kampong Cham,Garment Factory Worker,0,0,26.6,None,170.0,68.2,0,1.9,2024-03-11
+KH-01997,50,Other Rural,Rice Farmer,0,0,25.5,None,108.0,75.7,0,1.81,2024-04-01
+KH-01998,43,Battambang,Moto/Tuk-tuk Driver,0,1,22.8,None,156.0,83.5,0,1.92,2024-08-06
+KH-01999,40,Phnom Penh,Construction Worker,1,1,27.8,Hepatitis B,289.0,69.4,0,2.35,2024-12-27
+KH-02000,32,Other Rural,Construction Worker,0,1,21.3,None,185.0,92.4,1,1.64,2024-06-11
