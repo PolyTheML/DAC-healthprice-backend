@@ -5,14 +5,16 @@ model versioning + meta persistence, hot-swap retraining loop,
 full audit trail, 6-layer anti-scraping protection.
 """
 import os, re, time, uuid, logging, json, hashlib, secrets
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from typing import Optional, List
 from collections import defaultdict, deque
 import joblib, numpy as np
+import jwt as pyjwt
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, field_validator, model_validator
 import asyncpg
 
@@ -46,6 +48,41 @@ def _rl(ip):
     now=time.monotonic();b=_buckets[ip];b["t"]=min(RL,b["t"]+(now-b["last"])*(RL/60));b["last"]=now
     if b["t"]>=1: b["t"]-=1; return True
     return False
+
+# ── JWT Staff Authentication ────────────────────────────────────────────────────
+JWT_SECRET = os.getenv("JWT_SECRET", "dac-dev-secret-change-in-production")
+JWT_ALGO = "HS256"
+JWT_EXP_HRS = 8
+
+STAFF_USERS = {
+    "admin": {"password": os.getenv("ADMIN_PASSWORD", "dac2026!"), "role": "admin"},
+    "analyst": {"password": os.getenv("ANALYST_PASSWORD", "dac2026!"), "role": "analyst"},
+    "uw": {"password": os.getenv("UW_PASSWORD", "dac2026!"), "role": "underwriter"},
+}
+
+_bearer = HTTPBearer(auto_error=False)
+
+async def get_current_staff(creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer)):
+    if not creds:
+        raise HTTPException(401, "Authentication required")
+    try:
+        payload = pyjwt.decode(creds.credentials, JWT_SECRET, algorithms=[JWT_ALGO])
+    except pyjwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token expired")
+    except pyjwt.InvalidTokenError:
+        raise HTTPException(401, "Invalid token")
+    return {"username": payload["sub"], "role": payload["role"]}
+
+def require_roles(*roles):
+    async def _check(user: dict = Depends(get_current_staff)):
+        if user["role"] not in roles:
+            raise HTTPException(403, f"Role '{user['role']}' cannot perform this action")
+        return user
+    return _check
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
 
 async def verify_admin(x_api_key:str=Header(None)):
     if not ADMIN_KEY: raise HTTPException(503,"Admin not configured — set ADMIN_API_KEY env var")
@@ -349,6 +386,18 @@ async def _log_b(qid,req,browser_id:str="",email:str="",anomaly_flag:bool=False)
 @app.get("/health")
 async def health():
     return {"status":"healthy","service":"DAC HealthPrice v2.2","models_loaded":list(models.keys()),"fallback_models_loaded":list(_fallback_models.keys()),"model_version":model_version,"database_connected":db_pool is not None,"countries":list(CTY_REG.keys()),"timestamp":datetime.now(timezone.utc).isoformat()}
+
+# ── Staff JWT Login Endpoint ────────────────────────────────────────────────────
+@app.post("/auth/login")
+async def login(body: LoginRequest):
+    user = STAFF_USERS.get(body.username.strip().lower())
+    if not user or not secrets.compare_digest(body.password, user["password"]):
+        raise HTTPException(401, "Invalid credentials")
+    token = pyjwt.encode(
+        {"sub": body.username, "role": user["role"], "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXP_HRS)},
+        JWT_SECRET, algorithm=JWT_ALGO,
+    )
+    return {"access_token": token, "token_type": "bearer", "role": user["role"], "username": body.username}
 
 # ── Layer 6: session token enforcement ───────────────────────────────────────
 async def verify_session(x_session_token:Optional[str]=Header(None)):
