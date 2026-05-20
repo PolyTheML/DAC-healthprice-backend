@@ -220,7 +220,7 @@ app.add_middleware(CORSMiddleware,allow_origins=ALLOWED_ORIGINS,allow_credential
 async def mw(request:Request,call_next):
     ip=request.client.host if request.client else "x"
     # /api/v2/chat is called directly from browser — skip CF_SECRET check for it
-    if CF_SECRET and request.url.path not in ("/api/v2/chat", "/api/v2/ailab/upload", "/api/v2/ailab/analyze", "/api/v2/ailab/execute", "/api/v2/ailab/files") and request.headers.get("X-CF-Secret")!=CF_SECRET:
+    if CF_SECRET and request.url.path not in ("/auth/login", "/api/v2/chat", "/api/v2/ailab/upload", "/api/v2/ailab/analyze", "/api/v2/ailab/execute", "/api/v2/ailab/files") and request.headers.get("X-CF-Secret")!=CF_SECRET:
         return JSONResponse(status_code=403,content={"detail":"Direct API access not permitted. Use the official frontend."})
     # Rate limit
     if not _rl(ip): return JSONResponse(429,{"detail":"Rate limit exceeded"})
