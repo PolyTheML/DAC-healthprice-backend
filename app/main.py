@@ -735,21 +735,32 @@ import tempfile, base64, io, traceback
 AILAB_SYSTEM_PROMPT = """You are DAC Actuarial AI Assistant — a specialized AI for actuarial data science.
 You help actuaries with: data cleaning, EDA, frequency-severity modeling, pricing, reserving (BEL, RA, CSM), IFRS 17 valuation, and expense allocation.
 
-When the user uploads data or asks for analysis, you MUST respond with executable Python code inside ```python ``` blocks.
-The code should use pandas, numpy, scikit-learn, statsmodels, matplotlib, and seaborn.
+WHEN TO USE CODE vs WHEN TO JUST CHAT:
+- For QUESTIONS (e.g. "what is this data?", "explain loss ratio", "what should I do next?") → just answer in plain text, NO code needed.
+- For ACTIONS that need computation (e.g. "clean this data", "plot a chart", "build a model", "show summary statistics", "run EDA") → include executable Python code inside ```python``` blocks. The code will be auto-executed.
 
-IMPORTANT RULES:
-- Always start by loading the data with: df = pd.read_csv("/tmp/ailab_data/{filename}")
-- For charts, always save to file: plt.savefig("/tmp/ailab_output/chart.png", dpi=150, bbox_inches="tight") then plt.close()
+CODING RULES (only when code is needed):
+- Always load data with: df = pd.read_csv("/tmp/ailab_data/{filename}")
+- For charts, save to file: plt.savefig("/tmp/ailab_output/chart.png", dpi=150, bbox_inches="tight") then plt.close()
+- Use unique chart filenames when generating multiple charts (e.g. chart_1.png, chart_2.png)
 - Print results clearly with labels
+- Use pandas, numpy, scikit-learn, statsmodels, matplotlib, and seaborn
 - For actuarial models, prefer Poisson GLM for frequency and Gamma GLM for severity
 - Show model coefficients, metrics (R², MAE, RMSE, AUC-ROC), and interpretation
 - For data cleaning, show before/after statistics
 - For EDA, generate multiple relevant charts
 - Always add brief actuarial interpretation of results
 
-Available data columns will be provided in the user message.
-Respond with explanation text AND python code blocks. The code will be executed automatically."""
+SUGGESTIONS:
+At the end of EVERY response, add exactly 3 context-aware follow-up suggestions. Format them as:
+---suggestions---
+1. [suggestion text here]
+2. [suggestion text here]
+3. [suggestion text here]
+
+Make suggestions specific to the data and conversation (e.g. "Which companies have the highest loss ratio?" not generic "Analyze data"). If no data is uploaded, suggest data-related actions.
+
+Available data columns will be provided in the user message."""
 
 AILAB_UPLOAD_DIR = "/tmp/ailab_data"
 AILAB_OUTPUT_DIR = "/tmp/ailab_output"
@@ -839,7 +850,23 @@ async def ailab_analyze(request: Request):
             messages=messages,
         )
         ai_response = response.content[0].text
-        return {"response": ai_response, "has_code": "```python" in ai_response}
+
+        # Parse suggestions from response
+        suggestions = []
+        main_response = ai_response
+        if "---suggestions---" in ai_response:
+            parts = ai_response.split("---suggestions---")
+            main_response = parts[0].strip()
+            if len(parts) > 1:
+                for line in parts[1].strip().split("\n"):
+                    line = line.strip()
+                    if line and line[0].isdigit():
+                        # Remove "1. ", "2. ", "3. " prefix
+                        suggestion = line.lstrip("0123456789. ").strip()
+                        if suggestion:
+                            suggestions.append(suggestion)
+
+        return {"response": main_response, "has_code": "```" in main_response, "suggestions": suggestions[:3]}
 
     except Exception as e:
         log.error(f"AI Lab error: {e}")
