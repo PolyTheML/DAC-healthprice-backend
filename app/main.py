@@ -833,7 +833,7 @@ async def ailab_analyze(request: Request):
     try:
         client = Anthropic(api_key=anthropic_key)
         response = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-sonnet-4-5-20250514",
             max_tokens=2000,
             system=AILAB_SYSTEM_PROMPT + data_context,
             messages=messages,
